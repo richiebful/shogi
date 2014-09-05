@@ -1,0 +1,20 @@
+#include <shogi.h>
+
+struct graveyard{
+  char challenging[38];
+  char reigning[38];
+};
+  
+struct gm_status{
+  char board[9][9];
+  int player;
+  struct graveyard;
+};
+
+int main(void){
+    
+}
+
+void init(struct game){
+  
+}
