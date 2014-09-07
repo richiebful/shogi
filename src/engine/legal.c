@@ -12,8 +12,8 @@ void mkbitboard(struct gm_status *game){
     for (sfile = 0; sfile < 9; sfile++){
       for (drank = 0; drank < 9; drank++){
 	for (dfile = 0; dfile < 9; dfile++){
-	  int src[2] = {srank, sfile}
-	  int dst[2] = {drank, dfile}
+	  int src[2] = {srank, sfile};
+	  int dst[2] = {drank, dfile};
 	  if(legalmove(game,src,dst)==true){
 	    bitboard[srank][sfile][drank][dfile] = 1;
 	  }
@@ -59,10 +59,14 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
   if (legaldest(game,drank,dfile) == false){
     return false;
   }
-  if (legalsrc(game,drank,dfile) == false){
+  else if (legalsrc(game,drank,dfile) == false){
     return false;
   }
-  else if (piece == 'P' || piece == 'p'){
+  else if (drank == srank && dfile == sfile){
+    return false;
+  }
+  else if (piece == 'P' || piece == 'p'){ //pawn check
+    //pawns can only move forward one relative rank
     if (rel_srank + 1 == rel_drank && rel_sfile == rel_dfile){
       return true;
     }
@@ -70,7 +74,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
       return false;
     }
   }
-  else if (piece == 'R' || piece == 'r'){
+  else if (piece == 'R' || piece == 'r'){ //checks legality of rook move
     int i, var_s, var_d, sign;
     if ((drank != srank && dfile != sfile)||
 	(drank == srank && dfile == sfile)){
@@ -78,7 +82,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
     }
     else if (drank > srank){ //it is implied that dfile == sfile
       for (i = srank; i != drank; ++i){
-	if (dpiece != ' '){
+	if (board[i][sfile] != ' '){
 	  return false;
 	}
       }
@@ -86,7 +90,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
     }
     else if (drank < srank){
       for (i = srank; i != drank; --i){
-	if (dpiece != ' '){
+	if (board[i][sfile] != ' '){
 	  return false;
 	}
       }
@@ -94,7 +98,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
     }
     else if (dfile > sfile){
       for (i = sfile; i != dfile; ++i){
-	if (dpiece != ' '){
+	if (board[srank][i] != ' '){
 	  return false;
 	}
       }
@@ -102,12 +106,33 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
     }
     else{ //dfile < sfile
       for (i = sfile; i != dfile; --i){
-	if (dpiece != ' '){
+	if (board[srank][i] != ' '){
 	  return false;
 	}
       }
       return true;
     }
+  }
+  else if (piece == 'B' || piece == 'b'){ //checks bishop's legality
+    int slope, direction;
+    slope = (drank-srank)/(dfile-sfile);
+    if (slope != 1 && slope != -1){
+      return false;
+    }
+    else if (drank < srank){
+      direction = -1;
+    }
+    else{
+      direction = 1;
+    }
+    int i, yInt = sfile/(slope*srank);
+    for (i = srank+direction; i != drank; i += direction){
+      //checks whether the move is blocked by a piece
+      if (board[i][slope*i+yInt] != ' '){
+	return false;
+      }
+    }
+    return true;
   }
 }
 /*Determines whether the rank and file are out of range
