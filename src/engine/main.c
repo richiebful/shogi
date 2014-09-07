@@ -1,15 +1,14 @@
 #include <shogi.h>
 
-void init_game(struct gm_status *game);
-
 int main(void){
   struct gm_status game;
   init_game(&game);
+  
   return 0;  
 }
 
 void init_game(struct gm_status *game){
-  const char init_board[9][9] = {{'L','N','G','A','K','A','G','N','L'},
+  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
 				 {' ','R',' ',' ',' ',' ',' ','B',' '},
 				 {'P','P','P','P','P','P','P','P','P'},
 				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
@@ -17,7 +16,7 @@ void init_game(struct gm_status *game){
 				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
 				 {'p','p','p','p','p','p','p','p','p'},
 				 {' ','b',' ',' ',' ',' ',' ','r',' '},
-				 {'l','n','g','a','k','a','g','n','l'}};
+				 {'l','n','g','u','k','u','g','n','l'}};
   memcpy(game->board,init_board,sizeof(init_board));
 
   game->player = 1;
