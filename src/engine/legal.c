@@ -134,6 +134,42 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
     }
     return true;
   }
+  else if (piece == 'L'|| piece == 'l'){ //checks lance's legality
+    int direction;
+    //if the lance isn't moving forward, it is illegal
+    if (rel_drank <= rel_srank || sfile != dfile){
+      return false;
+    }
+    else if (drank > srank){
+      direction = 1;
+    }
+    else{
+      direction = -1;
+    }
+    int i;
+    for (i = srank + direction; i != drank; i += direction){
+      if (board[sfile][i] != ' '){
+	return false;
+      }
+    }
+    return true;
+  }
+  else if (piece == 'K' || piece == 'k'){
+    int possible[9][2] = {{srank + 1, sfile + 1},
+			  {srank + 1, sfile},
+			  {srank + 1, sfile - 1},
+			  {srank, sfile + 1},
+			  {srank, sfile - 1},
+			  {srank - 1, sfile + 1},
+			  {srank - 1, sfile},
+			  {srank - 1, sfile - 1}};
+    int i;
+    for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+      if (possible[i][0] == drank && possible[i][1] == dfile){
+	return true;
+      }
+    }
+  }
 }
 /*Determines whether the rank and file are out of range
  *of the board or not.
