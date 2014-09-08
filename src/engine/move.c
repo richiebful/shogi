@@ -38,7 +38,7 @@ void mkmove(struct gm_status *game, int * src, int * dst){
 	Destination coordinates are in absolute terms
   Assumes the move is legal
 */
-/*
+
 void mkdrop(struct gm_status *game, char piece, int *dst){
   int i = 0;
   if (game->player == P1){
@@ -58,12 +58,12 @@ void mkdrop(struct gm_status *game, char piece, int *dst){
   int dfile = dst[1];
   game->board[drank][dfile] = piece;
 }
-*/
+
 /*Takes coordinates from characters to absolute coordinates in /
   integer form. This will make an string {<file><rank>} or "e4"
   into {rank,file} or {3,4}.
  */
-/*
+
 void cToCoords(struct gm_status *game, int *converted, char *to_convert){
   int crank = to_convert[1];
   int cfile = to_convert[0];
@@ -80,4 +80,3 @@ void cToCoords(struct gm_status *game, int *converted, char *to_convert){
   converted[0] = irank;
   converted[1] = ifile;
 }
-*/
