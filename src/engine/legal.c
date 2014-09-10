@@ -102,7 +102,6 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 	  return false;
 	}
       }
-      return true;
     }
     else{ //dfile < sfile
       for (i = sfile; i != dfile; --i){
@@ -110,7 +109,23 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 	  return false;
 	}
       }
+    }
+    
+    if (piece == 'R' || piece == 'r'){
       return true;
+    }
+    else{ //if it is upgraded rook
+      int i;
+      int possible[4][2] = {{srank + 1, sfile},
+			    {srank - 1, sfile},
+			    {srank, sfile + 1},
+			    {srank, sfile - 1}};
+      for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+	if (possible[i][0] == drank && possible[i][1] == dfile){
+	  return true;
+	}
+      } 
+      return false;
     }
   }
   else if (piece == 'B' || piece == 'b'){ //checks bishop's legality
@@ -155,7 +170,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
     return true;
   }
   else if (piece == 'K' || piece == 'k'){
-    int possible[9][2] = {{srank + 1, sfile + 1},
+    int possible[8][2] = {{srank + 1, sfile + 1},
 			  {srank + 1, sfile},
 			  {srank + 1, sfile - 1},
 			  {srank, sfile + 1},
@@ -169,6 +184,34 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 	return true;
       }
     }
+    return false;
+  }
+  else if (piece == 'G' || piece == 'g'){
+    int possible[5][2] = {{rel_srank + 1, rel_sfile - 1},
+			  {rel_rank + 1, rel_sfile},
+			  {rel_srank + 1, rel_sfile + 1},
+			  {rel_srank - 1, rel_sfile - 1},
+			  {rel_srank - 1, rel_sfile + 1}};
+    for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+      if (possible[i][0] == rel_drank && possible[i][1] == rel_dfile){
+	return true;
+      }
+    }
+    return false;
+  }
+  else if (piece == 'U' || piece == 'u'){ //put in all that upgrade to gold
+    int possible[6][2] = {{rel_srank + 1, rel_sfile - 1},
+			  {rel_rank + 1, rel_sfile},
+			  {rel_srank + 1, rel_sfile + 1},
+			  {rel_srank, rel_sfile - 1},
+			  {rel_srank, rel_sfile + 1},
+			  {rel_srank-1, rel_sfile}};
+    for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+      if (possible[i][0] == rel_drank && possible[i][1] == rel_dfile){
+	return true;
+      }
+    }
+    return false;
   }
 }
 /*Determines whether the rank and file are out of range
