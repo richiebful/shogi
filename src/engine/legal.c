@@ -74,46 +74,47 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
       return false;
     }
   }
-  else if (piece == 'R' || piece == 'r'){ //checks legality of rook move
-    int rook_fatal_move = false;
+  else if (piece == 'R' || piece == 'r'||
+	   piece == 'S' || piece == 's'){ //checks legality of rook move
+    int rook_fatal_flag = false;
     if ((drank != srank && dfile != sfile)||
 	(drank == srank && dfile == sfile)){
-      rook_fatal_move = true;
+      rook_fatal_flag = true;
     }
     else if (drank > srank){ //it is implied that dfile == sfile
       for (i = srank; i != drank; ++i){
 	if (board[i][sfile] != ' '){
-	  rook_fatal_move = true;
+	  rook_fatal_flag = true;
 	}
       }
-      rook_fatal_move = false;
+      rook_fatal_flag = false;
     }
     else if (drank < srank){
       for (i = srank; i != drank; --i){
 	if (board[i][sfile] != ' '){
-	  rook_fatal_move = true;
+	  rook_fatal_flag = true;
 	}
       }
-      rook_fatal_move = false;
+      rook_fatal_flag = false;
     }
     else if (dfile > sfile){
       for (i = sfile; i != dfile; ++i){
 	if (board[srank][i] != ' '){
-	  rook_fatal_move = true;
+	  rook_fatal_flag = true;
 	}
       }
     }
     else{ //dfile < sfile
       for (i = sfile; i != dfile; --i){
 	if (board[srank][i] != ' '){
-	  rook_fatal_move = true;
+	  rook_fatal_flag = true;
 	}
       }
-      rook_fatal_move = false;
+      rook_fatal_flag = false;
     }
     
     if (piece == 'R' || piece == 'r'){
-      return rook_fatal_move;
+      return rook_fatal_flag;
     }
     else{ //if it is upgraded rook
       int i;
@@ -129,8 +130,10 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
       return false;
     }
   }
-  else if (piece == 'B' || piece == 'b'){ //checks bishop's legality
+  else if (piece == 'B' || piece == 'b'||
+	   piece == 'C' || piece == 'c'){ //checks bishop's legality
     int slope, direction;
+    bool bishop_fatal_flag = false;
     slope = (drank-srank)/(dfile-sfile);
     if (slope != 1 && slope != -1){
       return false;
@@ -145,10 +148,25 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
     for (i = srank+direction; i != drank; i += direction){
       //checks whether the move is blocked by a piece
       if (board[i][slope*i+yInt] != ' '){
-	return false;
+	bishop_fatal_flag = true;
       }
     }
-    return true;
+    bishop_fatal_flag = false;
+    if (piece == 'B' || piece == 'b'){
+      return bishop_fatal_flag;
+    }
+    else{
+      int possible[4][2] = {{srank + 1, sfile},
+			    {srank - 1, sfile},
+			    {srank, sfile + 1},
+			    {srank, sfile - 1}};
+      for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+	if (possible[i][0] == drank && possible[i][1] == dfile){
+	  return true;
+	}
+      }
+      return false;
+    }
   }
   else if (piece == 'L'|| piece == 'l'){ //checks lance's legality
     int direction;
