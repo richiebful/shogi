@@ -75,44 +75,45 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
     }
   }
   else if (piece == 'R' || piece == 'r'){ //checks legality of rook move
-    int i, var_s, var_d, sign;
+    int rook_fatal_move = false;
     if ((drank != srank && dfile != sfile)||
 	(drank == srank && dfile == sfile)){
-      return false;
+      rook_fatal_move = true;
     }
     else if (drank > srank){ //it is implied that dfile == sfile
       for (i = srank; i != drank; ++i){
 	if (board[i][sfile] != ' '){
-	  return false;
+	  rook_fatal_move = true;
 	}
       }
-      return true;
+      rook_fatal_move = false;
     }
     else if (drank < srank){
       for (i = srank; i != drank; --i){
 	if (board[i][sfile] != ' '){
-	  return false;
+	  rook_fatal_move = true;
 	}
       }
-      return true;
+      rook_fatal_move = false;
     }
     else if (dfile > sfile){
       for (i = sfile; i != dfile; ++i){
 	if (board[srank][i] != ' '){
-	  return false;
+	  rook_fatal_move = true;
 	}
       }
     }
     else{ //dfile < sfile
       for (i = sfile; i != dfile; --i){
 	if (board[srank][i] != ' '){
-	  return false;
+	  rook_fatal_move = true;
 	}
       }
+      rook_fatal_move = false;
     }
     
     if (piece == 'R' || piece == 'r'){
-      return true;
+      return rook_fatal_move;
     }
     else{ //if it is upgraded rook
       int i;
@@ -199,7 +200,11 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
     }
     return false;
   }
-  else if (piece == 'U' || piece == 'u'){ //put in all that upgrade to gold
+  else if (piece == 'U' || piece == 'u'||
+	   piece == 'H' || piece == 'h'||
+	   piece == 'Q' || piece == 'q'||
+	   piece == 'M' || piece == 'm'||
+	   piece == 'O' || piece == 'o'){ //put in all that upgrade to gold
     int possible[6][2] = {{rel_srank + 1, rel_sfile - 1},
 			  {rel_rank + 1, rel_sfile},
 			  {rel_srank + 1, rel_sfile + 1},
