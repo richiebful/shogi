@@ -16,18 +16,20 @@ void mkmove(struct gm_status *game, int * src, int * dst){
   game->board[drank][dfile] = spiece;
   
   int i;
+  /*captures a piece and places it into the 
+    capturing player's graveyard*/
   if (dpiece != ' '){
     if (player == P1){
       for (i = 0; i < 38; i++){
 	if (game->graveyard.challenging[i] != '\0'){
-	  game->graveyard.challenging[i] = dpiece;
+	  game->graveyard.challenging[i] = dpiece + 32;
 	}
       }
     }
     else{
       for (i = 0; i < 38; i++){
 	if (game->graveyard.reigning[i] != '\0'){
-	  game->graveyard.reigning[i] = spiece;
+	  game->graveyard.reigning[i] = spiece - 32;
 	}
       }
     }
@@ -35,7 +37,7 @@ void mkmove(struct gm_status *game, int * src, int * dst){
 }
 
 /*Takes a piece from the player's graveyard, and drops it.
-	Destination coordinates are in absolute terms
+  Destination coordinates are in absolute terms
   Assumes the move is legal
 */
 

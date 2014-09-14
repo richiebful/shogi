@@ -53,6 +53,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
   
   char board[9][9];
   memcpy(board,game->board,sizeof(board));
+
   char piece = board[srank][sfile];
   char dpiece = board[drank][dfile];
   
@@ -308,8 +309,46 @@ bool legalsrc(struct gm_status *game, int rank, int file){
 /*Returns true if drop is legal, false if not
  *Coordinates must be in absolute terms
  */
-bool isLegalDrop(struct gm_status *game, int *dst){
+bool isLegalDrop(struct gm_status *game, char piece, int *dst){
   int drank = dst[0];
   int dfile = dst[1];
+  int player = game->player;
+  char board[9][9];
+  memcpy(board, game->board, sizeof(game->board));
+  
+  char dpiece = board[drank][dfile];
+  if (dpiece != ' '){
+    return false;
+  }
+  else if(legaldest(game, drank, dfile)== false){
+    return false;
+  }
+  else if(player == P1 && isupper(piece)){
+      return false;
+  }
+  else if (islower(piece)){
+      return false;
+  }
+  
+  char p_graveyard[38];
+  int i;
+  if (player == 1){
+    memcpy(p_graveyard, game->graveyard->challenging, sizeof(p_graveyard));
+    for (i = 0; i < sizeof(p_graveyard)/sizeof(p_graveyard[0]), i++){
+      if (p_graveyard == piece){
+	return true;
+      }
+    }
+    return false;
+  }
+  else{ //player == 2
+    memcpy(p_graveyard, game->graveyard->challenging, sizeof(p_graveyard));
+    for (i = 0; i < sizeof(p_graveyard)/sizeof(p_graveyard[0]), i++){
+      if (p_graveyard == piece){
+	return true;
+      }
+    }
+    return false;
+  }
   return true;
 }
