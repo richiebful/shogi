@@ -161,7 +161,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 			    {srank - 1, sfile},
 			    {srank, sfile + 1},
 			    {srank, sfile - 1}};
-      for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+      for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
 	if (possible[i][0] == drank && possible[i][1] == dfile){
 	  return true;
 	}
@@ -199,7 +199,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 			  {srank - 1, sfile},
 			  {srank - 1, sfile - 1}};
     int i;
-    for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+    for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
       if (possible[i][0] == drank && possible[i][1] == dfile){
 	return true;
       }
