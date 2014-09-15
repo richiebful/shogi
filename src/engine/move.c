@@ -66,7 +66,7 @@ void mkdrop(struct gm_status *game, char piece, int *dst){
   into {rank,file} or {3,4}.
  */
 
-void cToCoords(struct gm_status *game, int *converted, char *to_convert){
+void ctocoords(struct gm_status *game, int *converted, char *to_convert){
   int crank = to_convert[1];
   int cfile = to_convert[0];
   int irank; 

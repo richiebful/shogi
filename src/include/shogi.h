@@ -27,11 +27,11 @@ void mkbitboard(struct gm_status *game);
 bool legalmove(struct gm_status *game, int *src, int *dst);
 bool inrange(int rank, int file);
 bool legalsrc(struct gm_status *game, int rank, int file);
-bool isLegalDrop(struct gm_status *game, int *dst);
+bool legaldrop(struct gm_status *game, char piece, int *dst);
 void init_game(struct gm_status *game);
 void mkmove(struct gm_status *game, int * src, int * dst);
 void mkdrop(struct gm_status *game, char piece, int *dst);
-void cToCoords(struct gm_status *game, int *converted, char *to_convert);
+void ctocoords(struct gm_status *game, int *converted, char *to_convert);
 
 
 

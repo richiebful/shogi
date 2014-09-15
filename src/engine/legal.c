@@ -77,7 +77,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
   }
   else if (piece == 'R' || piece == 'r'||
 	   piece == 'S' || piece == 's'){ //checks legality of rook move
-    int rook_fatal_flag = false;
+    int i, rook_fatal_flag = false;
     if ((drank != srank && dfile != sfile)||
 	(drank == srank && dfile == sfile)){
       rook_fatal_flag = true;
@@ -161,7 +161,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 			    {srank - 1, sfile},
 			    {srank, sfile + 1},
 			    {srank, sfile - 1}};
-      for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+      for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
 	if (possible[i][0] == drank && possible[i][1] == dfile){
 	  return true;
 	}
@@ -199,7 +199,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 			  {srank - 1, sfile},
 			  {srank - 1, sfile - 1}};
     int i;
-    for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+    for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
       if (possible[i][0] == drank && possible[i][1] == dfile){
 	return true;
       }
@@ -207,12 +207,13 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
     return false;
   }
   else if (piece == 'G' || piece == 'g'){
+    int i;
     int possible[5][2] = {{rel_srank + 1, rel_sfile - 1},
-			  {rel_rank + 1, rel_sfile},
+			  {rel_srank + 1, rel_sfile},
 			  {rel_srank + 1, rel_sfile + 1},
 			  {rel_srank - 1, rel_sfile - 1},
 			  {rel_srank - 1, rel_sfile + 1}};
-    for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+    for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
       if (possible[i][0] == rel_drank && possible[i][1] == rel_dfile){
 	return true;
       }
@@ -224,13 +225,14 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 	   piece == 'Q' || piece == 'q'||
 	   piece == 'M' || piece == 'm'||
 	   piece == 'O' || piece == 'o'){ //put in all that upgrade to gold
+    int i;
     int possible[6][2] = {{rel_srank + 1, rel_sfile - 1},
-			  {rel_rank + 1, rel_sfile},
+			  {rel_srank + 1, rel_sfile},
 			  {rel_srank + 1, rel_sfile + 1},
 			  {rel_srank, rel_sfile - 1},
 			  {rel_srank, rel_sfile + 1},
 			  {rel_srank-1, rel_sfile}};
-    for (i = 0, i < sizeof(possible)/sizeof(possible[0]); i++){
+    for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
       if (possible[i][0] == rel_drank && possible[i][1] == rel_dfile){
 	return true;
       }
@@ -309,7 +311,7 @@ bool legalsrc(struct gm_status *game, int rank, int file){
 /*Returns true if drop is legal, false if not
  *Coordinates must be in absolute terms
  */
-bool isLegalDrop(struct gm_status *game, char piece, int *dst){
+bool legaldrop(struct gm_status *game, char piece, int *dst){
   int drank = dst[0];
   int dfile = dst[1];
   int player = game->player;
@@ -334,17 +336,17 @@ bool isLegalDrop(struct gm_status *game, char piece, int *dst){
   int i;
   if (player == 1){
     memcpy(p_graveyard, game->graveyard->challenging, sizeof(p_graveyard));
-    for (i = 0; i < sizeof(p_graveyard)/sizeof(p_graveyard[0]), i++){
-      if (p_graveyard == piece){
+    for (i = 0; i < sizeof(p_graveyard)/sizeof(p_graveyard[0]); i++){
+      if (p_graveyard[i] == piece){
 	return true;
       }
     }
     return false;
   }
   else{ //player == 2
-    memcpy(p_graveyard, game->graveyard->challenging, sizeof(p_graveyard));
-    for (i = 0; i < sizeof(p_graveyard)/sizeof(p_graveyard[0]), i++){
-      if (p_graveyard == piece){
+    memcpy(p_graveyard, game->graveyard->reigning, sizeof(p_graveyard));
+    for (i = 0; i < sizeof(p_graveyard)/sizeof(p_graveyard[0]); i++){
+      if (p_graveyard[i] == piece){
 	return true;
       }
     }
