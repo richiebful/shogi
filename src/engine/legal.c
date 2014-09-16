@@ -332,21 +332,18 @@ bool legaldrop(struct gm_status *game, char piece, int *dst){
       return false;
   }
   
-  char p_graveyard[38];
   int i;
   if (player == 1){
-    memcpy(p_graveyard, game->graveyard->challenging, sizeof(p_graveyard));
-    for (i = 0; i < sizeof(p_graveyard)/sizeof(p_graveyard[0]); i++){
-      if (p_graveyard[i] == piece){
+    for (i = 0; i < 38; i++){
+      if (game->graveyard.challenging[i] == piece){
 	return true;
       }
     }
     return false;
   }
   else{ //player == 2
-    memcpy(p_graveyard, game->graveyard->reigning, sizeof(p_graveyard));
-    for (i = 0; i < sizeof(p_graveyard)/sizeof(p_graveyard[0]); i++){
-      if (p_graveyard[i] == piece){
+    for (i = 0; i < 38; i++){
+      if (game->graveyard.reigning[i] == piece){
 	return true;
       }
     }
