@@ -38,4 +38,5 @@ void dispBoard(struct gm_status *game){
     }
     printf("\n");
   }
-} 
+  //return color to default
+}
