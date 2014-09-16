@@ -38,5 +38,5 @@ void dispBoard(struct gm_status *game){
     }
     printf("\n");
   }
-  //return color to default
+  printf("\x1b[39;49m");
 }
