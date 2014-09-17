@@ -40,3 +40,21 @@ void dispBoard(struct gm_status *game){
   }
   printf("\x1b[39;49m");
 }
+
+
+/*if return 1, continue to next player
+ *if return 0, execute the commmand, if any,
+ *then query the player for input again 
+ */
+int processCMD(char *command, struct gm_status *game){
+  if(strncmp(command, "show", 4) == true){
+    dispboard(game);
+    return 0;
+  }
+  else if(strncmp(command, "help", 4) == true){
+    return 0;
+  }
+  else{
+    return 0;
+  }
+}

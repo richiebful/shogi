@@ -3,7 +3,16 @@
 int main(void){
   struct gm_status game;
   init_game(&game);
-  
+  bool fatal_f;
+  while (fatal_f == 0){
+    char[20] command = "NULL";
+    int input_f = false;
+    printf("Player %i:");
+    while (input_f == false){
+      scanf("%s", command);
+      input_f = processcmd(command);
+    }
+  }
   return 0;  
 }
 
@@ -27,3 +36,4 @@ void init_game(struct gm_status *game){
     game->graveyard.reigning[i] = '\0';
   }
 }
+
