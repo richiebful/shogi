@@ -14,47 +14,94 @@ void dispBoard(struct gm_status *game){
 				   {"香車","Ll"},
 				   {"成香","Nn"},
 				   {"成香","Pp"},
-				   {"と金","Qq"}}
+				   {"と金","Qq"}};
   memcpy(board, game->board);
   int i, j, k;
-  for (i = 0; i < sizeof(board)/sizeof(board[0]); i++){
-    for (j = 0; j < sizeof(board[0])/sizeof(board[0][0]); j++){
-      char piece[6];
-      for (k = 0; k < sizeof(convert_tbl)/sizeof(convert_tbl[0]); k++){
-	if (convert_tbl[k][1][0] == board[i][j]||
-	    convert_tbl[k][1][1] == board[i][j]){
-	  memcpy(piece, board[k][0], sizeof(board[k][0]));
-	  break;
+  if (game->player == 1){
+    for (i = 0; i < sizeof(board)/sizeof(board[0]); i++){
+      for (j = 0; j < sizeof(board[0])/sizeof(board[0][0]); j++){
+	char piece[6];
+	for (k = 0; k < sizeof(convert_tbl)/sizeof(convert_tbl[0]); k++){
+	  if (convert_tbl[k][1][0] == board[i][j]||
+	      convert_tbl[k][1][1] == board[i][j]){
+	    memcpy(piece, board[k][0], sizeof(board[k][0]));
+	    break;
+	  }
+	}
+	if (isupper(board[i][j])==true){
+	  //print the piece out in white
+	  printf("\x1b[37m%s\t", piece);
+	}
+	else{
+	  //print the piece out in red
+	  printf("\x1b[31m%s\t", piece);
 	}
       }
-      if (isupper(board[i][j])==true){
-	//print the piece out in white
-	printf("\x1b[37m%s\t", piece);
-      }
-      else{
-	//print the piece out in red
-	printf("\x1b[31m%s\t", piece);
-      }
+      printf("\n");
     }
-    printf("\n");
+  }
+  else{
+    for (i = 0; i < sizeof(board)/sizeof(board[0]); i++){
+      for (j = 0; j < sizeof(board)/sizeof(board[0]); j++){
+	char piece[6];
+	for (k = 0; k < sizeof(convert_tbl)/sizeof(convert_tbl[0]); k++){
+	  if (convert_tbl[k][1][0] == board[i][j]||
+	      convert_tbl[k][1][1] == board[i][j]){
+	    memcpy(piece, board[k][0], sizeof(board[k][0]));
+	    break;
+	  }
+	}
+	if (isupper(board[i][j])==true){
+	  //print the piece out in white
+	  printf("\x1b[37m%s\t", piece);
+	}
+	else{
+	  //print the piece out in red
+	  printf("\x1b[31m%s\t", piece);
+	}
+      }
+      printf("\n");
+    }
   }
   printf("\x1b[39;49m");
 }
 
 
-/*if return 1, continue to next player
- *if return 0, execute the commmand, if any,
- *then query the player for input again 
- */
-int processCMD(char *command, struct gm_status *game){
-  if(strncmp(command, "show", 4) == true){
-    dispboard(game);
-    return 0;
+void dispHelp(void){
+  printf("7g7f\t move from 7g to 7f\t");
+  printf("quit\texit Shogi\n");
+  printf("S6h\tmove Silver to 6h\t");
+  printf("resign\tresign the game to your opponent\n");
+  printf("2d2c+\tmove to 2c and promote\t");
+  printf("show\tshows board and graveyard from your pov\n");
+  printf("P*5e\tdrop pawn at 5e\t");
+  printf("revert\tgo back a move, or several\n");
+}
+
+void init_game(struct gm_status *game){
+  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
+				 {' ','R',' ',' ',' ',' ',' ','B',' '},
+				 {'P','P','P','P','P','P','P','P','P'},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {'p','p','p','p','p','p','p','p','p'},
+				 {' ','b',' ',' ',' ',' ',' ','r',' '},
+				 {'l','n','g','u','k','u','g','n','l'}};
+  memcpy(game->board,init_board,sizeof(init_board));
+
+  game->player = 1;
+  
+  int i;
+  for (i=0; i<38; i++){
+    game->graveyard.challenging[i] = '\0';
+    game->graveyard.reigning[i] = '\0';
   }
-  else if(strncmp(command, "help", 4) == true){
-    return 0;
-  }
-  else{
-    return 0;
-  }
+}
+
+int main(void){
+  struct gm_status game;
+  init_game(&game);
+  dispBoard(&game);
+  return 0;
 }
