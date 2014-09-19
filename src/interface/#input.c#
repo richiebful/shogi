@@ -29,7 +29,8 @@ int processCMD(char *command, struct gm_status *game){
   else if (islower(command[0]) == true &&
 	   isdigit(command[1]) == true &&
 	   sizeof(command) >= 4){
-    //process this move directly
+    char dst[2], src[2];
+    snprintf
   }
   else if (isupper(command[0]) == true &&
 	   islower(command[1]) == true &&
