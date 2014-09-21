@@ -46,14 +46,14 @@ int processCMD(char *command, struct gm_status *game){
 	   islower(command[1]) == true &&
 	   isdigit(command[2]) == true &&
 	   sizeof(command) <= 5){
-    //interpret move
+    //interpret move of form Pe4
     return 1;
   }
   else if (isupper(command[0]) == true &&
 	   command[1] == '*' &&
 	   islower(command[2]) == true &&
 	   sizeof(command) == 4){
-    //inteprets drop
+    //inteprets drop of form P*e4
     char piece = command[0], dst[2];
     snprintf(dst, 2, "%s", command+2);
     if (legaldrop(game, src, dst)){
