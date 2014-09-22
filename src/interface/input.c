@@ -47,6 +47,7 @@ int processCMD(char *command, struct gm_status *game){
 	   isdigit(command[2]) == true &&
 	   sizeof(command) <= 5){
     //interpret move of form Pe4
+    
     return 1;
   }
   else if (isupper(command[0]) == true &&
@@ -65,4 +66,12 @@ int processCMD(char *command, struct gm_status *game){
     printf("Sorry, that move is invalid, please try again.")
     return 0;
   }
+}
+
+void processMove(struct gm_status game, char *move, int *dst, int *src){
+  char piece = move[0];
+  int dfile =  move[1] - 'a';
+  int drank = move[2] - '0';
+  dst[0] = drank;
+  dst[1] = dfile;
 }
