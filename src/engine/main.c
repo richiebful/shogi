@@ -3,11 +3,12 @@
 int main(void){
   struct gm_status game;
   init_game(&game);
-  bool fatal_f;
+  bool fatal_f = 0;
+  int input_f;
   while (fatal_f == 0){
-    char[20] command = "NULL";
-    int input_f = false;
-    printf("Player %i:");
+    char command[20] = "NULL";
+    input_f = false;
+    printf("Player %i:", game.player);
     while (input_f == false){
       scanf("%s", command);
       input_f = processcmd(command);

@@ -5,9 +5,9 @@
  */
 void mkmove(struct gm_status *game, int * src, int * dst){
   //a 'd-' prefix means destination; a 's-' prefix means source
-  int drank = dst[0];
+  int drank = 8 - dst[0];
   int dfile = dst[1];
-  int srank = src[0];
+  int srank = 8 - src[0];
   int sfile = src[1];
   int player = game->player;
   int spiece = game->board[srank][sfile];
@@ -56,7 +56,7 @@ void mkdrop(struct gm_status *game, char piece, int *dst){
     game->graveyard.reigning[i] = '\0';//remove piece from graveyard
   }
   
-  int drank = dst[0];
+  int drank = 7 - dst[0];
   int dfile = dst[1];
   game->board[drank][dfile] = piece;
 }
@@ -71,14 +71,8 @@ void ctocoords(struct gm_status *game, int *converted, char *to_convert){
   int cfile = to_convert[0];
   int irank; 
   int ifile;
-  if (game->player == P1){
-    irank = (8 - 'a') + crank;
-    ifile = cfile;
-  }
-  else if(game->player == P2){
-    irank = crank;
-    ifile = (8 - 'a') + crank;
-  }
+  irank = (8 - 'a') + crank;
+  ifile = cfile;
   converted[0] = irank;
   converted[1] = ifile;
 }

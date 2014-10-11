@@ -31,22 +31,22 @@ void mkbitboard(struct gm_status *game){
  */
 
 bool legalmove(struct gm_status *game, int *src, int *dst){
-  int srank = src[0];
+  int srank = 8 - src[0];
   int sfile = src[1];
-  int drank = dst[0];
+  int drank = 8 - dst[0];
   int dfile = dst[1];
   
   int rel_srank, rel_sfile, rel_drank, rel_dfile;
   int player = game->player;
   if (player == P1){
-    rel_srank = 8 - srank;
-    rel_drank = 8 - drank;
+    rel_srank = srank;
+    rel_drank = drank;
     rel_sfile = sfile;
     rel_dfile = dfile;
   }
   else{
-    rel_srank = srank;
-    rel_drank = drank;
+    rel_srank = 8 - srank;
+    rel_drank = 8 - drank;
     rel_sfile = 8 - sfile;
     rel_dfile = 8 - dfile;
   }
@@ -224,7 +224,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 	   piece == 'H' || piece == 'h'||
 	   piece == 'Q' || piece == 'q'||
 	   piece == 'M' || piece == 'm'||
-	   piece == 'O' || piece == 'o'){ //put in all that upgrade to gold
+	   piece == 'O' || piece == 'o'){
     int i;
     int possible[6][2] = {{rel_srank + 1, rel_sfile - 1},
 			  {rel_srank + 1, rel_sfile},
