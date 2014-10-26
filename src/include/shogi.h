@@ -8,6 +8,10 @@
 #define REIGNING 2
 #define P1 1
 #define P2 2
+#define FORRANGE(var, beginning, end, increment) \
+  for(var = beginning; var < end; var += increment)
+#define FOREACH(iterable, var) \
+  for(var = 0; var < sizeof(iterable)/sizeof(iterable[0]); var++)
 
 struct droppable{
   char challenging[38];

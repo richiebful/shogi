@@ -19,10 +19,12 @@ void dispBoard(struct gm_status *game){
 				    {"と金","Qq"}};
   memcpy(board, game->board, sizeof(board));
   int i, j, k;
-  
   for (i = 8; i >= 0; i--){
     for (j = 8; j >= 0; j--){
       char piece[6];
+      if (j == 8){ //prints the rank no.
+	printf("\x1b[37m%i ", i);
+      }
       if (board[i][j] == ' '){
 	printf("     ");
 	continue;
@@ -45,7 +47,11 @@ void dispBoard(struct gm_status *game){
     }
     printf("\n");
   }
-  printf("Hello");
+  FORRANGE(i, 0, 9, 1){
+    printf("    %i", i);
+  }
+  printf("\n");
+  //need to print graveyard contents here
 }
 
 
@@ -71,16 +77,13 @@ void init_game(struct gm_status *game){
 				 {' ','b',' ',' ',' ',' ',' ','r',' '},
 				 {'l','n','g','u','k','u','g','n','l'}};
   memcpy(game->board,init_board,sizeof(init_board));
-
   game->player = 1;
-  
   int i;
   for (i=0; i<38; i++){
     game->graveyard.challenging[i] = '\0';
     game->graveyard.reigning[i] = '\0';
   }
 }
-
 int main(void){
   struct gm_status game;
   init_game(&game);
