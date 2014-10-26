@@ -1,6 +1,6 @@
 ##Summary##
 
-The object of the shogiAI project is to design a front-end for a text-based interface, then GUI, respectively and design a game engine and AI for the game, Shogi. [Shogi](http://en.wikipedia.org/wiki/Shogi) is a Japanese chess variant, based on the Chinese [xiangqi](http://en.wikipedia.org/wiki/Shogi). It is played on a 9x9 board, and has a much larger game complexity tree than chess. For the most part, computers have yet to beat the best players in the game. The idea here is to construct several AIs at different levels, so professional and amateur players can take a crack against the computer.
+The object of the shogiAI project is to design a front-end for a text-based interface, game engine and AI for the chess-like, Shogi. [Shogi](http://en.wikipedia.org/wiki/Shogi) is a Japanese chess variant, based on the Chinese [xiangqi](http://en.wikipedia.org/wiki/Shogi). It is played on a 9x9 board, and has a much larger game complexity tree than chess. For the most part, computers have yet to beat the best players in the game. The idea here is to construct several AIs at different levels, so professional and amateur players can take a crack against the computer.
 
 ##Status
 
