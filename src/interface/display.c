@@ -2,27 +2,31 @@
 
 void dispBoard(struct gm_status *game){
   char board[9][9];
-  const char convert_tbl[15][2][6]={{"王將","K "},
-				    {"玉將","k "},
+  const char convert_tbl[16][2][6]={{"王將","K"},
+				    {"玉將","k"},
 				    {"飛車","Rr"},
 				    {"龍王","Ss"},
 				    {"角行","Bb"},
 				    {"龍馬","Cc"},
 				    {"金将","Uu"},
-				    {"銀将","Ss"},
+				    {"銀将","Gg"},
 				    {"成銀","Tt"},
 				    {"桂馬","Nn"},
 				    {"成桂","Oo"},
 				    {"香車","Ll"},
 				    {"成香","Nn"},
-				    {"成香","Pp"},
+				    {"歩兵","Pp"},
 				    {"と金","Qq"}};
   memcpy(board, game->board, sizeof(board));
   int i, j, k;
   
-  for (i = 8; i < sizeof(board)/sizeof(board[0]); i--){
-    for (j = 0; j < sizeof(board[0])/sizeof(board[0][0]); j++){
+  for (i = 8; i >= 0; i--){
+    for (j = 8; j >= 0; j--){
       char piece[6];
+      if (board[i][j] == ' '){
+	printf("     ");
+	continue;
+      }
       for (k = 0; k < sizeof(convert_tbl)/sizeof(convert_tbl[0]); k++){
 	if (convert_tbl[k][1][0] == board[i][j]||
 	    convert_tbl[k][1][1] == board[i][j]){
@@ -30,18 +34,18 @@ void dispBoard(struct gm_status *game){
 	  break;
 	}
       }
-      if (isupper(board[i][j])==true){
+      if (isupper(board[i][j])){
 	//print the piece out in white
-	printf("\x1b[37m%s\t", piece);
+	printf("\x1b[37m%s ", piece);
       }
       else{
 	//print the piece out in red
-	printf("\x1b[31m%s\t", piece);
+	printf("\x1b[31m%s ", piece);
       }
     }
     printf("\n");
   }
-  printf("\x1b[39;49m");
+  printf("Hello");
 }
 
 
