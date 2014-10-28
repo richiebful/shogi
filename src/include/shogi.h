@@ -20,6 +20,7 @@ struct droppable{
   
 struct gm_status{
   char board[9][9];
+  char *history;
   bool bitboard[9][9][9][9];
   int player;
   struct droppable graveyard;

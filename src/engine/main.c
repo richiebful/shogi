@@ -30,9 +30,12 @@ void init_game(struct gm_status *game){
   memcpy(game->board,init_board,sizeof(init_board));
 
   game->player = 1;
-  
+
+  /*the equivalent of char game->history[150][5]*/
+  game->history = malloc(sizeof(char)*5*150);
+
   int i;
-  for (i=0; i<38; i++){
+  FORRANGE(i,0,38,1){
     game->graveyard.challenging[i] = '\0';
     game->graveyard.reigning[i] = '\0';
   }

@@ -16,7 +16,8 @@ int processCMD(char *command, struct gm_status *game){
   }
   else if (strncmp(command, "go", 2) == true){
     //have AI make the current move
-    return 1;
+    printf("AI is not complete yet");
+    return 0;
   }
   else if (strncmp(command, "exit", 4) == true){
     return -1;
@@ -47,8 +48,15 @@ int processCMD(char *command, struct gm_status *game){
 	   isdigit(command[2]) == true &&
 	   sizeof(command) <= 5){
     //interpret move of form Pe4
-    
-    return 1;
+    char src[2], dst[2];
+    processmv(game, command, src, dst);
+    if(legalmove(game, src, dst)==true){
+      mkmove(game, src, dst);
+      return 1;
+    }
+    else{
+      return 0;
+    }
   }
   else if (isupper(command[0]) == true &&
 	   command[1] == '*' &&
@@ -57,21 +65,45 @@ int processCMD(char *command, struct gm_status *game){
     //inteprets drop of form P*e4
     char piece = command[0], dst[2];
     snprintf(dst, 2, "%s", command+2);
-    if (legaldrop(game, src, dst)){
+    if (legaldrop(game, piece, dst) == true){
+      mkdrop(game, piece ,dst);
       return 1;
     }
-    return 0;
+    else{
+      return 0;
+    }
   }
   else{
-    printf("Sorry, that move is invalid, please try again.")
+    printf("Sorry, that move is invalid, please try again.\n")
     return 0;
   }
 }
 
-void processMove(struct gm_status game, char *move, int *dst, int *src){
+void processmv(struct gm_status game, char *move, int *src, int *dst){
   char piece = move[0];
-  int dfile =  move[1] - 'a';
-  int drank = move[2] - '0';
+  if (game->player == 1){
+    piece = tolower(piece);
+  }
+  else if(game->player == 0){
+    piece = toupper(piece);
+  }
+  int dfile =  move[1] - 'a',  drank = move[2] - '0';
+  /*n is count of possible pieces executing the move*/
+  int i, j, n;
+  int srank, sfile;//the outputs
   dst[0] = drank;
   dst[1] = dfile;
+  FORRANGE(i, 0, 9, 1){
+    FORRANGE(j, 0, 9, 1){
+      char thisPiece = game->board[i][j];
+      if(thisPiece ==  piece && legalmove(game, src, dst)){
+	srank = i;
+	sfile = 8 - j;
+	n++;
+      }
+    }
+  }
+  if(n == 1){
+    
+  }
 }
