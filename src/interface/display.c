@@ -47,7 +47,7 @@ void dispBoard(struct gm_status *game){
     }
     printf("\n");
   }
-  FORRANGE(i, 0, 9, 1){
+  FORRANGE(8 - i, 0, 9, 1){
     printf("    %i", i);
   }
   printf("\n");

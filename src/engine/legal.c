@@ -31,22 +31,22 @@ void mkbitboard(struct gm_status *game){
  */
 
 bool legalmove(struct gm_status *game, int *src, int *dst){
-  int srank = 8 - src[0];
+  int srank = src[0];
   int sfile = src[1];
-  int drank = 8 - dst[0];
+  int drank = dst[0];
   int dfile = dst[1];
   
   int rel_srank, rel_sfile, rel_drank, rel_dfile;
   int player = game->player;
   if (player == P1){
-    rel_srank = srank;
-    rel_drank = drank;
+    rel_srank = 8 - srank;
+    rel_drank = 8 - drank;
     rel_sfile = sfile;
     rel_dfile = dfile;
   }
   else{
-    rel_srank = 8 - srank;
-    rel_drank = 8 - drank;
+    rel_srank = srank;
+    rel_drank = drank;
     rel_sfile = 8 - sfile;
     rel_dfile = 8 - dfile;
   }
@@ -331,23 +331,24 @@ bool legaldrop(struct gm_status *game, char piece, int *dst){
   else if (islower(piece)){
       return false;
   }
-  
-  int i;
-  if (player == 1){
-    for (i = 0; i < 38; i++){
-      if (game->graveyard.challenging[i] == piece){
-	return true;
+  else{
+    int i;
+    if (player == 1){
+      for (i = 0; i < 38; i++){
+	if (game->graveyard.challenging[i] == piece){
+	  return true;
+	}
       }
+      return false;
     }
-    return false;
-  }
-  else{ //player == 2
-    for (i = 0; i < 38; i++){
-      if (game->graveyard.reigning[i] == piece){
-	return true;
+    else{ //player == 2
+      for (i = 0; i < 38; i++){
+	if (game->graveyard.reigning[i] == piece){
+	  return true;
+	}
       }
+      return false;
     }
-    return false;
+    return true;
   }
-  return true;
 }
