@@ -2,53 +2,28 @@
 
 void dispBoard(struct gm_status *game){
   char board[9][9];
-  const char convert_tbl[16][2][6]={{"王將","K"},
-				    {"玉將","k"},
-				    {"飛車","Rr"},
-				    {"龍王","Ss"},
-				    {"角行","Bb"},
-				    {"龍馬","Cc"},
-				    {"金将","Uu"},
-				    {"銀将","Gg"},
-				    {"成銀","Tt"},
-				    {"桂馬","Nn"},
-				    {"成桂","Oo"},
-				    {"香車","Ll"},
-				    {"成香","Nn"},
-				    {"歩兵","Pp"},
-				    {"と金","Qq"}};
   memcpy(board, game->board, sizeof(board));
-  int i, j, k;
+  int i, j;
   for (i = 8; i >= 0; i--){
     for (j = 8; j >= 0; j--){
-      char piece[6];
+      char piece = board[i][j];
       if (j == 8){ //prints the rank no.
 	printf("\x1b[37m%i ", i);
       }
-      if (board[i][j] == ' '){
-	printf("     ");
-	continue;
-      }
-      for (k = 0; k < sizeof(convert_tbl)/sizeof(convert_tbl[0]); k++){
-	if (convert_tbl[k][1][0] == board[i][j]||
-	    convert_tbl[k][1][1] == board[i][j]){
-	  memcpy(piece, convert_tbl[k][0], sizeof(convert_tbl[k][0]));
-	  break;
-	}
-      }
       if (isupper(board[i][j])){
 	//print the piece out in white
-	printf("\x1b[37m%s ", piece);
+	printf("\x1b[37m%c ", piece);
       }
       else{
 	//print the piece out in red
-	printf("\x1b[31m%s ", piece);
+	printf("\x1b[31m%c ", piece);
       }
     }
     printf("\n");
   }
-  FORRANGE(8 - i, 0, 9, 1){
-    printf("    %i", i);
+  printf(" ");
+  for(i = 8+97; i > 96; i--){
+    printf(" %c", i);
   }
   printf("\n");
   //need to print graveyard contents here
