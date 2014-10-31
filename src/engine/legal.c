@@ -1,5 +1,60 @@
 #include <shogi.h>
 
+int main(void){
+  struct gm_status game;
+  init_game(&game);
+  bool fatal_f = 0;
+  int legal_f = 0, i;
+  /*of form {{{srank,sfile},{drank,dfile}},...} */
+  int trueCases[10][2][2]; 
+  int falseCases[10][2][2];
+  int srank, sfile, drank, dfile;
+  FOREACH(trueCases, i){
+    srank = trueCases[i][0][0];
+    sfile = trueCases[i][0][1];
+    drank = trueCases[i][1][0];
+    dfile = trueCases[i][1][1];
+    if(legal_f = legalmove(&game, trueCases[i][0], trueCases[i][1])){
+      printf("%i,%i to %i,%i returns %i", srank, sfile, drank, dfile, legal_f);
+    }
+  }
+  FOREACH(falseCases, i){
+    srank = falseCases[i][0][0];
+    sfile = falseCases[i][0][1];
+    drank = falseCases[i][1][0];
+    dfile = falseCases[i][1][1];
+    if(legal_f = legalmove(&game, falseCases[i][0], falseCases[i][1])){
+      printf("%i,%i to %i,%i returns %i", srank, sfile, drank, dfile, input_f);
+    }
+  }
+  printf("%i", legal_f);
+  return 0;  
+}
+
+void init_game(struct gm_status *game){
+  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
+				 {' ','R',' ',' ',' ',' ',' ','B',' '},
+				 {'P','P','P','P','P','P','P','P','P'},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {'p','p','p','p','p','p','p','p','p'},
+				 {' ','b',' ',' ',' ',' ',' ','r',' '},
+				 {'l','n','g','u','k','u','g','n','l'}};
+  memcpy(game->board,init_board,sizeof(init_board));
+
+  game->player = 2;
+
+  /*the equivalent of char game->history[150][5]*/
+  game->history = malloc(sizeof(char)*5*150);
+
+  int i;
+  FORRANGE(i,0,38,1){
+    game->graveyard.challenging[i] = '\0';
+    game->graveyard.reigning[i] = '\0';
+  }
+}
+
 /*Makes the bitboard for the current game board
  */
 void mkbitboard(struct gm_status *game){
@@ -32,9 +87,9 @@ void mkbitboard(struct gm_status *game){
 
 bool legalmove(struct gm_status *game, int *src, int *dst){
   int srank = src[0];
-  int sfile = src[1];
+  int sfile = 8 - src[1];
   int drank = dst[0];
-  int dfile = dst[1];
+  int dfile = 8 - dst[1];
   
   int rel_srank, rel_sfile, rel_drank, rel_dfile;
   int player = game->player;
@@ -53,17 +108,20 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
   
   char board[9][9];
   memcpy(board,game->board,sizeof(board));
-
+  
   char piece = board[srank][sfile];
   char dpiece = board[drank][dfile];
   
   if (legaldest(game,drank,dfile) == false){
+    printf("legaldest\n");
     return false;
   }
   else if (legalsrc(game,drank,dfile) == false){
+    printf("legalsrc");
     return false;
   }
   else if (drank == srank && dfile == sfile){
+    printf("same piece");
     return false;
   }
   else if (piece == 'P' || piece == 'p'){ //pawn check
@@ -72,6 +130,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
       return true;
     }
     else{
+      printf("bad pawn");
       return false;
     }
   }
@@ -88,6 +147,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 	  rook_fatal_flag = true;
 	}
       }
+      printf("bad rook");
       rook_fatal_flag = false;
     }
     else if (drank < srank){
@@ -96,6 +156,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 	  rook_fatal_flag = true;
 	}
       }
+      printf("bad rook");
       rook_fatal_flag = false;
     }
     else if (dfile > sfile){
@@ -104,6 +165,8 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 	  rook_fatal_flag = true;
 	}
       }
+      printf("bad rook");
+      rook_fatal_flag = false;
     }
     else{ //dfile < sfile
       for (i = sfile; i != dfile; --i){
@@ -111,6 +174,7 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
 	  rook_fatal_flag = true;
 	}
       }
+      printf("bad rook");
       rook_fatal_flag = false;
     }
     
@@ -134,9 +198,10 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
   else if (piece == 'B' || piece == 'b'||
 	   piece == 'C' || piece == 'c'){ //checks bishop's legality
     int slope, direction;
-    bool bishop_fatal_flag = false;
+    bool bishop_fatal_f = false;
     slope = (drank-srank)/(dfile-sfile);
     if (slope != 1 && slope != -1){
+      printf("bad bishop1");
       return false;
     }
     else if (drank < srank){
@@ -146,15 +211,18 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
       direction = 1;
     }
     int i, yInt = sfile/(slope*srank);
-    for (i = srank+direction; i != drank; i += direction){
+    for (i = srank+direction; i != drank+direction; i += direction){
       //checks whether the move is blocked by a piece
       if (board[i][slope*i+yInt] != ' '){
-	bishop_fatal_flag = true;
+	bishop_fatal_f = true;
       }
     }
-    bishop_fatal_flag = false;
+    if (bishop_fatal_f == true){
+      printf("bad bishop2\n");
+    }
     if (piece == 'B' || piece == 'b'){
-      return bishop_fatal_flag;
+      //returns opposite of fatal_f
+      return ~bishop_fatal_f;
     }
     else{
       int possible[4][2] = {{srank + 1, sfile},
@@ -261,7 +329,7 @@ bool legaldest(struct gm_status *game, int rank, int file){
     return false;
   }
   else if (player == P1){ //player can't attack own piece
-    if (islower(dpiece)){
+    if (isupper(dpiece)==true){
       return false;
     }
     else{
@@ -269,7 +337,7 @@ bool legaldest(struct gm_status *game, int rank, int file){
     }
   }
   else{
-    if (isupper(dpiece)){
+    if (islower(dpiece)==true){
       return false;
     }
     else{
