@@ -14,19 +14,37 @@ void dispBoard(struct gm_status *game){
 	//print the piece out in white
 	printf("\x1b[37m%c ", piece);
       }
+      else if(piece == ' '){
+	printf("  ");
+      }
       else{
 	//print the piece out in red
-	printf("\x1b[31m%c ", piece);
+	printf("\x1b[31m%c ", piece-32);
       }
     }
     printf("\n");
   }
-  printf(" ");
+  printf("\x1b[37m ");
   for(i = 8+97; i > 96; i--){
     printf(" %c", i);
   }
+  printf("\n\n");
+  char p1Yard[38];
+  char p2Yard[38];
+  memcpy(p1Yard, game->graveyard.challenging, sizeof(p1Yard));
+  memcpy(p2Yard, game->graveyard.reigning, sizeof(p2Yard));
+  for (i = 0; i < 38; i++){
+    if (p1Yard[i] != '\0'){
+      printf("\x1b[31m%c ", p1Yard[i]);
+    }
+  }
   printf("\n");
-  //need to print graveyard contents here
+  for (i = 0; i < 38; i++){
+    if (p2Yard[i] != '\0'){
+      printf("\x1b[37m%c ", p2Yard[i]);
+    }
+  }
+  printf("\n");
 }
 
 
@@ -55,8 +73,8 @@ void init_game(struct gm_status *game){
   game->player = 1;
   int i;
   for (i=0; i<38; i++){
-    game->graveyard.challenging[i] = '\0';
-    game->graveyard.reigning[i] = '\0';
+    game->graveyard.challenging[i] = 'a';
+    game->graveyard.reigning[i] = 'b';
   }
 }
 int main(void){
