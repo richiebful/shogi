@@ -1,3 +1,4 @@
+/** \file */
 #include <shogi.h>
 
 int main(void){

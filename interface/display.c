@@ -1,4 +1,6 @@
+/** \file */
 #include <shogi.h>
+
 
 void dispBoard(struct gm_status *game){
   char board[9][9];

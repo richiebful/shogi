@@ -1,3 +1,4 @@
+/** \file */
 #include <shogi.h>
 
 /* Moves a piece from one location on the board to another, and moves the "killed" piece to the killer's drop pile 

@@ -1,3 +1,4 @@
+/** \file */
 #include <shogi.h>
 
 /*if return 1, continue to next player
