@@ -2,5 +2,5 @@
 *.a
 *~
 #*#
-./docs/html/*
-./docs/latex/*
+docs/html/*
+docs/latex/*
