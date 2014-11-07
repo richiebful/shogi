@@ -8,7 +8,7 @@ void dispBoard(struct gm_status *game){
     for (j = 8; j >= 0; j--){
       char piece = board[i][j];
       if (j == 8){ //prints the rank no.
-	printf("\x1b[37m%i ", i);
+	printf("\x1b[37m%i ", i+1);
       }
       if (isupper(board[i][j])){
 	//print the piece out in white
@@ -57,29 +57,4 @@ void dispHelp(void){
   printf("show\tshows board and graveyard from your pov\n");
   printf("P*5e\tdrop pawn at 5e\t");
   printf("revert\tgo back a move, or several\n");
-}
-
-void init_game(struct gm_status *game){
-  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
-				 {' ','R',' ',' ',' ',' ',' ','B',' '},
-				 {'P','P','P','P','P','P','P','P','P'},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {'p','p','p','p','p','p','p','p','p'},
-				 {' ','b',' ',' ',' ',' ',' ','r',' '},
-				 {'l','n','g','u','k','u','g','n','l'}};
-  memcpy(game->board,init_board,sizeof(init_board));
-  game->player = 1;
-  int i;
-  for (i=0; i<38; i++){
-    game->graveyard.challenging[i] = 'a';
-    game->graveyard.reigning[i] = 'b';
-  }
-}
-int main(void){
-  struct gm_status game;
-  init_game(&game);
-  dispBoard(&game);
-  return 0;
 }

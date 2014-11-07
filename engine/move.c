@@ -5,13 +5,14 @@
  */
 void mkmove(struct gm_status *game, int * src, int * dst){
   //a 'd-' prefix means destination; a 's-' prefix means source
-  int drank = 8 - dst[0];
-  int dfile = dst[1];
-  int srank = 8 - src[0];
-  int sfile = src[1];
+  int drank = dst[0];
+  int dfile = 8 - dst[1];
+  int srank = src[0];
+  int sfile = 8 - src[1];
   int player = game->player;
   int spiece = game->board[srank][sfile];
-  int dpiece = game->board[drank][dfile]; /*dpiece is the board cell being attacked*/ 
+  /*dpiece is the board cell being attacked*/ 
+  int dpiece = game->board[drank][dfile];
   game->board[srank][sfile] = ' ';
   game->board[drank][dfile] = spiece;
   
@@ -76,3 +77,51 @@ void ctocoords(struct gm_status *game, int *converted, char *to_convert){
   converted[0] = irank;
   converted[1] = ifile;
 }
+
+int main(){
+  struct gm_status game;
+  init_game(&game);
+  int moves[3][2][2] = {{{2,2},{3,2}},
+			{{1,1},{4,4}},
+			{{5,5},{6,6}}};
+  int drops[3][2][2];
+  int src[2], dst[2];
+  int i;
+  FOREACH(moves, i){
+    memcpy(src, moves[i][0], sizeof(src));
+    memcpy(dst, moves[i][1], sizeof(dst));
+    printf("%i,%i to %i, %i\n", src[0], src[1], dst[0], dst[1]);
+    if (legalmove(&game, src, dst) == true){
+      mkmove(&game, src, dst);
+    }
+    dispBoard(&game);
+  }
+  return 0;  
+}
+
+void init_game(struct gm_status *game){
+  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
+				 {' ','R',' ',' ',' ',' ',' ','B',' '},
+				 {'P','P','P','P','P','P','P','P','P'},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {'p','p','p','p','p','p','p','p','p'},
+				 {' ','b',' ',' ',' ',' ',' ','r',' '},
+				 {'l','n','g','u','k','u','g','n','l'}};
+  memcpy(game->board,init_board,sizeof(init_board));
+
+  game->player = 1;
+
+  /*the equivalent of char game->history[150][5]*/
+  game->history = malloc(sizeof(char)*5*150);
+  game->check_f = 0;
+  game->cmate_f = 0;
+
+  int i;
+  FORRANGE(i,0,38,1){
+    game->graveyard.challenging[i] = '\0';
+    game->graveyard.reigning[i] = '\0';
+  }
+}
+

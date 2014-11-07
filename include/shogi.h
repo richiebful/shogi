@@ -40,7 +40,7 @@ void mkmove(struct gm_status *game, int * src, int * dst);
 void mkdrop(struct gm_status *game, char piece, int *dst);
 void ctocoords(struct gm_status *game, int *converted, char *to_convert);
 int processCMD(char *command, struct gm_status *game);
-
+void dispBoard(struct gm_status *game);
 
 
 
