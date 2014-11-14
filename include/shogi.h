@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <ctype.h>
+#include <time.h>
 
 #define CHALLENGING 1
 #define REIGNING 2
@@ -20,6 +21,13 @@ struct droppable{
   char challenging[38];
   char reigning[38];
 };
+
+struct time{
+  //mm:ss format
+  int challenging[2];
+  int reigning[2];
+  time_t lastTime;
+}clock;
   
 struct gm_status{
   char board[9][9];
@@ -29,6 +37,7 @@ struct gm_status{
   struct droppable graveyard;
   bool check_f;
   bool cmate_f;
+
 };
 
 bool legaldest(struct gm_status *game, int rank, int file);
