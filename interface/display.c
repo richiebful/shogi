@@ -60,3 +60,7 @@ void dispHelp(void){
   printf("P*5e\tdrop pawn at 5e\t");
   printf("revert\tgo back a move, or several\n");
 }
+
+void dispClock(void){
+  //none
+}
