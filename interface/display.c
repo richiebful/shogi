@@ -1,7 +1,9 @@
 /** \file */
 #include <shogi.h>
 
-
+/**
+ *\brief Shows the board and graveyard
+ */
 void dispBoard(struct gm_status *game){
   char board[9][9];
   memcpy(board, game->board, sizeof(board));
@@ -64,9 +66,70 @@ void dispHelp(void){
 void dispClock(struct gm_status *game){
   //clock = game->clock
   struct time_s clock;
-  memcpy(game->clock, clock, sizeof(clock));
+  memcpy(&clock, &game->clock, sizeof(clock));
+
+  /*testing framework*/
+  int n;
+  scanf("%i", &n);
+
+  //player = existing player
+  int p = game->player - 1;
+
+  //get difference between last time and now
+  time_t curr_t = time(NULL);
+  time_t diff_t = difftime(curr_t, clock.last_t);
   
-  time_t curr_t = time();
-  time_t diff_t = difftime(curr_t, clock->last_t);
-  char diff_ts = strftime();
+  //subtracts time from current player
+  clock.player_t[p][1] -= (int) diff_t % 60;
+  clock.player_t[p][0] -= (int) diff_t / 60;
+  if (clock.player_t[p][1] < 0){
+    clock.player_t[p][0]--;
+    clock.player_t[p][1] = 60 + clock.player_t[p][1];
+  }
+
+  //set clock.last_t to curr_t
+  clock.last_t = curr_t;
+
+  //display clock
+  printf("Black: %i:%.2i\n",
+	 clock.player_t[1][0],
+	 clock.player_t[1][1]);
+  printf("White: %i:%.2i\n",
+	 clock.player_t[0][0],
+	 clock.player_t[0][1]);
+}
+
+int main(void){
+  struct gm_status game;
+  init_game(&game);
+  dispClock(&game);
+}
+
+void init_game(struct gm_status *game){
+  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
+				 {' ','R',' ',' ',' ',' ',' ','B',' '},
+				 {'P','P','P','P','P','P','P','P','P'},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {'p','p','p','p','p','p','p','p','p'},
+				 {' ','b',' ',' ',' ',' ',' ','r',' '},
+				 {'l','n','g','u','k','u','g','n','l'}};
+  memcpy(game->board,init_board,sizeof(init_board));
+
+  game->player = 1;
+
+  /*the equivalent of char game->history[150][5]*/
+  game->history = malloc(sizeof(char)*5*150);
+
+  int i;
+  FORRANGE(i,0,38,1){
+    game->graveyard.challenging[i] = '\0';
+    game->graveyard.reigning[i] = '\0';
+  }
+  //set each player's clocks to 60:00
+  game->clock.player_t[0][0] = game->clock.player_t[1][0] = 60;
+  game->clock.player_t[0][1] = game->clock.player_t[1][1] = 0;
+  game->clock.last_t = time(NULL);
+  game->clock.advance_t = 15; //15s added per move
 }

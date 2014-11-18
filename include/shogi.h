@@ -24,8 +24,7 @@ struct droppable{
 
 struct time_s{
   //mm:ss format
-  int challenging[2];
-  int reigning[2];
+  int player_t[2][2];
   time_t last_t;
   int advance_t; //time added per move, if at all
 };
@@ -33,7 +32,7 @@ struct time_s{
 struct gm_status{
   char board[9][9];
   char *history;
-  struct time clock;
+  struct time_s clock;
   int player;
   struct droppable graveyard;
   bool check_f;
