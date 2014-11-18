@@ -27,17 +27,17 @@ struct time{
   int challenging[2];
   int reigning[2];
   time_t lastTime;
-}clock;
+  int advance_s; //time added per move, if at all
+};
   
 struct gm_status{
   char board[9][9];
   char *history;
-  bool bitboard[9][9][9][9];
+  struct time clock;
   int player;
   struct droppable graveyard;
   bool check_f;
   bool cmate_f;
-
 };
 
 bool legaldest(struct gm_status *game, int rank, int file);
