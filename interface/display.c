@@ -61,6 +61,12 @@ void dispHelp(void){
   printf("revert\tgo back a move, or several\n");
 }
 
-void dispClock(struct gm_status *game, struct time_s *clock){
-  //
+void dispClock(struct gm_status *game){
+  //clock = game->clock
+  struct time_s clock;
+  memcpy(game->clock, clock, sizeof(clock));
+  
+  time_t curr_t = time();
+  time_t diff_t = difftime(curr_t, clock->last_t);
+  char diff_ts = strftime();
 }

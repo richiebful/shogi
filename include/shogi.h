@@ -22,12 +22,12 @@ struct droppable{
   char reigning[38];
 };
 
-struct time{
+struct time_s{
   //mm:ss format
   int challenging[2];
   int reigning[2];
-  time_t lastTime;
-  int advance_s; //time added per move, if at all
+  time_t last_t;
+  int advance_t; //time added per move, if at all
 };
   
 struct gm_status{

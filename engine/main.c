@@ -43,6 +43,7 @@ void init_game(struct gm_status *game){
   //set each player's clocks to 60:00
   game->clock.reigning[0] = game->clock.challenging[0] = 60;
   game->clock.reigning[1] = game->clock.challenging[1] = 0;
+  game->clock.advance_t = 15; //15s added per move
 }
 
 
