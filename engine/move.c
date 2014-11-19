@@ -36,6 +36,7 @@ void mkmove(struct gm_status *game, int * src, int * dst){
       }
     }
   }
+  clockUpdate(&game);
 }
 
 /*Takes a piece from the player's graveyard, and drops it.
@@ -58,9 +59,11 @@ void mkdrop(struct gm_status *game, char piece, int *dst){
     game->graveyard.reigning[i] = '\0';//remove piece from graveyard
   }
   
-  int drank = 7 - dst[0];
+  int drank = 8 - dst[0];
   int dfile = dst[1];
   game->board[drank][dfile] = piece;
+
+  clockUpdate(&game);
 }
 
 /*Takes coordinates from characters to absolute coordinates in /

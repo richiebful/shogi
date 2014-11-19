@@ -64,13 +64,24 @@ void dispHelp(void){
 }
 
 void dispClock(struct gm_status *game){
+  clockUpdate(&game);
+
+  struct time_s clock;
+  memcpy(&clock, &game-->clock, sizeof(clock));
+
+  //display clock
+  printf("Black: %i:%.2i\n",
+	 clock.player_t[1][0],
+	 clock.player_t[1][1]);
+  printf("White: %i:%.2i\n",
+	 clock.player_t[0][0],
+	 clock.player_t[0][1]);
+}
+
+void clockUpdate(struct gm_status *game){
   //clock = game->clock
   struct time_s clock;
   memcpy(&clock, &game->clock, sizeof(clock));
-
-  /*testing framework*/
-  int n;
-  scanf("%i", &n);
 
   //player = existing player
   int p = game->player - 1;
@@ -89,14 +100,6 @@ void dispClock(struct gm_status *game){
 
   //set clock.last_t to curr_t
   clock.last_t = curr_t;
-
-  //display clock
-  printf("Black: %i:%.2i\n",
-	 clock.player_t[1][0],
-	 clock.player_t[1][1]);
-  printf("White: %i:%.2i\n",
-	 clock.player_t[0][0],
-	 clock.player_t[0][1]);
 }
 
 int main(void){
