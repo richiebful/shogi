@@ -36,7 +36,7 @@ void mkmove(struct gm_status *game, int * src, int * dst){
       }
     }
   }
-  clockUpdate(&game);
+  clockUpdate(game);
 }
 
 /*Takes a piece from the player's graveyard, and drops it.
@@ -63,20 +63,20 @@ void mkdrop(struct gm_status *game, char piece, int *dst){
   int dfile = dst[1];
   game->board[drank][dfile] = piece;
 
-  clockUpdate(&game);
+  clockUpdate(game);
 }
 
-/*Takes coordinates from characters to absolute coordinates in /
+/**Takes coordinates from characters to absolute coordinates in /
   integer form. This will make an string {<file><rank>} or "e4"
   into {rank,file} or {3,4}.
  */
 
-void ctocoords(struct gm_status *game, int *converted, char *to_convert){
+void ctocoords(int *converted, char *to_convert){
   int crank = to_convert[1];
   int cfile = to_convert[0];
   int irank; 
   int ifile;
-  irank = (8 - 'a') + crank;
+  irank = 8 -(crank - 'a');
   ifile = cfile;
   converted[0] = irank;
   converted[1] = ifile;

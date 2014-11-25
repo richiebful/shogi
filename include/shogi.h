@@ -48,10 +48,12 @@ bool legaldrop(struct gm_status *game, char piece, int *dst);
 void init_game(struct gm_status *game);
 void mkmove(struct gm_status *game, int * src, int * dst);
 void mkdrop(struct gm_status *game, char piece, int *dst);
-void ctocoords(struct gm_status *game, int *converted, char *to_convert);
-int processCMD(char *command, struct gm_status *game);
+void ctocoords(int *converted, char *to_convert);
+int processcmd(char *command, struct gm_status *game);
+int processmv(struct gm_status game, char piece, int *src, int *dst);
 void dispBoard(struct gm_status *game);
-void updateClock(struct gm_status *game);
+void dispClock(struct gm_status *game);
+void clockUpdate(struct gm_status *game);
 
 
 

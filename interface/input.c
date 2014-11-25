@@ -6,7 +6,7 @@
  *then query the player for input again 
  *if return -1, input kills the program.
  */
-int processCMD(char *command, struct gm_status *game){
+int processcmd(char *command, struct gm_status *game){
   if (strncmp(command, "show", 4) == true){
     dispboard(game);
     return 0;
@@ -24,18 +24,20 @@ int processCMD(char *command, struct gm_status *game){
     return -1;
   }
   else if (strncmp(command, "resign", 6) == true){
-    printf("Player %i has resigned. You win, Player %i",
+    printf("Player %i has resigned. You win, Player %i.\n",
 	   game->player, ((game->player)%2)+1);
     return -1;
   }
   else if (islower(command[0]) == true &&
 	   isdigit(command[1]) == true &&
-	   sizeof(command) >= 4){
+	   sizeof(command) == 4){
     /*copies command[0:2] to src
      *and copies command[2:4] to dst*/
-    char src[2], char dst[2];
-    snprintf(src, 2, "%s", command);
-    snprintf(dst, 2, "%s", command+2);
+    char src_c[2], char dst_c[2];
+    snprintf(src_c, 2, "%s", command);
+    snprintf(dst_c, 2, "%s", command+2);
+    ctocoords(dst, dst_c);
+    ctocoords(src, src_c);
     if (legalmove(game, src, dst)==true){
       mkmove(game, src, dst);
       return 1;
@@ -50,8 +52,13 @@ int processCMD(char *command, struct gm_status *game){
 	   sizeof(command) <= 5){
     //interpret move of form Pe4
     char src[2], dst[2];
-    processmv(game, command, src, dst);
-    if(legalmove(game, src, dst)==true){
+    char piece = command[0], dst_c[2];
+    int dst[2];
+    snprintf(dst_c, 2, "%s", command+1);
+    ctocoords(dst_i, dst);
+    int processed_f = processmv(game, piece, src, dst);
+    if(legalmove(game, src, dst)==true &&
+       processed_f == true){
       mkmove(game, src, dst);
       return 1;
     }
@@ -63,9 +70,11 @@ int processCMD(char *command, struct gm_status *game){
 	   command[1] == '*' &&
 	   islower(command[2]) == true &&
 	   sizeof(command) == 4){
-    //inteprets drop of form P*e4
-    char piece = command[0], dst[2];
-    snprintf(dst, 2, "%s", command+2);
+    //inteprets drop of form P*e43
+    char piece = command[0], dst_c[2];
+    int dst_i[2];
+    snprintf(dst_c, 2, "%s", command+2);
+    ctocoords(dst_i, dst_c);
     if (legaldrop(game, piece, dst) == true){
       mkdrop(game, piece ,dst);
       return 1;
@@ -80,7 +89,7 @@ int processCMD(char *command, struct gm_status *game){
   }
 }
 
-void processmv(struct gm_status game, char *move, int *src, int *dst){
+int processmv(struct gm_status game, char piece, int *src, int *dst){
   char piece = move[0];
   if (game->player == 1){
     piece = tolower(piece);
@@ -88,15 +97,16 @@ void processmv(struct gm_status game, char *move, int *src, int *dst){
   else if(game->player == 0){
     piece = toupper(piece);
   }
-  int dfile =  move[1] - 'a',  drank = move[2] - '0';
+  int dfile =  dst[1],  drank = dst[0];
   /*n is count of possible pieces executing the move*/
-  int i, j, n;
-  int srank, sfile;//the outputs
+  int i, j, n = 0;
+  int srank, sfile;//outputted in dst
   dst[0] = drank;
   dst[1] = dfile;
   FORRANGE(i, 0, 9, 1){
     FORRANGE(j, 0, 9, 1){
       char thisPiece = game->board[i][j];
+      //tests whether a the selected pice on the board can make the move or not
       if(thisPiece ==  piece && legalmove(game, src, dst)){
 	srank = i;
 	sfile = 8 - j;
@@ -104,7 +114,17 @@ void processmv(struct gm_status game, char *move, int *src, int *dst){
       }
     }
   }
-  if(n == 1){
-    
+  if (n == 1){
+    src[0] = srank;
+    src[1] = sfile;
+    return true;
+  }
+  else if (n == 0){
+    printf("Invalid move/formatting.\n");
+    return false;
+  }
+  else{
+    printf("Ambiguous move.\n");
+    return false;
   }
 }
