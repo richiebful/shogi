@@ -8,11 +8,11 @@
  */
 int processcmd(char *command, struct gm_status *game){
   if (strncmp(command, "show", 4) == true){
-    dispboard(game);
+    dispBoard(game);
     return 0;
   }
   else if (strncmp(command, "help", 4) == true){
-    disphelp();
+    dispHelp();
     return 0;
   }
   else if (strncmp(command, "go", 2) == true){
@@ -32,8 +32,10 @@ int processcmd(char *command, struct gm_status *game){
 	   isdigit(command[1]) == true &&
 	   sizeof(command) == 4){
     /*copies command[0:2] to src
-     *and copies command[2:4] to dst*/
-    char src_c[2], char dst_c[2];
+     *and copies command[2:4] to dst
+     *input is of format 5e4e*/
+    char src_c[2], dst_c[2];
+    int src[2], dst[2];
     snprintf(src_c, 2, "%s", command);
     snprintf(dst_c, 2, "%s", command+2);
     ctocoords(dst, dst_c);
@@ -50,13 +52,12 @@ int processcmd(char *command, struct gm_status *game){
 	   islower(command[1]) == true &&
 	   isdigit(command[2]) == true &&
 	   sizeof(command) <= 5){
-    //interpret move of form Pe4
-    char src[2], dst[2];
+    //interpret move of form P4e
+    int src[2], dst[2];
     char piece = command[0], dst_c[2];
-    int dst[2];
     snprintf(dst_c, 2, "%s", command+1);
-    ctocoords(dst_i, dst);
-    int processed_f = processmv(game, piece, src, dst);
+    ctocoords(dst, dst_c);
+    int processed_f = processmv(*game, piece, src, dst);
     if(legalmove(game, src, dst)==true &&
        processed_f == true){
       mkmove(game, src, dst);
@@ -70,11 +71,11 @@ int processcmd(char *command, struct gm_status *game){
 	   command[1] == '*' &&
 	   islower(command[2]) == true &&
 	   sizeof(command) == 4){
-    //inteprets drop of form P*e43
+    //inteprets drop of form P*4e
     char piece = command[0], dst_c[2];
-    int dst_i[2];
+    int dst[2];
     snprintf(dst_c, 2, "%s", command+2);
-    ctocoords(dst_i, dst_c);
+    ctocoords(dst, dst_c);
     if (legaldrop(game, piece, dst) == true){
       mkdrop(game, piece ,dst);
       return 1;
@@ -84,17 +85,16 @@ int processcmd(char *command, struct gm_status *game){
     }
   }
   else{
-    printf("Sorry, that move is invalid, please try again.\n")
+    printf("Sorry, that move is invalid, please try again.\n");
     return 0;
   }
 }
 
 int processmv(struct gm_status game, char piece, int *src, int *dst){
-  char piece = move[0];
-  if (game->player == 1){
+  if (game.player == 1){
     piece = tolower(piece);
   }
-  else if(game->player == 0){
+  else if(game.player == 0){
     piece = toupper(piece);
   }
   int dfile =  dst[1],  drank = dst[0];
@@ -105,9 +105,9 @@ int processmv(struct gm_status game, char piece, int *src, int *dst){
   dst[1] = dfile;
   FORRANGE(i, 0, 9, 1){
     FORRANGE(j, 0, 9, 1){
-      char thisPiece = game->board[i][j];
+      char thisPiece = game.board[i][j];
       //tests whether a the selected pice on the board can make the move or not
-      if(thisPiece ==  piece && legalmove(game, src, dst)){
+      if(thisPiece ==  piece && legalmove(&game, src, dst)){
 	srank = i;
 	sfile = 8 - j;
 	n++;
@@ -126,5 +126,37 @@ int processmv(struct gm_status game, char piece, int *src, int *dst){
   else{
     printf("Ambiguous move.\n");
     return false;
+  }
+}
+
+int main(){
+  struct gm_status game;
+  init_game(&game);
+  return 0;  
+}
+
+void init_game(struct gm_status *game){
+  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
+				 {' ','R',' ',' ',' ',' ',' ','B',' '},
+				 {'P','P','P','P','P','P','P','P','P'},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
+				 {'p','p','p','p','p','p','p','p','p'},
+				 {' ','b',' ',' ',' ',' ',' ','r',' '},
+				 {'l','n','g','u','k','u','g','n','l'}};
+  memcpy(game->board,init_board,sizeof(init_board));
+
+  game->player = 1;
+
+  /*the equivalent of char game->history[150][5]*/
+  game->history = malloc(sizeof(char)*5*150);
+  game->check_f = 0;
+  game->cmate_f = 0;
+
+  int i;
+  FORRANGE(i,0,38,1){
+    game->graveyard.challenging[i] = '\0';
+    game->graveyard.reigning[i] = '\0';
   }
 }

@@ -46,7 +46,7 @@ bool inrange(int rank, int file);
 bool legalsrc(struct gm_status *game, int rank, int file);
 bool legaldrop(struct gm_status *game, char piece, int *dst);
 void init_game(struct gm_status *game);
-void mkmove(struct gm_status *game, int * src, int * dst);
+void mkmove(struct gm_status *game, int *src, int *dst);
 void mkdrop(struct gm_status *game, char piece, int *dst);
 void ctocoords(int *converted, char *to_convert);
 int processcmd(char *command, struct gm_status *game);
