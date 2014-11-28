@@ -53,6 +53,7 @@ int processcmd(char *command, struct gm_status *game);
 int processmv(struct gm_status game, char piece, int *src, int *dst);
 void dispBoard(struct gm_status *game);
 void dispClock(struct gm_status *game);
+void dispHelp();
 void clockUpdate(struct gm_status *game);
 
 

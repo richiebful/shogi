@@ -72,12 +72,14 @@ void mkdrop(struct gm_status *game, char piece, int *dst){
  */
 
 void ctocoords(int *converted, char *to_convert){
-  int crank = to_convert[1];
-  int cfile = to_convert[0];
+  //input is of form 7e, (file, rank)
+  //output is of form (8,6), (rank, file)
+  char crank = to_convert[1];
+  char cfile = to_convert[0];
   int irank; 
   int ifile;
-  irank = 8 -(crank - 'a');
-  ifile = cfile;
+  irank = crank - 'a';
+  ifile = cfile - '1';
   converted[0] = irank;
   converted[1] = ifile;
 }
@@ -117,7 +119,7 @@ void init_game(struct gm_status *game){
 
   game->player = 1;
 
-  /*the equivalent of char game->history[150][5]*//*
+  the equivalent of char game->history[150][5]
   game->history = malloc(sizeof(char)*5*150);
   game->check_f = 0;
   game->cmate_f = 0;

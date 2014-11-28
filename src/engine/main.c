@@ -12,7 +12,7 @@ int main(void){
     printf("Player %i:", game.player);
     while (input_f == false){
       scanf("%s", command);
-      input_f = processcmd(command);
+      input_f = processcmd(command, &game);
     }
   }
   return 0;  

@@ -7,29 +7,30 @@
  *if return -1, input kills the program.
  */
 int processcmd(char *command, struct gm_status *game){
-  if (strncmp(command, "show", 4) == true){
+  //printf("%s", command);
+  if (strncmp(command, "show", 4) == 0){
     dispBoard(game);
     return 0;
   }
-  else if (strncmp(command, "help", 4) == true){
+  else if (strncmp(command, "help", 4) == 0){
     dispHelp();
     return 0;
   }
-  else if (strncmp(command, "go", 2) == true){
+  else if (strncmp(command, "go", 2) == 0){
     //have AI make the current move
     printf("AI is not complete yet");
     return 0;
   }
-  else if (strncmp(command, "exit", 4) == true){
+  else if (strncmp(command, "exit", 4) == 0){
     return -1;
   }
-  else if (strncmp(command, "resign", 6) == true){
+  else if (strncmp(command, "resign", 6) == 0){
     printf("Player %i has resigned. You win, Player %i.\n",
 	   game->player, ((game->player)%2)+1);
     return -1;
   }
-  else if (islower(command[0]) == true &&
-	   isdigit(command[1]) == true &&
+  else if (islower(command[0]) &&
+	   isdigit(command[1]) &&
 	   sizeof(command) == 4){
     /*copies command[0:2] to src
      *and copies command[2:4] to dst
@@ -48,14 +49,15 @@ int processcmd(char *command, struct gm_status *game){
       return 0;
     }
   }
-  else if (isupper(command[0]) == true &&
-	   islower(command[1]) == true &&
-	   isdigit(command[2]) == true &&
-	   sizeof(command) <= 5){
+  else if ((isupper(command[0]) != 0) &&
+	   (isdigit(command[1]) != 0) &&
+	   (islower(command[2]) != 0) &&
+	   (strlen(command) <= 5)){
     //interpret move of form P4e
     int src[2], dst[2];
     char piece = command[0], dst_c[2];
-    snprintf(dst_c, 2, "%s", command+1);
+    snprintf(dst_c, 3, "%s", command+1);
+    printf("%s\n", dst_c);
     ctocoords(dst, dst_c);
     int processed_f = processmv(*game, piece, src, dst);
     if(legalmove(game, src, dst)==true &&
@@ -67,9 +69,9 @@ int processcmd(char *command, struct gm_status *game){
       return 0;
     }
   }
-  else if (isupper(command[0]) == true &&
+  else if (isupper(command[0]) &&
 	   command[1] == '*' &&
-	   islower(command[2]) == true &&
+	   islower(command[2]) &&
 	   sizeof(command) == 4){
     //inteprets drop of form P*4e
     char piece = command[0], dst_c[2];
@@ -91,21 +93,24 @@ int processcmd(char *command, struct gm_status *game){
 }
 
 int processmv(struct gm_status game, char piece, int *src, int *dst){
+  //you get integers in terms of
   if (game.player == 1){
     piece = tolower(piece);
   }
   else if(game.player == 0){
     piece = toupper(piece);
   }
-  int dfile =  dst[1],  drank = dst[0];
+  int drank =  dst[0],  dfile = 8 - dst[1];
+  printf("d-pos: (%i,%i)", drank, dfile);
   /*n is count of possible pieces executing the move*/
   int i, j, n = 0;
   int srank, sfile;//outputted in dst
-  dst[0] = drank;
-  dst[1] = dfile;
+  char thisPiece;
   FORRANGE(i, 0, 9, 1){
     FORRANGE(j, 0, 9, 1){
-      char thisPiece = game.board[i][j];
+      thisPiece = game.board[i][j];
+      src[0] = i;
+      src[1] = 8 - j;
       //tests whether a the selected pice on the board can make the move or not
       if(thisPiece ==  piece && legalmove(&game, src, dst)){
 	srank = i;
@@ -132,7 +137,10 @@ int processmv(struct gm_status game, char piece, int *src, int *dst){
 int main(){
   struct gm_status game;
   init_game(&game);
-  return 0;  
+  char *cmd = malloc(sizeof(char)*10);
+  scanf("%s", cmd);
+  processcmd(cmd, &game);
+  return 0;
 }
 
 void init_game(struct gm_status *game){
@@ -151,12 +159,14 @@ void init_game(struct gm_status *game){
 
   /*the equivalent of char game->history[150][5]*/
   game->history = malloc(sizeof(char)*5*150);
-  game->check_f = 0;
-  game->cmate_f = 0;
 
   int i;
   FORRANGE(i,0,38,1){
     game->graveyard.challenging[i] = '\0';
     game->graveyard.reigning[i] = '\0';
   }
+  //set each player's clocks to 60:00
+  game->clock.player_t[0][0] = game->clock.player_t[1][0] = 60;
+  game->clock.player_t[0][1] = game->clock.player_t[1][1] = 0;
+  game->clock.advance_t = 15; //15s added per move
 }
