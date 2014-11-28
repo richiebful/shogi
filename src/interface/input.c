@@ -55,9 +55,8 @@ int processcmd(char *command, struct gm_status *game){
 	   (strlen(command) <= 5)){
     //interpret move of form P4e
     int src[2], dst[2];
-    char piece = command[0], dst_c[2];
+    char dst_c[2], piece;
     snprintf(dst_c, 3, "%s", command+1);
-    printf("%s\n", dst_c);
     ctocoords(dst, dst_c);
     int processed_f = processmv(*game, piece, src, dst);
     if(legalmove(game, src, dst)==true &&
@@ -93,7 +92,6 @@ int processcmd(char *command, struct gm_status *game){
 }
 
 int processmv(struct gm_status game, char piece, int *src, int *dst){
-  //you get integers in terms of
   if (game.player == 1){
     piece = tolower(piece);
   }
@@ -112,7 +110,7 @@ int processmv(struct gm_status game, char piece, int *src, int *dst){
       src[0] = i;
       src[1] = 8 - j;
       //tests whether a the selected pice on the board can make the move or not
-      if(thisPiece ==  piece && legalmove(&game, src, dst)){
+      if (thisPiece ==  piece && legalmove(&game, src, dst)){
 	srank = i;
 	sfile = 8 - j;
 	n++;
