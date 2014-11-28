@@ -4,16 +4,17 @@
 int main(void){
   struct gm_status game;
   init_game(&game);
-  bool fatal_f = 0;
+  bool fatal_f = false;
   int input_f;
-  while (fatal_f == 0){
+  while (fatal_f != true){
     char command[20] = "NULL";
-    input_f = false;
+    input_f = 0;
     printf("Player %i:", game.player);
-    while (input_f == false){
+    while (input_f == 0){
       scanf("%s", command);
       input_f = processcmd(command, &game);
     }
+    if (input_f == -1)
   }
   return 0;  
 }
