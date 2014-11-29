@@ -1,6 +1,7 @@
 /** \file */
 #include <shogi.h>
 
+
 #ifdef LEGAL_TEST
 void init_game(struct gm_status *game){
   const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
@@ -38,7 +39,7 @@ int main(void){
   int legal_f = 0, i;
   //of form {{{srank,sfile},{drank,dfile}},...} 
   int trueCases[10][2][2]; 
-  int falseCases[10][2][2];
+  int falseCases[1][2][2] = {{{7, 1},{8, 4}}};
   int srank, sfile, drank, dfile;
   FOREACH(trueCases, i){
     srank = trueCases[i][0][0];
@@ -54,13 +55,13 @@ int main(void){
     drank = falseCases[i][1][0];
     dfile = falseCases[i][1][1];
     legal_f = legalmove(&game, falseCases[i][0], falseCases[i][1]);
-    printf("%i,%i to %i,%i returns %i", srank, sfile, drank, dfile, legal_f);
+    printf("%i,%i to %i,%i returns %i\n", srank, sfile, drank, dfile, legal_f);
   }
   printf("%i", legal_f);
   return 0;  
 }
-#endif
 
+#endif
 /*Checks whether a move works
  *Coords are in absolute terms*/
 
@@ -73,14 +74,14 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
   int rel_srank, rel_sfile, rel_drank, rel_dfile;
   int player = game->player;
   if (player == P1){
-    rel_srank = srank;
-    rel_drank = drank;
+    rel_srank = 8-srank;
+    rel_drank = 8-drank;
     rel_sfile = sfile;
     rel_dfile = dfile;
   }
   else{
-    rel_srank = 8 - srank;
-    rel_drank = 8 - drank;
+    rel_srank = srank;
+    rel_drank = drank;
     rel_sfile = 8 - sfile;
     rel_dfile = 8 - dfile;
   }
@@ -115,50 +116,51 @@ bool legalmove(struct gm_status *game, int *src, int *dst){
   }
   else if (piece == 'R' || piece == 'r'||
 	   piece == 'S' || piece == 's'){ //checks legality of rook move
-    int i, rook_fatal_flag = false;
-    if ((drank != srank && dfile != sfile)||
-	(drank == srank && dfile == sfile)){
-      rook_fatal_flag = true;
+    printf("enters rook\n");
+    int i, rook_lf = false;
+    if (!((drank != srank && dfile == sfile)||
+	  (drank == srank && dfile != sfile))){
+      rook_lf = false;
     }
     else if (drank > srank){ //it is implied that dfile == sfile
       for (i = srank; i != drank; ++i){
 	if (board[i][sfile] != ' '){
-	  rook_fatal_flag = true;
+	  rook_lf = false;
 	}
       }
-      printf("bad rook");
-      rook_fatal_flag = false;
+      printf("bad rook1");
+      rook_lf = true;
     }
     else if (drank < srank){
       for (i = srank; i != drank; --i){
 	if (board[i][sfile] != ' '){
-	  rook_fatal_flag = true;
+	  rook_lf = false;
 	}
       }
-      printf("bad rook");
-      rook_fatal_flag = false;
+      printf("bad rook2");
+      rook_lf = true;
     }
     else if (dfile > sfile){
       for (i = sfile; i != dfile; ++i){
 	if (board[srank][i] != ' '){
-	  rook_fatal_flag = true;
+	  rook_lf = false;
 	}
       }
-      printf("bad rook");
-      rook_fatal_flag = false;
+      printf("bad rook3");
+      rook_lf = true;
     }
     else{ //dfile < sfile
       for (i = sfile; i != dfile; --i){
 	if (board[srank][i] != ' '){
-	  rook_fatal_flag = true;
+	  rook_lf = false;
 	}
       }
-      printf("bad rook");
-      rook_fatal_flag = false;
+      printf("bad rook4");
+      rook_lf = true;
     }
     
     if (piece == 'R' || piece == 'r'){
-      return rook_fatal_flag;
+      return rook_lf;
     }
     else{ //if it is upgraded rook
       int i;
@@ -310,18 +312,18 @@ bool legaldest(struct gm_status *game, int rank, int file){
   }
   else if (player == P1){ //player can't attack own piece
     if (isupper(dpiece)==true){
-      return false;
+      return true;
     }
     else{
-      return true;
+      return false;
     }
   }
   else if (player == P2){
     if (islower(dpiece)==true){
-      return false;
+      return true;
     }
     else{
-      return true;
+      return false;
     }
   }
   else{

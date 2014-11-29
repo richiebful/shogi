@@ -21,6 +21,10 @@ int processcmd(char *command, struct gm_status *game){
     printf("AI is not complete yet");
     return 0;
   }
+  else if (strncmp(command, "undo", 4) == 0){
+    printf("Undo is not complete yet");
+    return 0;
+  }
   else if (strncmp(command, "exit", 4) == 0){
     return -1;
   }
@@ -55,7 +59,7 @@ int processcmd(char *command, struct gm_status *game){
 	   (strlen(command) <= 5)){
     //interpret move of form P4e
     int src[2], dst[2];
-    char dst_c[2], piece;
+    char dst_c[2], piece = command[0];
     snprintf(dst_c, 3, "%s", command+1);
     ctocoords(dst, dst_c);
     int processed_f = processmv(*game, piece, src, dst);
@@ -92,6 +96,7 @@ int processcmd(char *command, struct gm_status *game){
 }
 
 int processmv(struct gm_status game, char piece, int *src, int *dst){
+  printf("Piece: %c\n", piece);
   if (game.player == 1){
     piece = tolower(piece);
   }
@@ -109,6 +114,7 @@ int processmv(struct gm_status game, char piece, int *src, int *dst){
       thisPiece = game.board[i][j];
       src[0] = i;
       src[1] = 8 - j;
+      printf("SRC={%i, %i} DST={%i, %i}\n", src[0], src[1], dst[0], dst[1]);
       //tests whether a the selected pice on the board can make the move or not
       if (thisPiece ==  piece && legalmove(&game, src, dst)){
 	srank = i;
@@ -139,6 +145,7 @@ int main(){
   char *cmd = malloc(sizeof(char)*10);
   scanf("%s", cmd);
   processcmd(cmd, &game);
+  processcmd("show", &game);
   return 0;
 }
 
