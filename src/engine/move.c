@@ -83,7 +83,8 @@ void ctocoords(int *converted, char *to_convert){
   converted[0] = irank;
   converted[1] = ifile;
 }
-/*
+
+#ifdef MOVE_TEST
 int main(){
   struct gm_status game;
   init_game(&game);
@@ -119,7 +120,7 @@ void init_game(struct gm_status *game){
 
   game->player = 1;
 
-  the equivalent of char game->history[150][5]
+  /*the equivalent of char game->history[150][5]*/
   game->history = malloc(sizeof(char)*5*150);
   game->check_f = 0;
   game->cmate_f = 0;
@@ -130,5 +131,6 @@ void init_game(struct gm_status *game){
     game->graveyard.reigning[i] = '\0';
   }
 }
+#endif
 
-						  */
+						  

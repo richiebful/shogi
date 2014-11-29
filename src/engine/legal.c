@@ -1,6 +1,7 @@
 /** \file */
 #include <shogi.h>
-/*
+
+#ifdef LEGAL_TEST
 void init_game(struct gm_status *game){
   const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
 				 {' ','R',' ',' ',' ',' ',' ','B',' '},
@@ -14,8 +15,8 @@ void init_game(struct gm_status *game){
   memcpy(game->board,init_board,sizeof(init_board));
 
   game->player = 1;
-*/
-/*the equivalent of char game->history[150][5]*//*
+
+  /*the equivalent of char game->history[150][5]*/
   game->history = malloc(sizeof(char)*5*150);
 
   int i;
@@ -58,7 +59,7 @@ int main(void){
   printf("%i", legal_f);
   return 0;  
 }
-*/
+#endif
 
 /*Checks whether a move works
  *Coords are in absolute terms*/

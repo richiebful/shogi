@@ -1,6 +1,7 @@
 /** \file */
 #include <shogi.h>
 
+
 int main(void){
   struct gm_status game;
   init_game(&game);
@@ -45,5 +46,4 @@ void init_game(struct gm_status *game){
   game->clock.player_t[0][1] = game->clock.player_t[1][1] = 0;
   game->clock.advance_t = 15; //15s added per move
 }
-
 

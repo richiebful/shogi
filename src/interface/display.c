@@ -102,7 +102,8 @@ void clockUpdate(struct gm_status *game){
   clock.last_t = curr_t;
 }
 
-/*int main(void){
+#ifdef DISPLAY_TEST
+int main(void){
   struct gm_status game;
   init_game(&game);
   dispClock(&game);
@@ -122,7 +123,7 @@ void init_game(struct gm_status *game){
 
   game->player = 1;*/
 
-/*the equivalent of char game->history[150][5]*//*
+/*the equivalent of char game->history[150][5]*/
   game->history = malloc(sizeof(char)*5*150);
 
   int i;
@@ -136,4 +137,5 @@ void init_game(struct gm_status *game){
   game->clock.last_t = time(NULL);
   game->clock.advance_t = 15; //15s added per move
 }
-						*/
+
+#endif
