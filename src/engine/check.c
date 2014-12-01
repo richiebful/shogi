@@ -56,7 +56,11 @@ bool ischeck(struct gm_status game){
 }
 
 bool ismate(struct gm_status game){
-  return true;
+  if (ischeck(game)==false){
+    return false;
+  }
+  /*test all possible following moves, then determine whether check still
+   *exists under the new game state*/
 }
 
 int main(){
