@@ -8,27 +8,27 @@ void dispBoard(struct gm_status *game){
   char board[9][9];
   memcpy(board, game->board, sizeof(board));
   int i, j;
-  for (i = 8; i >= 0; i--){
-    for (j = 8; j >= 0; j--){
+  for (i = 0; i < 9; i++){
+    for (j = 0; j < 9; j++){
       char piece = board[i][j];
-      if (j == 8){ //prints the rank no.
-	printf("\x1b[37m%i ", i+1);
-      }
       if (isupper(board[i][j])){
 	//print the piece out in white
-	printf("\x1b[37m%c ", piece);
+	printf(" \x1b[37m%c", piece);
       }
       else if(piece == ' '){
 	printf("  ");
       }
       else{
 	//print the piece out in red
-	printf("\x1b[31m%c ", piece-32);
+	printf(" \x1b[31m%c", piece-32);
+      }
+      if (j == 8){ //prints the rank no.
+	printf(" \x1b[37m%i", i+1);
       }
     }
     printf("\n");
   }
-  printf("\x1b[37m ");
+  printf("\x1b[37m");
   for(i = 8+97; i > 96; i--){
     printf(" %c", i);
   }
@@ -106,7 +106,7 @@ void clockUpdate(struct gm_status *game){
 int main(void){
   struct gm_status game;
   init_game(&game);
-  dispClock(&game);
+  dispBoard(&game);
 }
 
 void init_game(struct gm_status *game){
@@ -121,7 +121,7 @@ void init_game(struct gm_status *game){
 				 {'l','n','g','u','k','u','g','n','l'}};
   memcpy(game->board,init_board,sizeof(init_board));
 
-  game->player = 1;*/
+  game->player = 1;
 
 /*the equivalent of char game->history[150][5]*/
   game->history = malloc(sizeof(char)*5*150);

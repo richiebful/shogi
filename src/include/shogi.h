@@ -56,5 +56,6 @@ void dispClock(struct gm_status *game);
 void dispHelp();
 void clockUpdate(struct gm_status *game);
 
-
+/*Testing Variable*/
+#define DISPLAY_TEST 1
 
