@@ -91,11 +91,11 @@ bool legalmove(struct gm_status *game, int player, int *src, int *dst){
   char piece = board[srank][sfile];
   char dpiece = board[drank][dfile];
   
-  if (legaldest(game,drank,dfile) == false){
+  if (legaldest(game, player,drank,dfile) == false){
     printf("legaldest\n");
     return false;
   }
-  else if (legalsrc(game,drank,dfile) == false){
+  else if (legalsrc(game, player,drank,dfile) == false){
     printf("legalsrc");
     return false;
   }
@@ -363,7 +363,6 @@ bool legalsrc(struct gm_status *game, int player, int rank, int file){
 bool legaldrop(struct gm_status *game, int player, char piece, int *dst){
   int drank = dst[0];
   int dfile = dst[1];
-  int player = game->player;
   char board[9][9];
   memcpy(board, game->board, sizeof(game->board));
   
@@ -371,7 +370,7 @@ bool legaldrop(struct gm_status *game, int player, char piece, int *dst){
   if (dpiece != ' '){
     return false;
   }
-  else if(legaldest(game, drank, dfile)== false){
+  else if(legaldest(game, player, drank, dfile)== false){
     return false;
   }
   else if(player == P1 && isupper(piece)){

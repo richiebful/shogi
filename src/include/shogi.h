@@ -39,12 +39,12 @@ struct gm_status{
   bool cmate_f;
 };
 
-bool legaldest(struct gm_status *game, int rank, int file);
+bool legaldest(struct gm_status *game, int player, int rank, int file);
 void mkbitboard(struct gm_status *game);
-bool legalmove(struct gm_status *game, int *src, int *dst);
+bool legalmove(struct gm_status *game, int player, int *src, int *dst);
 bool inrange(int rank, int file);
-bool legalsrc(struct gm_status *game, int rank, int file);
-bool legaldrop(struct gm_status *game, char piece, int *dst);
+bool legalsrc(struct gm_status *game, int player, int rank, int file);
+bool legaldrop(struct gm_status *game, int player, char piece, int *dst);
 void init_game(struct gm_status *game);
 void mkmove(struct gm_status *game, int *src, int *dst);
 void mkdrop(struct gm_status *game, char piece, int *dst);
