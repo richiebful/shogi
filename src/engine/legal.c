@@ -46,7 +46,7 @@ int main(void){
     sfile = trueCases[i][0][1];
     drank = trueCases[i][1][0];
     dfile = trueCases[i][1][1];
-    legal_f = legalmove(&game, trueCases[i][0], trueCases[i][1]);
+    legal_f = legalmove(&game, 1, trueCases[i][0], trueCases[i][1]);
     printf("%i,%i to %i,%i returns %i", srank, sfile, drank, dfile, legal_f);
   }
   FOREACH(falseCases, i){
@@ -54,7 +54,7 @@ int main(void){
     sfile = falseCases[i][0][1];
     drank = falseCases[i][1][0];
     dfile = falseCases[i][1][1];
-    legal_f = legalmove(&game, falseCases[i][0], falseCases[i][1]);
+    legal_f = legalmove(&game,1,  falseCases[i][0], falseCases[i][1]);
     printf("%i,%i to %i,%i returns %i\n", srank, sfile, drank, dfile, legal_f);
   }
   printf("%i", legal_f);
@@ -65,14 +65,13 @@ int main(void){
 /*Checks whether a move works
  *Coords are in absolute terms*/
 
-bool legalmove(struct gm_status *game, int *src, int *dst){
+bool legalmove(struct gm_status *game, int player, int *src, int *dst){
   int srank = src[0];
   int sfile = 8 - src[1];
   int drank = dst[0];
   int dfile = 8 - dst[1];
   
   int rel_srank, rel_sfile, rel_drank, rel_dfile;
-  int player = game->player;
   if (player == P1){
     rel_srank = 8-srank;
     rel_drank = 8-drank;
@@ -303,9 +302,8 @@ bool inrange(int rank, int file){
 /*determines whether a destination is legal regardless of
  *a specific move's legality
  */ 
-bool legaldest(struct gm_status *game, int rank, int file){
+bool legaldest(struct gm_status *game, int player, int rank, int file){
   char dpiece = game->board[rank][file];
-  int player = game->player;
 
   if (inrange(rank, file) == false){
     return false;
@@ -335,9 +333,8 @@ bool legaldest(struct gm_status *game, int rank, int file){
  *by a certain player
  */
 
-bool legalsrc(struct gm_status *game, int rank, int file){
+bool legalsrc(struct gm_status *game, int player, int rank, int file){
   char spiece =  game->board[rank][file];
-  int player = game->player;
 
   if (inrange(rank, file) == false){
     return false;
@@ -363,7 +360,7 @@ bool legalsrc(struct gm_status *game, int rank, int file){
 /*Returns true if drop is legal, false if not
  *Coordinates must be in absolute terms
  */
-bool legaldrop(struct gm_status *game, char piece, int *dst){
+bool legaldrop(struct gm_status *game, int player, char piece, int *dst){
   int drank = dst[0];
   int dfile = dst[1];
   int player = game->player;

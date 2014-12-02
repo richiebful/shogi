@@ -55,12 +55,42 @@ bool ischeck(struct gm_status game){
   return exit_f;
 }
 
-bool ismate(struct gm_status game){
+bool ismate(struct gm_status game, int player){
+  int board[9][9];
+  memcpy(test_board, game.board, sizeof(board));
+
+  struct gm_status test_game;
+  memcpy(test_game, game, sizeof(test_game));
+
   if (ischeck(game)==false){
     return false;
   }
   /*test all possible following moves, then determine whether check still
    *exists under the new game state*/
+  int i, j, k, l;
+  int src[2], dst[2];
+  bool mate_f = false;
+  FORRANGE(i, 0, 9, 1){
+    FORRANGE(j, 0, 9, 1){
+      FORRANGE(k, 0, 9, 1){
+	FORRANGE(l, 0, 9, 1){
+	  src[0] = i; src[1] = 8 - j;
+	  dst[0] = k; dst[1] = 9 - l;
+	  if (legalmove(test_game, player, src, dst) == true){
+	    mkmove(test_game, player, src, dst);
+	    if (ischeck(test_game, player, src, dst)){
+	      
+	    }
+	    memcpy(test_game, game, sizeof(test_game));
+	  }
+	  else{
+	    continue;
+	  }
+	}
+      }
+    }
+  }
+  return mate_f;
 }
 
 int main(){
