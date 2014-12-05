@@ -65,12 +65,14 @@ int main(void){
 /*Checks whether a move works
  *Coords are in absolute terms*/
 
-bool legalmove(struct gm_status *game, int player, int *src, int *dst){
+int legalmove(struct gm_status *game, int player, int *src, int *dst){
+  /*Convert coordinates to array dimensions*/
   int srank = src[0];
   int sfile = 8 - src[1];
   int drank = dst[0];
   int dfile = 8 - dst[1];
   
+  /*Get relative coordinates, which are useful for directional pieces*/
   int rel_srank, rel_sfile, rel_drank, rel_dfile;
   if (player == P1){
     rel_srank = 8-srank;
@@ -92,18 +94,15 @@ bool legalmove(struct gm_status *game, int player, int *src, int *dst){
   char dpiece = board[drank][dfile];
   
   if (legaldest(game, player,drank,dfile) == false){
-    printf("legaldest\n");
     return false;
   }
-  else if (legalsrc(game, player,drank,dfile) == false){
-    printf("legalsrc");
+  else if (legalsrc(game, player, srank, sfile) == false){
     return false;
   }
   else if (drank == srank && dfile == sfile){
-    printf("same piece");
     return false;
   }
-  else if (piece == 'P' || piece == 'p'){ //pawn check
+  else if (piece == 'P' || piece == 'p'){
     //pawns can only move forward one relative rank
     if (rel_srank + 1 == rel_drank && rel_sfile == rel_dfile){
       return true;
@@ -172,7 +171,7 @@ bool legalmove(struct gm_status *game, int player, int *src, int *dst){
 	  return true;
 	}
       } 
-      return false;
+      return rook_lf;
     }
   }
   else if (piece == 'B' || piece == 'b'||
@@ -223,12 +222,16 @@ bool legalmove(struct gm_status *game, int player, int *src, int *dst){
     if (rel_drank <= rel_srank || sfile != dfile){
       return false;
     }
-    else if (drank > srank){
+    else if (drank > srank && player == 2){
       direction = 1;
     }
-    else{
+    else if (drank < srank && player == 1){
       direction = -1;
     }
+    else{
+      return false;
+    }
+    
     int i;
     for (i = srank + direction; i != drank; i += direction){
       if (board[sfile][i] != ' '){
@@ -292,7 +295,7 @@ bool legalmove(struct gm_status *game, int player, int *src, int *dst){
 /*Determines whether the rank and file are out of range
  *of the board or not.
  */
-bool inrange(int rank, int file){
+int inrange(int rank, int file){
   if (rank > 8 || rank < 0 || file > 8 || file < 0){
     return false;
   }
@@ -302,7 +305,7 @@ bool inrange(int rank, int file){
 /*determines whether a destination is legal regardless of
  *a specific move's legality
  */ 
-bool legaldest(struct gm_status *game, int player, int rank, int file){
+int legaldest(struct gm_status *game, int player, int rank, int file){
   char dpiece = game->board[rank][file];
 
   if (inrange(rank, file) == false){
@@ -333,7 +336,7 @@ bool legaldest(struct gm_status *game, int player, int rank, int file){
  *by a certain player
  */
 
-bool legalsrc(struct gm_status *game, int player, int rank, int file){
+int legalsrc(struct gm_status *game, int player, int rank, int file){
   char spiece =  game->board[rank][file];
 
   if (inrange(rank, file) == false){
@@ -360,7 +363,7 @@ bool legalsrc(struct gm_status *game, int player, int rank, int file){
 /*Returns true if drop is legal, false if not
  *Coordinates must be in absolute terms
  */
-bool legaldrop(struct gm_status *game, int player, char piece, int *dst){
+int legaldrop(struct gm_status *game, int player, char piece, int *dst){
   int drank = dst[0];
   int dfile = dst[1];
   char board[9][9];

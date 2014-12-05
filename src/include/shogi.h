@@ -39,15 +39,15 @@ struct gm_status{
   bool cmate_f;
 };
 
-bool legaldest(struct gm_status *game, int player, int rank, int file);
+int legaldest(struct gm_status *game, int player, int rank, int file);
 void mkbitboard(struct gm_status *game);
-bool legalmove(struct gm_status *game, int player, int *src, int *dst);
-bool inrange(int rank, int file);
-bool legalsrc(struct gm_status *game, int player, int rank, int file);
-bool legaldrop(struct gm_status *game, int player, char piece, int *dst);
+int legalmove(struct gm_status *game, int player, int *src, int *dst);
+int inrange(int rank, int file);
+int legalsrc(struct gm_status *game, int player, int rank, int file);
+int legaldrop(struct gm_status *game, int player, char piece, int *dst);
 void init_game(struct gm_status *game);
-void mkmove(struct gm_status *game, int *src, int *dst);
-void mkdrop(struct gm_status *game, char piece, int *dst);
+void mkmove(struct gm_status *game, int player, int *src, int *dst);
+void mkdrop(struct gm_status *game, int player, char piece, int *dst);
 void ctocoords(int *converted, char *to_convert);
 int processcmd(char *command, struct gm_status *game);
 int processmv(struct gm_status game, char piece, int *src, int *dst);
@@ -55,6 +55,8 @@ void dispBoard(struct gm_status *game);
 void dispClock(struct gm_status *game);
 void dispHelp();
 void clockUpdate(struct gm_status *game);
+int ischeck(struct gm_status game, int player);
+int ismate(struct gm_status game, int player);
 
 /*Testing Variable*/
 #define CHECK_TEST 1

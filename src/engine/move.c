@@ -43,7 +43,7 @@ void mkmove(struct gm_status *game, int player, int * src, int * dst){
   Assumes the move is legal
 */
 
-void mkdrop(struct gm_status *game, int player; char piece, int *dst){
+void mkdrop(struct gm_status *game, int player, char piece, int *dst){
   int i = 0;
   if (player == P1){
     while (game->graveyard.challenging[i] != piece){

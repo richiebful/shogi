@@ -1,10 +1,11 @@
 /**\file*/
 #include <shogi.h>
 
-bool ischeck(struct gm_status game){
+/**Tests whether a player is currently in check
+ *
+ */
+int ischeck(struct gm_status game, int player){
   int i, j;
-  int player = game.player;
-  int otherPlayer = (game.player+1)%2+1;
   //board = game->board
   char board[9][9];
   memcpy(board, game.board, sizeof(board));
@@ -20,7 +21,7 @@ bool ischeck(struct gm_status game){
     king = 'K';
   }
   
-  //can optimize by starting from player's side
+  //can optimize later by starting from player's side
   FORRANGE(i, 0, 9, 1){
     FORRANGE(j, 0, 9, 1){
       if (board[i][j] == king){
@@ -33,36 +34,30 @@ bool ischeck(struct gm_status game){
 
   int src[2];
   bool exit_f;
-
-  //game.player changed to other player,
-  //so theoretical attack testing can take place
-  game.player = otherPlayer;
-
   FORRANGE(i, 0, 9, 1){
     FORRANGE(j, 0, 9, 1){
       src[0] = i;
       src[1] = 8 - j;
-      if (legalmove(&game, src, dst)==true){
+      if (legalmove(&game, player, src, dst)==true){
 	printf("%i, %i -> %i, %i", src[0], src[1], dst[0], dst[1]);
 	exit_f = true;
       }
     }
   }
 
-  //game.player changed back
-  game.player = player;
-
   return exit_f;
 }
 
-bool ismate(struct gm_status game, int player){
+int ismate(struct gm_status game, int player){
   int board[9][9];
-  memcpy(test_board, game.board, sizeof(board));
+  memcpy(&board, &game.board, sizeof(board));
 
   struct gm_status test_game;
-  memcpy(test_game, game, sizeof(test_game));
+  memcpy(&test_game, &game, sizeof(test_game));
 
-  if (ischeck(game)==false){
+  int otherPlayer = (player + 1) % 2 + 1;
+
+  if (ischeck(game, player)==false){
     return false;
   }
   /*test all possible following moves, then determine whether check still
@@ -75,13 +70,13 @@ bool ismate(struct gm_status game, int player){
       FORRANGE(k, 0, 9, 1){
 	FORRANGE(l, 0, 9, 1){
 	  src[0] = i; src[1] = 8 - j;
-	  dst[0] = k; dst[1] = 9 - l;
-	  if (legalmove(test_game, player, src, dst) == true){
-	    mkmove(test_game, player, src, dst);
-	    if (ischeck(test_game, player, src, dst)){
-	      
+	  dst[0] = k; dst[1] = 8 - l;
+	  if (legalmove(&test_game, player, src, dst) == true){
+	    mkmove(&test_game, player, src, dst);
+	    if (ischeck(test_game, player)){
+	      continue;
 	    }
-	    memcpy(test_game, game, sizeof(test_game));
+	    memcpy(&test_game, &game, sizeof(test_game));
 	  }
 	  else{
 	    continue;
@@ -97,8 +92,9 @@ bool ismate(struct gm_status game, int player){
 
 int main(){
   struct gm_status game;
+  int player = 1;
   init_game(&game);
-  printf("%i",ischeck(game));
+  printf("%i",ischeck(game, player));
 }
 
 void init_game(struct gm_status *game){
