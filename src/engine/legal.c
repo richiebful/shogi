@@ -89,6 +89,10 @@ int legalmove(struct gm_status *game, int player, int *src, int *dst){
   
   char board[9][9];
   memcpy(board,game->board,sizeof(board));
+
+  struct gm_status test_game;
+  memcpy(&test_game, game, sizeof(test_game));
+  mkmove(&test_game, player, src, dst);
   
   char piece = board[srank][sfile];
   char dpiece = board[drank][dfile];
@@ -103,6 +107,12 @@ int legalmove(struct gm_status *game, int player, int *src, int *dst){
   }
   else if (drank == srank && dfile == sfile){
     printf("samesrc/dst");
+    return false;
+  }
+  else if (ischeck(test_game, player)){
+    /*checks if the player puts himself into check by making
+      his move, if so, it is illegal.*/
+    printf("move puts player in check");
     return false;
   }
   else if (piece == 'P' || piece == 'p'){
