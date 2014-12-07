@@ -10,6 +10,7 @@ int ischeck(struct gm_status game, int player){
   char board[9][9];
   memcpy(board, game.board, sizeof(board));
 
+  int otherPlayer = (player) % 2 + 1;
   //coords stored in standard shogi form exc. (0-8);
   int dst[2];
 
@@ -33,14 +34,14 @@ int ischeck(struct gm_status game, int player){
   }
 
   int src[2];
-  bool exit_f;
+  bool exit_f = false;
   FORRANGE(i, 0, 9, 1){
     FORRANGE(j, 0, 9, 1){
       src[0] = i;
       src[1] = 8 - j;
-      if (legalmove(&game, player, src, dst)==true){
-	printf("%i, %i -> %i, %i", src[0], src[1], dst[0], dst[1]);
+      if (legalmove(&game, otherPlayer, src, dst)==true){
 	exit_f = true;
+	break;
       }
     }
   }
@@ -55,8 +56,9 @@ int ismate(struct gm_status game, int player){
   struct gm_status test_game;
   memcpy(&test_game, &game, sizeof(test_game));
 
-  int otherPlayer = (player + 1) % 2 + 1;
+  int otherPlayer = player % 2 + 1;
 
+  /*Player must be in check to be in mate*/
   if (ischeck(game, player)==false){
     return false;
   }
@@ -64,7 +66,9 @@ int ismate(struct gm_status game, int player){
    *exists under the new game state*/
   int i, j, k, l;
   int src[2], dst[2];
-  bool mate_f = false;
+  
+  /*Assume checkmate until it is disproven*/
+  bool mate_f = true;
   FORRANGE(i, 0, 9, 1){
     FORRANGE(j, 0, 9, 1){
       FORRANGE(k, 0, 9, 1){
@@ -73,8 +77,9 @@ int ismate(struct gm_status game, int player){
 	  dst[0] = k; dst[1] = 8 - l;
 	  if (legalmove(&test_game, player, src, dst) == true){
 	    mkmove(&test_game, player, src, dst);
-	    if (ischeck(test_game, player)){
-	      continue;
+	    if (!ischeck(test_game, player)){
+	      mate_f = false;
+	      return mate_f;
 	    }
 	    memcpy(&test_game, &game, sizeof(test_game));
 	  }

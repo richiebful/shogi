@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <time.h>
+#include <test.h>
 
 #define CHALLENGING 1
 #define REIGNING 2
@@ -57,7 +58,4 @@ void dispHelp();
 void clockUpdate(struct gm_status *game);
 int ischeck(struct gm_status game, int player);
 int ismate(struct gm_status game, int player);
-
-/*Testing Variable*/
-#define CHECK_TEST 1
 

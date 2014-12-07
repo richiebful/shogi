@@ -60,8 +60,8 @@ int main(void){
   printf("%i", legal_f);
   return 0;  
 }
-
 #endif
+
 /*Checks whether a move works
  *Coords are in absolute terms*/
 
@@ -75,8 +75,8 @@ int legalmove(struct gm_status *game, int player, int *src, int *dst){
   /*Get relative coordinates, which are useful for directional pieces*/
   int rel_srank, rel_sfile, rel_drank, rel_dfile;
   if (player == P1){
-    rel_srank = 8-srank;
-    rel_drank = 8-drank;
+    rel_srank = 8 - srank;
+    rel_drank = 8 - drank;
     rel_sfile = sfile;
     rel_dfile = dfile;
   }
@@ -93,13 +93,16 @@ int legalmove(struct gm_status *game, int player, int *src, int *dst){
   char piece = board[srank][sfile];
   char dpiece = board[drank][dfile];
   
-  if (legaldest(game, player,drank,dfile) == false){
+  if (legaldest(game, player,dst[0],dst[1]) == false){
+    printf("illegaldest");
     return false;
   }
-  else if (legalsrc(game, player, srank, sfile) == false){
+  else if (legalsrc(game, player, src[0], src[1]) == false){
+    printf("illegalsrc");
     return false;
   }
   else if (drank == srank && dfile == sfile){
+    printf("samesrc/dst");
     return false;
   }
   else if (piece == 'P' || piece == 'p'){
@@ -115,46 +118,41 @@ int legalmove(struct gm_status *game, int player, int *src, int *dst){
   else if (piece == 'R' || piece == 'r'||
 	   piece == 'S' || piece == 's'){ //checks legality of rook move
     printf("enters rook\n");
-    int i, rook_lf = false;
+    int i, rook_lf = true;
     if (!((drank != srank && dfile == sfile)||
 	  (drank == srank && dfile != sfile))){
       rook_lf = false;
     }
     else if (drank > srank){ //it is implied that dfile == sfile
-      for (i = srank; i != drank; ++i){
+      for (i = srank + 1; i != drank; ++i){
 	if (board[i][sfile] != ' '){
 	  rook_lf = false;
+	  break;
 	}
       }
-      printf("bad rook1");
-      rook_lf = true;
     }
     else if (drank < srank){
-      for (i = srank; i != drank; --i){
+      for (i = srank - 1; i != drank; --i){
 	if (board[i][sfile] != ' '){
 	  rook_lf = false;
+	  break;
 	}
       }
-      printf("bad rook2");
-      rook_lf = true;
     }
     else if (dfile > sfile){
-      for (i = sfile; i != dfile; ++i){
+      for (i = sfile + 1; i != dfile; ++i){
 	if (board[srank][i] != ' '){
 	  rook_lf = false;
+	  break;
 	}
       }
-      printf("bad rook3");
-      rook_lf = true;
     }
     else{ //dfile < sfile
-      for (i = sfile; i != dfile; --i){
+      for (i = sfile - 1; i != dfile; --i){
 	if (board[srank][i] != ' '){
 	  rook_lf = false;
 	}
       }
-      printf("bad rook4");
-      rook_lf = true;
     }
     
     if (piece == 'R' || piece == 'r'){
@@ -176,32 +174,36 @@ int legalmove(struct gm_status *game, int player, int *src, int *dst){
   }
   else if (piece == 'B' || piece == 'b'||
 	   piece == 'C' || piece == 'c'){ //checks bishop's legality
-    int slope, direction;
+    double slope, direction;
     bool bishop_fatal_f = false;
     slope = (drank-srank)/(dfile-sfile);
     if (slope != 1 && slope != -1){
       printf("bad bishop1");
       return false;
     }
-    else if (drank < srank){
+    else if (dfile < sfile){
       direction = -1;
     }
     else{
       direction = 1;
     }
-    int i, yInt = sfile/(slope*srank);
-    for (i = srank+direction; i != drank+direction; i += direction){
+    printf("((%i + %i))", srank, sfile);
+    int i, yInt = srank - slope*sfile;
+    printf("%f*x + %i", slope, yInt);
+    for (i = sfile+direction; i != dfile; i += direction){
       //checks whether the move is blocked by a piece
-      if (board[i][slope*i+yInt] != ' '){
+      printf("%i, %i", i, (int)slope*i +yInt);
+      if (board[(int)slope*i+yInt][i] != ' '){
 	bishop_fatal_f = true;
+	break;
       }
     }
     if (bishop_fatal_f == true){
       printf("bad bishop2\n");
     }
-    if (piece == 'B' || piece == 'b'){
+    else if (piece == 'B' || piece == 'b'){
       //returns opposite of fatal_f
-      return ~bishop_fatal_f;
+      return true;
     }
     else{
       int possible[4][2] = {{srank + 1, sfile},
@@ -306,13 +308,13 @@ int inrange(int rank, int file){
  *a specific move's legality
  */ 
 int legaldest(struct gm_status *game, int player, int rank, int file){
+  file = 8 - file;
   char dpiece = game->board[rank][file];
-
   if (inrange(rank, file) == false){
     return false;
   }
   else if (player == P1){ //player can't attack own piece
-    if (isupper(dpiece)==true){
+    if (isupper(dpiece)){
       return true;
     }
     else{
@@ -320,7 +322,7 @@ int legaldest(struct gm_status *game, int player, int rank, int file){
     }
   }
   else if (player == P2){
-    if (islower(dpiece)==true){
+    if (islower(dpiece)){
       return true;
     }
     else{
@@ -337,6 +339,7 @@ int legaldest(struct gm_status *game, int player, int rank, int file){
  */
 
 int legalsrc(struct gm_status *game, int player, int rank, int file){
+  file = 8 - file;
   char spiece =  game->board[rank][file];
 
   if (inrange(rank, file) == false){
