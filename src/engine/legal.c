@@ -95,7 +95,6 @@ int legalmove(struct gm_status *game, int player, int *src, int *dst){
   mkmove(&test_game, player, src, dst);
   
   char piece = board[srank][sfile];
-  char dpiece = board[drank][dfile];
   
   if (legaldest(game, player,dst[0],dst[1]) == false){
     printf("illegaldest");

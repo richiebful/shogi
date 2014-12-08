@@ -56,8 +56,6 @@ int ismate(struct gm_status game, int player){
   struct gm_status test_game;
   memcpy(&test_game, &game, sizeof(test_game));
 
-  int otherPlayer = player % 2 + 1;
-
   /*Player must be in check to be in mate*/
   if (ischeck(game, player)==false){
     return false;

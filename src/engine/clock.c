@@ -1,11 +1,10 @@
 #include <shogi.h>
 
 void clockUpdate(struct gm_status *game){
-  //clock = game->clock
   struct time_s clock;
-  memcpy(&clock, &game->clock, sizeof(clock));
+  malloc(&clock, game->clock, sizeof(clock));
 
-  //player = existing player
+  //player = existing player - 1 for array dim purposes
   int p = game->player - 1;
 
   //get difference between last time and now
@@ -22,4 +21,7 @@ void clockUpdate(struct gm_status *game){
 
   //set clock.last_t to curr_t
   clock.last_t = curr_t;
+
+  //transfer clock back to its rightful position
+  malloc(game->clock, &clock, sizeof(clock));
 }
