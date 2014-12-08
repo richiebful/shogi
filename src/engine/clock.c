@@ -2,7 +2,7 @@
 
 void clockUpdate(struct gm_status *game){
   struct time_s clock;
-  malloc(&clock, game->clock, sizeof(clock));
+  memcpy(&clock, &game->clock, sizeof(clock));
 
   //player = existing player - 1 for array dim purposes
   int p = game->player - 1;
@@ -23,5 +23,13 @@ void clockUpdate(struct gm_status *game){
   clock.last_t = curr_t;
 
   //transfer clock back to its rightful position
-  malloc(game->clock, &clock, sizeof(clock));
+  memcpy(&game->clock, &clock, sizeof(clock));
 }
+
+#ifdef CLOCK_DEBUG
+
+int main(){
+
+}
+
+#endif

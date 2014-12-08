@@ -4,6 +4,7 @@
 /* Moves a piece from one location on the board to another, and moves the "killed" piece to the killer's drop pile 
  * Input coordinates are in absolute terms, and move must be proven legal first.
  */
+
 void mkmove(struct gm_status *game, int player, int * src, int * dst){
   //a 'd-' prefix means destination; a 's-' prefix means source
   int drank = dst[0];
@@ -61,8 +62,7 @@ void mkdrop(struct gm_status *game, int player, char piece, int *dst){
   int drank = 8 - dst[0];
   int dfile = dst[1];
   game->board[drank][dfile] = piece;
-
-  clockUpdate(game);
+  //clockUpdate(game);
 }
 
 /**Takes coordinates from characters to absolute coordinates in /

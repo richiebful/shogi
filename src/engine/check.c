@@ -48,7 +48,7 @@ int ischeck(struct gm_status game, int player){
 
   return exit_f;
 }
-
+#ifdef MATE_IN
 int ismate(struct gm_status game, int player){
   int board[9][9];
   memcpy(&board, &game.board, sizeof(board));
@@ -90,7 +90,7 @@ int ismate(struct gm_status game, int player){
   }
   return mate_f;
 }
-
+#endif
 #ifdef CHECK_TEST 
 
 int main(){
