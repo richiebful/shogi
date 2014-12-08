@@ -42,7 +42,7 @@ struct gm_status{
 
 int legaldest(struct gm_status *game, int player, int rank, int file);
 void mkbitboard(struct gm_status *game);
-int legalmove(struct gm_status *game, int player, int *src, int *dst);
+int legalmove(struct gm_status *game, int player, int *src, int *dst, int check_f);
 int inrange(int rank, int file);
 int legalsrc(struct gm_status *game, int player, int rank, int file);
 int legaldrop(struct gm_status *game, int player, char piece, int *dst);

@@ -39,7 +39,8 @@ int ischeck(struct gm_status game, int player){
     FORRANGE(j, 0, 9, 1){
       src[0] = i;
       src[1] = 8 - j;
-      if (legalmove(&game, otherPlayer, src, dst)==true){
+      if (legalmove(&game, otherPlayer, src, dst,
+		    true)==true){
 	exit_f = true;
 	break;
       }
@@ -57,7 +58,7 @@ int ismate(struct gm_status game, int player){
   memcpy(&test_game, &game, sizeof(test_game));
 
   /*Player must be in check to be in mate*/
-  if (ischeck(game, player)==false){
+  if (ischeck(game, player, player)==false){
     return false;
   }
   /*test all possible following moves, then determine whether check still

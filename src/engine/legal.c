@@ -4,14 +4,15 @@
 /*Checks whether a move works
  *Coords are in absolute terms*/
 
-int legalmove(struct gm_status *game, int player, int *src, int *dst){
+int legalmove(struct gm_status *game, int player, 
+	      int *src, int *dst, int from_check_f){
   //printf("%i, %i to %i, %i", src[0], src[1], dst[0], dst[1]);
   /*Convert coordinates to array dimensions*/
   int srank = src[0];
   int sfile = 8 - src[1];
   int drank = dst[0];
   int dfile = 8 - dst[1];
-  
+
   /*Get relative coordinates, which are useful for directional pieces*/
   int rel_srank, rel_sfile, rel_drank, rel_dfile;
   if (player == P1){
@@ -30,9 +31,16 @@ int legalmove(struct gm_status *game, int player, int *src, int *dst){
   char board[9][9];
   memcpy(board,game->board,sizeof(board));
 
+  /*Only checks whether that move puts the current mover
+    into check if this isn't being called from a second
+    iteration of ischeck
+   */
   struct gm_status test_game;
-  memcpy(&test_game, game, sizeof(test_game));
-  mkmove(&test_game, player, src, dst);
+
+  if (from_check_f == false){
+    memcpy(&test_game, game, sizeof(test_game));
+    mkmove(&test_game, player, src, dst);
+  }
   
   char piece = board[srank][sfile];
   
@@ -51,7 +59,8 @@ int legalmove(struct gm_status *game, int player, int *src, int *dst){
     printf("samesrc/dst");
     return false;
   }
-  else if (ischeck(test_game, player) && ck_f == 0){
+  else if (from_check_f == false && 
+	   ischeck(test_game, player)){
     /*checks if the player puts himself into check by making
       his move, if so, it is illegal.*/
     printf("move puts player in check");
