@@ -35,7 +35,7 @@ void init_game(struct gm_status *game){
   game->player = 1;
 
   /*the equivalent of char game->history[150][5]*/
-  game->history = malloc(sizeof(char)*5*150);
+  game->history = calloc(sizeof(char)*5*150);
 
   int i;
   FORRANGE(i,0,38,1){
