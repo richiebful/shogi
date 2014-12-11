@@ -1,1 +1,1 @@
-#define CHECK_TEST 1
+#define CMATE_TEST 1
