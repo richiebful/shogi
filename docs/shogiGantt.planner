@@ -17,8 +17,8 @@
         </overridden-day-type>
       </overridden-day-types>
       <days>
-        <day date="20141213" type="day-type" id="0"/>
         <day date="20141220" type="day-type" id="0"/>
+        <day date="20141213" type="day-type" id="0"/>
       </days>
     </calendar>
   </calendars>
@@ -26,50 +26,51 @@
     <task id="1" name="Finish 2P mode" note="" work="288000" start="20141207T000000Z" end="20141216T170000Z" work-start="20141207T080000Z" percent-complete="60" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20141101T000000Z"/>
     </task>
-    <task id="2" name="Implement Shogi AI" note="" work="1699200" start="20141216T170000Z" end="20150115T170000Z" work-start="20141217T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="2" name="Implement Shogi AI" note="" work="1699200" start="20141216T170000Z" end="20150121T170000Z" work-start="20141217T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="1" type="FS"/>
       </predecessors>
-      <task id="3" name="Design data structures" note="" work="432000" start="20141216T170000Z" end="20141221T170000Z" work-start="20141217T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-      <task id="4" name="Implement data structures" note="" work="288000" start="20141221T170000Z" end="20141226T170000Z" work-start="20141222T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="3" name="Design data structures" note="" work="432000" start="20141216T170000Z" end="20141222T170000Z" work-start="20141217T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="4" name="Implement data structures" note="" work="288000" start="20141222T170000Z" end="20141230T142000Z" work-start="20141223T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="3" type="FS"/>
         </predecessors>
       </task>
-      <task id="5" name="Work out algorithm" note="" work="403200" start="20141226T170000Z" end="20150104T170000Z" work-start="20141228T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="5" name="Work out algorithm" note="" work="403200" start="20141230T142000Z" end="20150109T170000Z" work-start="20141230T142000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="4" type="FS"/>
         </predecessors>
       </task>
-      <task id="6" name="Program AI" note="" work="576000" start="20150104T170000Z" end="20150115T170000Z" work-start="20150105T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="6" name="Program AI" note="" work="576000" start="20150109T170000Z" end="20150121T170000Z" work-start="20150111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="5" type="FS"/>
         </predecessors>
       </task>
     </task>
-    <task id="7" name="Debug AI" note="" work="144000" start="20150115T170000Z" end="20150121T170000Z" work-start="20150116T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="7" name="Develop GUI" note="" work="576000" start="20141207T000000Z" end="20150119T170000Z" work-start="20141207T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="8" name="Debug AI" note="" work="144000" start="20150121T170000Z" end="20150127T170000Z" work-start="20150122T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="2" type="FS"/>
       </predecessors>
     </task>
-    <task id="8" name="Link AI to Interface" note="" work="57600" start="20150121T170000Z" end="20150123T170000Z" work-start="20150122T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-      <predecessors>
-        <predecessor id="1" predecessor-id="7" type="FS"/>
-      </predecessors>
-    </task>
-    <task id="9" name="Perfect Interface" note="" work="57600" start="20150123T170000Z" end="20150126T170000Z" work-start="20150125T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="9" name="Link AI to Interface" note="" work="57600" start="20150127T170000Z" end="20150129T170000Z" work-start="20150128T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="8" type="FS"/>
       </predecessors>
     </task>
-    <task id="10" name="Documentation" note="" work="1440000" start="20141207T000000Z" end="20150130T170000Z" work-start="20141207T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="10" name="Perfect Interface" note="" work="57600" start="20150129T170000Z" end="20150201T170000Z" work-start="20150130T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="9" type="FS"/>
+      </predecessors>
+    </task>
+    <task id="11" name="Documentation" note="" work="1440000" start="20141207T000000Z" end="20150130T170000Z" work-start="20141207T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="1" type="SS"/>
       </predecessors>
     </task>
-    <task id="11" name="Presentation" note="" work="1152000" start="20150130T170000Z" end="20150208T142000Z" work-start="20150201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="12" name="Presentation" note="" work="1152000" start="20150130T170000Z" end="20150208T142000Z" work-start="20150201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <predecessors>
-        <predecessor id="1" predecessor-id="10" type="FS"/>
+        <predecessor id="1" predecessor-id="11" type="FS"/>
       </predecessors>
     </task>
   </tasks>
@@ -83,22 +84,23 @@
     <resource id="6" name="Steve" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
   </resources>
   <allocations>
-    <allocation task-id="11" resource-id="1" units="100"/>
+    <allocation task-id="12" resource-id="1" units="100"/>
     <allocation task-id="3" resource-id="1" units="100"/>
-    <allocation task-id="10" resource-id="2" units="100"/>
     <allocation task-id="11" resource-id="2" units="100"/>
-    <allocation task-id="11" resource-id="3" units="100"/>
+    <allocation task-id="12" resource-id="2" units="100"/>
+    <allocation task-id="7" resource-id="3" units="50"/>
+    <allocation task-id="3" resource-id="3" units="50"/>
+    <allocation task-id="12" resource-id="3" units="100"/>
     <allocation task-id="6" resource-id="3" units="100"/>
-    <allocation task-id="4" resource-id="3" units="100"/>
-    <allocation task-id="5" resource-id="3" units="100"/>
-    <allocation task-id="3" resource-id="3" units="100"/>
-    <allocation task-id="11" resource-id="4" units="100"/>
-    <allocation task-id="11" resource-id="5" units="100"/>
+    <allocation task-id="4" resource-id="3" units="50"/>
+    <allocation task-id="5" resource-id="3" units="50"/>
+    <allocation task-id="12" resource-id="4" units="100"/>
+    <allocation task-id="12" resource-id="5" units="100"/>
     <allocation task-id="3" resource-id="5" units="100"/>
     <allocation task-id="4" resource-id="5" units="100"/>
     <allocation task-id="5" resource-id="5" units="100"/>
     <allocation task-id="6" resource-id="5" units="100"/>
     <allocation task-id="1" resource-id="5" units="100"/>
-    <allocation task-id="11" resource-id="6" units="100"/>
+    <allocation task-id="12" resource-id="6" units="100"/>
   </allocations>
 </project>
