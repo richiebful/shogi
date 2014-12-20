@@ -33,7 +33,6 @@ int generateChildren(struct gm_status *curr_game,
 	    memcpy(node[node_i].dst, dst, sizeof(dst));
 	    this_node ++;
 
-	    int node_ct = sizeof(node);
 	    if (this_node == node_ct){
 	      free(&node);
 	      *node = malloc(node_ct*2);
@@ -46,8 +45,12 @@ int generateChildren(struct gm_status *curr_game,
   node_set = &tree_node;
 }
 
-int scoreNode(struct gm_status *curr_game,
-	      struct tree_node *node){
-  int score = 0;
+int getPieceValues(){
+  
+}
+
+int scoreNode(struct tree_node *node){
+  int score;
+  
   return score;
 }
