@@ -5,7 +5,6 @@
 int main(void){
   struct gm_status game;
   init_game(&game);
-  bool fatal_f = false;
   int input_f;
   while (fatal_f != true){
     char command[20] = "NULL";
@@ -15,7 +14,13 @@ int main(void){
       scanf("%s", command);
       input_f = processcmd(command, &game);
     }
-    if (input_f == -1)
+    if (input_f == 1){
+      game.player = game.player % 2 + 1;
+    }
+    if (input_f == -1){
+      //if move is fatal
+      break;
+    }
   }
   return 0;  
 }
@@ -47,4 +52,3 @@ void init_game(struct gm_status *game){
   game->clock.player_t[0][1] = game->clock.player_t[1][1] = 0;
   game->clock.advance_t = 15; //15s added per move
 }
-
