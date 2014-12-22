@@ -15,7 +15,6 @@ int main(void){
       scanf("%s", command);
       input_f = processcmd(command, &game);
     }
-    if (input_f == -1)
   }
   return 0;  
 }
