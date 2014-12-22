@@ -83,6 +83,27 @@ void ctocoords(int *converted, char *to_convert){
   converted[1] = ifile;
 }
 
+/*Undoes the last move 
+ *Returns 1 if successful, 0 if failure
+ */
+int undo(struct gm_status *game){
+  /*Makes a copy of game history*/
+  char *history = game->history;
+  int step = 4;
+  char *lastMove;
+  int i;
+  while (*history != '\0' && i < sizeof(history)){
+    lastMove = history;
+    history += step;
+    i += step;
+  }
+  
+  char src[2] = {*(lastMove+2), *(lastMove+3)};
+  char dst[2] = {*(lastMove), *(lastMove+1)};
+
+  mkmove(game, (game->player) %2 + 1, src, dst);
+}
+
 #ifdef MOVE_TEST
 int main(){
   struct gm_status game;
