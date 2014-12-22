@@ -22,8 +22,8 @@ int processcmd(char *command, struct gm_status *game){
     return 0;
   }
   else if (strncmp(command, "undo", 4) == 0){
-    printf("Undo is not complete yet");
-    return 0;
+    printf("Undo has not been constructed yet");
+    return 1;
   }
   else if (strncmp(command, "exit", 4) == 0){
     return -1;

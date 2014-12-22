@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <time.h>
+#include <math.h>
 #include <test.h>
 
 #define CHALLENGING 1
