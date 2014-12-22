@@ -36,6 +36,30 @@ void mkmove(struct gm_status *game, int player, int * src, int * dst){
       }
     }
   }
+
+  /*This section adds move to the history*/
+  char *history = game->history;
+  int step = 4;
+  char *lastMove;
+  int i;
+  while (*history != '\0' && i < sizeof(history)){
+    lastMove = history;
+    history += step;
+    i += step;
+  }
+
+  if (i + 1 == sizeof(game->history)){
+    /*Expand history to double its present size*/
+    char *nHistory = calloc(2*sizeof(game->history));
+    memcpy(nHistory, game->history, sizeof(game0>history));
+    free(game->history);
+    /*Re-establishes current place in history*/
+    history = game->history + i;
+  }
+  
+  /*Copy move being made to current place in history*/
+  sprintf(history, 4, "%i%i%i%i", src[0], src[1], dst[0], dst[1]);
+ 
   clockUpdate(game);
 }
 
@@ -98,10 +122,12 @@ int undo(struct gm_status *game){
     i += step;
   }
   
+  /*Flip-flops sources and destinations in history to reverse them*/
   char src[2] = {*(lastMove+2), *(lastMove+3)};
   char dst[2] = {*(lastMove), *(lastMove+1)};
 
-  mkmove(game, (game->player) %2 + 1, src, dst);
+  mkmove(game, (game.player) % 2 + 1, src, dst);
+  snprintf(history, 4, "    ");
 }
 
 #ifdef MOVE_TEST
