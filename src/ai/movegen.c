@@ -46,12 +46,8 @@ int generateChildren(struct gm_status *curr_game,
   return true;
 }
 
-int getPieceValues(){
-  
-}
-
 int scoreNode(struct tree_node *node){
-  int score;
+  int score = 0;
   
   return score;
 }
