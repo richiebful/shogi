@@ -13,7 +13,7 @@ struct ai_score_book{
   char piece[14];
   int score[14];
   int check_v;
-}
+};
 
 /*Determines the difficulty of the game AI*/
 struct gm_ai_profile{
@@ -22,3 +22,5 @@ struct gm_ai_profile{
   int level; //official level 1-9
   struct ai_score_book score_book;
 }ai_profile;
+
+int * score_book = malloc(sizeof(int));
