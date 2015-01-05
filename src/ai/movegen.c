@@ -43,6 +43,7 @@ int generateChildren(struct gm_status *curr_game,
     }
   }
   node_set = &tree_node;
+  return true;
 }
 
 int getPieceValues(){
