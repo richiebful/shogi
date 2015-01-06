@@ -49,5 +49,10 @@ int generateChildren(struct gm_status *curr_game,
 int scoreNode(struct tree_node *node){
   int score = 0;
   
+  scoreNode(*node->parent);
+  while (*node){
+    
+    node++;
+  }
   return score;
 }
