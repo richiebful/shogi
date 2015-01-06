@@ -46,13 +46,6 @@ int generateChildren(struct gm_status *curr_game,
   return true;
 }
 
-int scoreNode(struct tree_node *node){
-  int score = 0;
+int pruneTree(struct tree_node *node){
   
-  scoreNode(*node->parent);
-  while (*node){
-    
-    node++;
-  }
-  return score;
 }
