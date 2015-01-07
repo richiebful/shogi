@@ -1,11 +1,14 @@
+#define treetop (struct tree_node);
+
 /*Game tree node*/
 struct tree_node{
   int potential;
   int raw_score;
   int score;
   int src[2], dst[2];
-  struct * tree_node parent;
-  struct * tree_row child_row;
+  struct gm_status *game;
+  struct tree_node *parent;
+  struct tree_node *children;
 };
 
 /*Stores values for piece valuation*/
