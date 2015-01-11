@@ -1,7 +1,6 @@
 /** \file */
 #include <shogi.h>
 
-
 void init_game(struct gm_status *game){
   const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
 				 {' ','R',' ',' ',' ',' ',' ','B',' '},
