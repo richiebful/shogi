@@ -64,7 +64,7 @@ void dispHelp(void){
 }
 
 void dispClock(struct gm_status *game){
-  clockUpdate(game);
+  updateClock(game);
 
   struct time_s clock;
   memcpy(&clock, &game->clock, sizeof(clock));
@@ -76,6 +76,10 @@ void dispClock(struct gm_status *game){
   printf("White: %i:%.2i\n",
 	 clock.player_t[0][0],
 	 clock.player_t[0][1]);
+}
+
+void updateClock(struct gm_status *game){
+  ;
 }
 
 

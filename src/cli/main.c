@@ -3,7 +3,7 @@
 int main(void){
   struct gm_status game;
   init_game(&game);
-  int input_f;
+  int input_f = 0;
   while (fatal_f != true){
     char command[20] = "NULL";
     input_f = 0;
@@ -24,7 +24,7 @@ int main(void){
 	break;
       }
     }
-    if (input_f == -1){
+    else if (input_f == -1){
       break;
     }
   }

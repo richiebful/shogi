@@ -45,8 +45,8 @@ int processcmd(char *command, struct gm_status *game){
     snprintf(dst_c, 2, "%s", command+2);
     ctocoords(dst, dst_c);
     ctocoords(src, src_c);
-    if (legalmove(game, src, dst)==true){
-      mkmove(game, src, dst);
+    if (legalmove(game,game->player, src, dst, 0)==true){
+      mkmove(game, game->player, src, dst);
       return 1;
     }
     else{
@@ -63,9 +63,9 @@ int processcmd(char *command, struct gm_status *game){
     snprintf(dst_c, 3, "%s", command+1);
     ctocoords(dst, dst_c);
     int processed_f = processmv(*game, piece, src, dst);
-    if(legalmove(game, src, dst)==true &&
+    if(legalmove(game, game->player, src, dst, 0)==true &&
        processed_f == true){
-      mkmove(game, src, dst);
+      mkmove(game, game->player, src, dst);
       return 1;
     }
     else{
@@ -81,8 +81,8 @@ int processcmd(char *command, struct gm_status *game){
     int dst[2];
     snprintf(dst_c, 2, "%s", command+2);
     ctocoords(dst, dst_c);
-    if (legaldrop(game, piece, dst) == true){
-      mkdrop(game, piece ,dst);
+    if (legaldrop(game, game->player, piece, dst) == true){
+      mkdrop(game, game->player, piece ,dst);
       return 1;
     }
     else{
@@ -114,9 +114,11 @@ int processmv(struct gm_status game, char piece, int *src, int *dst){
       thisPiece = game.board[i][j];
       src[0] = i;
       src[1] = 8 - j;
-      printf("SRC={%i, %i} DST={%i, %i}\n", src[0], src[1], dst[0], dst[1]);
+      printf("SRC={%i, %i} DST={%i, %i}\n",
+	     src[0], src[1], dst[0], dst[1]);
       //tests whether a the selected pice on the board can make the move or not
-      if (thisPiece ==  piece && legalmove(&game, src, dst)){
+      if (thisPiece ==  piece && 
+	  legalmove(&game, game.player, src, dst, 0)){
 	srank = i;
 	sfile = 8 - j;
 	n++;
@@ -142,11 +144,20 @@ int processmv(struct gm_status game, char piece, int *src, int *dst){
 int main(){
   struct gm_status game;
   init_game(&game);
-  char *cmd = malloc(sizeof(char)*10);
-  scanf("%s", cmd);
-  processcmd(cmd, &game);
-  processcmd("show", &game);
+  char pieces[5] = "PBUNG";
+  int *src = malloc(2*sizeof(int));
+  int dsts[5][2] = {{3,0},{2,2},{1,4},{2,2},{2,1}};
+  int i, mv_f;
+  FOREACH(pieces, i){
+    mv_f = processmv(game, pieces[i], src, dsts[i]);
+    if (mv_f == true){
+      printf("%i,%i\n", src[0], src[1]);
+    }
+    else{
+      printf("Failure\n");
+    }
   return 0;
+  }
 }
 
 void init_game(struct gm_status *game){
@@ -159,6 +170,7 @@ void init_game(struct gm_status *game){
 				 {'p','p','p','p','p','p','p','p','p'},
 				 {' ','b',' ',' ',' ',' ',' ','r',' '},
 				 {'l','n','g','u','k','u','g','n','l'}};
+
   memcpy(game->board,init_board,sizeof(init_board));
 
   game->player = 1;
@@ -176,4 +188,5 @@ void init_game(struct gm_status *game){
   game->clock.player_t[0][1] = game->clock.player_t[1][1] = 0;
   game->clock.advance_t = 15; //15s added per move
 }
+
 #endif

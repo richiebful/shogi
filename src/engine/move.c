@@ -5,7 +5,7 @@
  * Input coordinates are in absolute terms, and move must be proven legal first.
  */
 
-void mkmove(struct gm_status *game, int player, int * src, int * dst){
+void mkmove(struct gm_status *game, int player, int *src, int *dst){
   //a 'd-' prefix means destination; a 's-' prefix means source
   int drank = dst[0];
   int dfile = 8 - dst[1];
@@ -37,11 +37,17 @@ void mkmove(struct gm_status *game, int player, int * src, int * dst){
     }
   }
 
+  updateHist(game, src, dst);
+ 
+  updateClock(game);
+}
+
+void updateHist(struct gm_status *game, int *src, int *dst){
   /*This section adds move to the history*/
   char *history = game->history;
   int step = 4;
   char *lastMove;
-  int i;
+  int i = 0;
   while (*history != '\0' && i < sizeof(history)){
     lastMove = history;
     history += step;
@@ -50,17 +56,15 @@ void mkmove(struct gm_status *game, int player, int * src, int * dst){
 
   if (i + 1 == sizeof(game->history)){
     /*Expand history to double its present size*/
-    char *nHistory = calloc(2*sizeof(game->history));
-    memcpy(nHistory, game->history, sizeof(game0>history));
+    char *nHistory = calloc(2*sizeof(game->history), sizeof(char)*4);
+    memcpy(nHistory, game->history, sizeof(*game->history));
     free(game->history);
     /*Re-establishes current place in history*/
     history = game->history + i;
   }
   
   /*Copy move being made to current place in history*/
-  sprintf(history, 4, "%i%i%i%i", src[0], src[1], dst[0], dst[1]);
- 
-  clockUpdate(game);
+  snprintf(history, 4, "%i%i%i%i", src[0], src[1], dst[0], dst[1]);
 }
 
 /*Takes a piece from the player's graveyard, and drops it.
@@ -106,7 +110,7 @@ void ctocoords(int *converted, char *to_convert){
   converted[0] = irank;
   converted[1] = ifile;
 }
-
+#ifdef UNDO_NEEDED
 /*Undoes the last move 
  *Returns 1 if successful, 0 if failure
  */
@@ -129,6 +133,7 @@ int undo(struct gm_status *game){
   mkmove(game, (game.player) % 2 + 1, src, dst);
   snprintf(history, 4, "    ");
 }
+#endif
 
 #ifdef MOVE_TEST
 int main(){
@@ -166,8 +171,8 @@ void init_game(struct gm_status *game){
 
   game->player = 1;
 
-  /*the equivalent of char game->history[150][5]*/
-  game->history = malloc(sizeof(char)*5*150);
+  /*the equivalent of char game->history[32][4]*/
+  game->history = calloc(sizeof(char)*4, 32);
   game->check_f = 0;
   game->cmate_f = 0;
 

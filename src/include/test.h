@@ -1,1 +1,1 @@
-#define CMATE_TEST 1
+#define INPUT_TEST 1

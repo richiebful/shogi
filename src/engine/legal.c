@@ -215,7 +215,7 @@ int legalmove(struct gm_status *game, int player,
     int i;
     for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
       if (possible[i][0] == drank && possible[i][1] == dfile){
-	return true;
+x	return true;
       }
     }
     return false;
@@ -383,8 +383,8 @@ void init_game(struct gm_status *game){
 
   game->player = 1;
 
-  /*the equivalent of char game->history[150][5]*/
-  game->history = malloc(sizeof(char)*5*150);
+  /*the equivalent of char game->history[150][4]*/
+  game->history = calloc(sizeof(char)*4, 32);
 
   int i;
   FORRANGE(i,0,38,1){
