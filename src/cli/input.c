@@ -97,30 +97,29 @@ int processcmd(char *command, struct gm_status *game){
 
 int processmv(struct gm_status game, char piece, int *src, int *dst){
   printf("Piece: %c\n", piece);
-  if (game.player == 1){
+  if (game.player == CHALLENGING){
     piece = tolower(piece);
   }
-  else if(game.player == 0){
+  else if(game.player == REIGNING){
     piece = toupper(piece);
   }
-  int drank =  dst[0],  dfile = 8 - dst[1];
+  int drank =  dst[0],  dfile = dst[1];
   printf("d-pos: (%i,%i)", drank, dfile);
   /*n is count of possible pieces executing the move*/
-  int i, j, n = 0;
+  int n = 0;
   int srank, sfile;//outputted in dst
   char thisPiece;
-  FORRANGE(i, 0, 9, 1){
-    FORRANGE(j, 0, 9, 1){
-      thisPiece = game.board[i][j];
-      src[0] = i;
-      src[1] = 8 - j;
+  for (src[0] = 0; src[0] < 9; src[0]++){
+    for (src[1] = 0; src[1] < 9; src[1]++){
+      thisPiece = game.board[src[0]][src[1]];
       printf("SRC={%i, %i} DST={%i, %i}\n",
 	     src[0], src[1], dst[0], dst[1]);
-      //tests whether a the selected pice on the board can make the move or not
+      /*tests whether a the selected piece on 
+	the board can make the move or not*/
       if (thisPiece ==  piece && 
 	  legalmove(&game, game.player, src, dst, 0)){
-	srank = i;
-	sfile = 8 - j;
+	srank = src[0];
+	sfile = src[1];
 	n++;
       }
     }
@@ -152,28 +151,29 @@ int main(){
     mv_f = processmv(game, pieces[i], src, dsts[i]);
     if (mv_f == true){
       printf("%i,%i\n", src[0], src[1]);
+      mv_f = false;
     }
     else{
       printf("Failure\n");
     }
-  return 0;
   }
+  return 0;
 }
 
 void init_game(struct gm_status *game){
-  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
-				 {' ','R',' ',' ',' ',' ',' ','B',' '},
-				 {'P','P','P','P','P','P','P','P','P'},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {'p','p','p','p','p','p','p','p','p'},
-				 {' ','b',' ',' ',' ',' ',' ','r',' '},
-				 {'l','n','g','u','k','u','g','n','l'}};
+  const char init_board[9][9] = {"LNGAKAGNL",
+				 " R     B ",
+				 "PPPPPPPPP",
+				 "         ",
+				 "         ",
+				 "         ",
+				 "ppppppppp",
+				 " b     r ",
+				 "lngakagnl"};
 
   memcpy(game->board,init_board,sizeof(init_board));
 
-  game->player = 1;
+  game->player = 2;
 
   /*the equivalent of char game->history[150][5]*/
   game->history = malloc(sizeof(char)*5*150);

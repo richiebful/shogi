@@ -6,7 +6,6 @@
 
 int legalmove(struct gm_status *game, int player, 
 	      int *src, int *dst, int from_check_f){
-  //printf("%i, %i to %i, %i", src[0], src[1], dst[0], dst[1]);
   /*Convert coordinates to array dimensions*/
   int srank = src[0];
   int sfile = 8 - src[1];
@@ -45,14 +44,11 @@ int legalmove(struct gm_status *game, int player,
   char piece = board[srank][sfile];
   
   if (legaldest(game, player, dst[0], dst[1]) == false){
-    if (piece == 'B'){
-      printf("illegaldest");
-    }
+    printf("Legaldest");
     return false;
   }
   if (legalsrc(game, player, src[0], src[1]) == false){
-    if (piece == 'B')
-      printf("illegalsrc");
+    printf("illegalsrc");
     return false;
   }
   else if (drank == srank && dfile == sfile){
@@ -69,6 +65,7 @@ int legalmove(struct gm_status *game, int player,
   else if (piece == 'P' || piece == 'p'){
     //pawns can only move forward one relative rank
     if (rel_srank + 1 == rel_drank && rel_sfile == rel_dfile){
+      printf("it works");
       return true;
     }
     else{
@@ -215,7 +212,7 @@ int legalmove(struct gm_status *game, int player,
     int i;
     for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
       if (possible[i][0] == drank && possible[i][1] == dfile){
-x	return true;
+	return true;
       }
     }
     return false;
@@ -271,28 +268,27 @@ int inrange(int rank, int file){
 int legaldest(struct gm_status *game, int player, int rank, int file){
   file = 8 - file;
   char dpiece = game->board[rank][file];
+  printf("%c\t", dpiece);
   if (inrange(rank, file) == false){
     return false;
   }
-  else if (player == P1){ //player can't attack own piece
-    if (isupper(dpiece)){
+  else if (player == P1){ 
+    if (isupper(dpiece) || dpiece == ' '){
       return true;
     }
-    else{
+    else{//player can't attack own piece
       return false;
     }
   }
   else if (player == P2){
-    if (islower(dpiece)){
+    if (islower(dpiece) || dpiece == ' '){
       return true;
     }
-    else{
+    else{//player can't attack own piece
       return false;
     }
   }
-  else{
-    return true;
-  }
+  return -1;
 }
 
 /*Tests whether the coordinates point to something can be moved
