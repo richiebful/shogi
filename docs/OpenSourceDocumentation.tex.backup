@@ -1,0 +1,37 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{wasysym}
+\usepackage{CJK}
+
+%opening
+\title{Open Source Software Engineering}
+\author{Wilson High School}
+
+%title page
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+ ~\\[1cm]
+ \textsc{\LARGE Software Development}\\[1.5cm]
+ \textsc{\Large TSA Regional Competition}\\[0.5cm]
+ \rule{\linewidth}{0.5mm}
+ {\huge \bfseries Shogi AI and Client \\[0.4cm]}
+ \rule{\linewidth}{0.5mm}\\[0.5cm]
+ \begin{CJK}{UTF8}{gbsn}
+ {\huge 将棋}
+ \end{CJK}
+ \vfill
+ {\large Lancaster, PA \\[0.4cm]}
+ {\large 7 February 2015}
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+
+\pagebreak
+
+\section{Communism is Fun}
+
+\end{document}

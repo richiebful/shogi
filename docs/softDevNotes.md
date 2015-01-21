@@ -1,15 +1,15 @@
-1.Title page with the event title, the conference city and state,
+1. Title page with the event title, the conference city and state,
 and the year; one (1) page
-2.	 Table of contents; pages as needed
-3.	 Research about the problem; one (1) page
-4.	 Description of the team’s project, including the problem
+2. Table of contents; pages as needed
+3. Research about the problem; one (1) page
+4. Description of the team’s project, including the problem
 and the solution for the problem, and an explanation of the
 project’s social or educational value; up to two (2) pages
-5.	 Plan of Work log that indicates preparation for the event,
+5. Plan of Work log that indicates preparation for the event,
 as noted by date, task, time involved, team member(s)
 responsible, and comments (See Plan of Work log); one (1)
 page
-6.	 Documentation of the use of a software development
+6. Documentation of the use of a software development
 process, including the following:
 a.	 Project requirements; one (1) page
 b.	 High-level software design; one (1) page
