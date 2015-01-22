@@ -13,19 +13,7 @@ int legalmove(struct gm_status *game, int player,
   int dfile = 8 - dst[1];
 
   /*Get relative coordinates, which are useful for directional pieces*/
-  int rel_srank, rel_sfile, rel_drank, rel_dfile;
-  if (player == P1){
-    rel_srank = 8 - srank;
-    rel_drank = 8 - drank;
-    rel_sfile = sfile;
-    rel_dfile = dfile;
-  }
-  else{
-    rel_srank = srank;
-    rel_drank = drank;
-    rel_sfile = 8 - sfile;
-    rel_dfile = 8 - dfile;
-  }
+  int rel_dir = (player == REIGNING) ? 1 : -1;
   
   char board[9][9];
   memcpy(board,game->board,sizeof(board));
@@ -64,7 +52,8 @@ int legalmove(struct gm_status *game, int player,
   }
   else if (piece == 'P' || piece == 'p'){
     //pawns can only move forward one relative rank
-    if (rel_srank + 1 == rel_drank && rel_sfile == rel_dfile){
+    if (srank + rel_dir == drank &&
+	sfile == dfile){
       printf("it works");
       return true;
     }
@@ -178,8 +167,11 @@ int legalmove(struct gm_status *game, int player,
   }
   else if (piece == 'L'|| piece == 'l'){ //checks lance's legality
     int direction;
-    //if the lance isn't moving forward, it is illegal
-    if (rel_drank <= rel_srank || sfile != dfile){
+    /*lance must stay in same file*/
+    if (sfile != dfile){
+      return false;
+    }
+    else if ((drank-srank)*rel_dir < 0){
       return false;
     }
     else if (drank > srank && player == 2){
@@ -218,14 +210,16 @@ int legalmove(struct gm_status *game, int player,
     return false;
   }
   else if (piece == 'G' || piece == 'g'){
+    
+    int possible[5][2] = {{srank + rel_dir, sfile - 1},
+			  {srank + rel_dir, sfile},
+			  {srank + rel_dir, sfile + 1},
+			  {srank - rel_dir, sfile - 1},
+			  {srank - rel_dir, sfile + 1}};
     int i;
-    int possible[5][2] = {{rel_srank + 1, rel_sfile - 1},
-			  {rel_srank + 1, rel_sfile},
-			  {rel_srank + 1, rel_sfile + 1},
-			  {rel_srank - 1, rel_sfile - 1},
-			  {rel_srank - 1, rel_sfile + 1}};
     for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
-      if (possible[i][0] == rel_drank && possible[i][1] == rel_dfile){
+      if (possible[i][0] == drank &&
+	  possible[i][1] == dfile){
 	return true;
       }
     }
@@ -237,14 +231,15 @@ int legalmove(struct gm_status *game, int player,
 	   piece == 'M' || piece == 'm'||
 	   piece == 'O' || piece == 'o'){
     int i;
-    int possible[6][2] = {{rel_srank + 1, rel_sfile - 1},
-			  {rel_srank + 1, rel_sfile},
-			  {rel_srank + 1, rel_sfile + 1},
-			  {rel_srank, rel_sfile - 1},
-			  {rel_srank, rel_sfile + 1},
-			  {rel_srank-1, rel_sfile}};
+    int possible[6][2] = {{srank + rel_dir, sfile - 1},
+			  {srank + rel_dir, sfile},
+			  {srank + rel_dir, sfile + 1},
+			  {srank, sfile - 1},
+			  {srank, sfile + 1},
+			  {srank - rel_dir, sfile}};
     for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
-      if (possible[i][0] == rel_drank && possible[i][1] == rel_dfile){
+      if (possible[i][0] == drank && 
+	  possible[i][1] == dfile){
 	return true;
       }
     }

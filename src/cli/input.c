@@ -103,7 +103,12 @@ int processmv(struct gm_status game, char piece, int *src, int *dst){
   else if(game.player == REIGNING){
     piece = toupper(piece);
   }
+
   int drank =  dst[0],  dfile = dst[1];
+
+  /*Possible optimisation by early exit if 
+   *legaldest() returns false*/
+
   printf("d-pos: (%i,%i)", drank, dfile);
   /*n is count of possible pieces executing the move*/
   int n = 0;
@@ -161,7 +166,7 @@ int main(){
 }
 
 void init_game(struct gm_status *game){
-  const char init_board[9][9] = {"LNGAKAGNL",
+  const char init_board[9][9] = {"LNGUKUGNL",
 				 " R     B ",
 				 "PPPPPPPPP",
 				 "         ",
@@ -169,7 +174,7 @@ void init_game(struct gm_status *game){
 				 "         ",
 				 "ppppppppp",
 				 " b     r ",
-				 "lngakagnl"};
+				 "lngukugnl"};
 
   memcpy(game->board,init_board,sizeof(init_board));
 
