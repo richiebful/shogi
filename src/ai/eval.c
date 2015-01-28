@@ -9,14 +9,14 @@ int scoreNode(struct tree_node *node,
   int board[8][8];
   memcpy(board, node->game->board, sizeof(board));
   
-  int i, j, k;
+  int loc[2];
   int last_score, this_score;
-  FORRANGE(i, 0, 10, 1){
-    FORRANGE(j, 0, 10, 1){
+  FORRANGE(loc[0], 0, 10, 1){
+    FORRANGE(loc[1], 0, 10, 1){
       char thisPiece = board[i][j];
       FOREACH(pcValue->name, k){
         if (pcValue->name[k] == thisPiece){
-          //score piece
+          scorePiece(game.board, loc, thisPiece);
         }
       }
     }
@@ -29,6 +29,10 @@ int scoreNode(struct tree_node *node,
     score = last_score - this_score;
   }
   return score;
+}
+
+int scorePiece(int board[][], int loc[2], char piece){
+
 }
 
 int historyLength(){
