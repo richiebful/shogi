@@ -31,7 +31,7 @@ int scoreNode(struct tree_node *node,
   return score;
 }
 
-int scorePiece(int board[][], int loc[2], char piece){
+int scorePiece(int *board[], int *loc, char piece){
 
 }
 
