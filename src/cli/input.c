@@ -6,6 +6,7 @@
  *then query the player for input again 
  *if return -1, input kills the program.
  */
+ 
 int processcmd(char *command, struct gm_status *game){
   //printf("%s", command);
   if (strncmp(command, "show", 4) == 0){
@@ -94,6 +95,11 @@ int processcmd(char *command, struct gm_status *game){
     return 0;
   }
 }
+
+/*Converts move from form "<piece><file><rank>"
+ *or "Pe4" to the form "e4e5" or "<sfile><srank><dfile><drank>"
+ *then executes the move function.
+ */
 
 int processmv(struct gm_status game, char piece, int *src, int *dst){
   printf("Piece: %c\n", piece);
