@@ -1,3 +1,4 @@
-MAKEFILES=./src/interface/Makefile ./src/engine/Makefile
+MAKEFILES=./src/ai/Makefile ./src/engine/Makefile ./src/cli/Makefile
 
-make 
+all:
+	make MAKEFILES;
