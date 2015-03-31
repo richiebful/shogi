@@ -36,7 +36,7 @@ int scorePiece(int *board[], int *loc, char piece){
 	int i, j;
 	char pc;
 	FOREACH(board, i){
-		
+		 if ()
 	}
 }
 
