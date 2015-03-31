@@ -30,7 +30,7 @@ struct time_s{
   time_t last_t;
   int advance_t; //time added per move, if at all
 };
-  
+
 struct gm_status{
   char board[9][9];
   char *history;
@@ -43,7 +43,7 @@ struct gm_status{
 
 int legaldest(struct gm_status *game, int player, int rank, int file);
 void mkbitboard(struct gm_status *game);
-int legalmove(struct gm_status *game, int player, int *src, int *dst, int check_f);
+int legalmove(struct gm_status *game, int player, int *src, int *dst, int from_check_f);
 int inrange(int rank, int file);
 int legalsrc(struct gm_status *game, int player, int rank, int file);
 int legaldrop(struct gm_status *game, int player, char piece, int *dst);
@@ -60,4 +60,3 @@ void updateClock(struct gm_status *game);
 void updateHist(struct gm_status *game, int *src, int *dst);
 int ischeck(struct gm_status game, int player);
 int ismate(struct gm_status game, int player);
-

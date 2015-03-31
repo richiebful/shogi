@@ -34,12 +34,9 @@ int scoreNode(struct tree_node *node,
 
 int scorePiece(int *board[], int *loc, char piece){
 	int i, j;
-	char pc;
 	FOREACH(board, i){
-		 if ()
+		FOREACH(board[0], j){
+			if(legalmove())
+		}
 	}
-}
-
-int historyLength(){
-
 }
