@@ -1,12 +1,11 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.9.5)  26 JAN 2015 11:35
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.1.20)  14 APR 2015 22:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **OpenSourceDocumentation.tex
 (./OpenSourceDocumentation.tex
 LaTeX2e <2011/06/27>
-Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, lo
-aded.
+Babel <3.9h> and hyphenation patterns for 11 languages loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo
@@ -509,10 +508,10 @@ LaTeX Font Info:    Try loading font information for C70+gbsn on input line 25.
 
 
 (/usr/share/texmf/tex/latex/CJK/UTF8/c70gbsn.fd
-File: c70gkai.fd 2008/10/03 4.8.1
+File: c70gbsn.fd 2008/10/03 4.8.1
 )
 (/usr/share/texmf/tex/latex/CJK/UTF8/c70gbsn.fdx
-File: c70gbsn.fdx 2008/12/29 4.8.2
+File: c70gbsn.fdx 2012/05/07 4.8.3
 ) [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./OpenSourceDocumentation
@@ -558,71 +557,6 @@ File: img/knightMove.jpg Graphic file (type jpg)
  <use img/knightMove.jpg>
 Package pdftex.def Info: img/knightMove.jpg used on input line 64.
 (pdftex.def)             Requested size: 142.26378pt x 142.27771pt.
-Missing character: There is no Ä in font cmr12!
-Missing character: There is no ô in font cmr12!
-
-! Undefined control sequence.
-\CJK@XXX ...endcsname {`#2}{`#3}\CJK@ignorespaces 
-                                                  \fi 
-l.73 ...have to be promoted if the player doesn‚Äô
-                                                  t want to. Promoted pieces...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-Missing character: There is no Ä in font cmr12!
-Missing character: There is no ô in font cmr12!
-! Undefined control sequence.
-\CJK@XXX ...endcsname {`#2}{`#3}\CJK@ignorespaces 
-                                                  \fi 
-l.76 ... one square in the directions it couldn‚Äô
-                                                  t prior to the promotion (...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-Missing character: There is no Ä in font cmr12!
-Missing character: There is no ô in font cmr12!
-! Undefined control sequence.
-\CJK@XXX ...endcsname {`#2}{`#3}\CJK@ignorespaces 
-                                                  \fi 
-l.79 ...sing piece, just like in chess. A piece‚Äô
-                                                  s promotion is lost upon b...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-Missing character: There is no Ä in font cmr12!
-Missing character: There is no ú in font cmr12!
-! Undefined control sequence.
-\CJK@XXX ...endcsname {`#2}{`#3}\CJK@ignorespaces 
-                                                  \fi 
-l.81 ...n, shogi adds another unique mechanic: ‚Äú
-                                                  drops.‚Äù A drop is when t...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-Missing character: There is no Ä in font cmr12!
-Missing character: There is no ù in font cmr12!
-! Undefined control sequence.
-\CJK@XXX ...endcsname {`#2}{`#3}\CJK@ignorespaces 
-                                                  \fi 
-l.81 ...adds another unique mechanic: ‚Äúdrops.‚Äù
-                                                   A drop is when the player...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
 
 [3 <./img/knightMove.jpg>]
 <img/shogiBoard.png, id=24, 350.5095pt x 377.61075pt>
@@ -631,25 +565,25 @@ File: img/shogiBoard.png Graphic file (type png)
 Package pdftex.def Info: img/shogiBoard.png used on input line 86.
 (pdftex.def)             Requested size: 284.52756pt x 306.5314pt.
 
-[4 <./img/shogiBoard.png>] [5] [6] (./OpenSourceDocumentation.aux) ) 
+[4 <./img/shogiBoard.png>] [5] [6] [7] (./OpenSourceDocumentation.aux) ) 
 Here is how much of TeX's memory you used:
- 2936 strings out of 495059
- 36295 string characters out of 3182031
- 93274 words of memory out of 3000000
- 6031 multiletter control sequences out of 15000+200000
- 10632 words of font info for 38 fonts, out of 3000000 for 9000
- 14 hyphenation exceptions out of 8191
- 37i,4n,23p,804b,297s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texlive/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/arphi
-c/gbsnu/gbsnu5c.pfb></usr/share/texmf/fonts/type1/arphic/gbsnu/gbsnu68.pfb>
-Output written on OpenSourceDocumentation.pdf (7 pages, 675924 bytes).
+ 2935 strings out of 494756
+ 36291 string characters out of 6175150
+ 94638 words of memory out of 5000000
+ 6189 multiletter control sequences out of 15000+600000
+ 10632 words of font info for 38 fonts, out of 8000000 for 9000
+ 80 hyphenation exceptions out of 8191
+ 37i,4n,23p,794b,297s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/a
+rphic/gbsnu/gbsnu5c.pfb></usr/share/texmf/fonts/type1/arphic/gbsnu/gbsnu68.pfb>
+Output written on OpenSourceDocumentation.pdf (8 pages, 678394 bytes).
 PDF statistics:
- 58 PDF objects out of 1000 (max. 8388607)
- 37 compressed objects within 1 object stream
+ 61 PDF objects out of 1000 (max. 8388607)
+ 39 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  21 words of extra memory for PDF output out of 10000 (max. 10000000)
 
