@@ -32,39 +32,32 @@ int legalmove(struct gm_status *game, int player,
   char piece = board[srank][sfile];
   
   if (legaldest(game, player, dst[0], dst[1]) == false){
-    printf("Legaldest");
     return false;
   }
   if (legalsrc(game, player, src[0], src[1]) == false){
-    printf("illegalsrc");
     return false;
   }
   else if (drank == srank && dfile == sfile){
-    printf("samesrc/dst");
     return false;
   }
   else if (from_check_f == false && 
 	   ischeck(test_game, player)){
     /*checks if the player puts himself into check by making
       his move, if so, it is illegal.*/
-    printf("move puts player in check");
     return false;
   }
   else if (piece == 'P' || piece == 'p'){
     //pawns can only move forward one relative rank
     if (srank + rel_dir == drank &&
 	sfile == dfile){
-      printf("it works");
       return true;
     }
     else{
-      printf("bad pawn");
       return false;
     }
   }
   else if (piece == 'R' || piece == 'r'||
 	   piece == 'S' || piece == 's'){ //checks legality of rook move
-    printf("enters rook\n");
     int i, rook_lf = true;
     if (!((drank != srank && dfile == sfile)||
 	  (drank == srank && dfile != sfile))){
@@ -102,10 +95,11 @@ int legalmove(struct gm_status *game, int player,
       }
     }
     
-    if (piece == 'R' || piece == 'r'){
+    if (piece == 'R' || piece == 'r' || rook_lf == true){
       return rook_lf;
     }
-    else{ //if it is upgraded rook
+    else if (rooklf == false && (piece == 's' || piece == 'S')){
+      //if it is upgraded rook and rooklf is false
       int i;
       int possible[4][2] = {{srank + 1, sfile},
 			    {srank - 1, sfile},
@@ -125,7 +119,6 @@ int legalmove(struct gm_status *game, int player,
     bool bishop_fatal_f = false;
     slope = (drank-srank)/(dfile-sfile);
     if (slope != 1 && slope != -1){
-      printf("bad bishop1");
       return false;
     }
     else if (dfile < sfile){
@@ -146,7 +139,7 @@ int legalmove(struct gm_status *game, int player,
       }
     }
     if (bishop_fatal_f == true){
-      printf("bad bishop2\n");
+      return false;
     }
     else if (piece == 'B' || piece == 'b'){
       //returns opposite of fatal_f
