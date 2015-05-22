@@ -1,1 +1,1 @@
-#define INPUT_TEST 1
+#define MOVE_TEST 1

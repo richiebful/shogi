@@ -8,12 +8,12 @@
 void mkmove(struct gm_status *game, int player, int *src, int *dst){
   //a 'd-' prefix means destination; a 's-' prefix means source
   int drank = dst[0];
-  int dfile = 8 - dst[1];
+  int dfile = dst[1];
   int srank = src[0];
-  int sfile = 8 - src[1];
-  int spiece = game->board[srank][sfile];
+  int sfile = src[1];
+  char spiece = game->board[srank][sfile];
   /*dpiece is the board cell being attacked*/ 
-  int dpiece = game->board[drank][dfile];
+  char dpiece = game->board[drank][dfile];
   game->board[srank][sfile] = ' ';
   game->board[drank][dfile] = spiece;
   
@@ -37,9 +37,9 @@ void mkmove(struct gm_status *game, int player, int *src, int *dst){
     }
   }
 
-  updateHist(game, src, dst);
+  //updateHist(game, src, dst);
  
-  updateClock(game);
+  //updateClock(game);
 }
 
 void updateHist(struct gm_status *game, int *src, int *dst){
@@ -139,9 +139,7 @@ int undo(struct gm_status *game){
 int main(){
   struct gm_status game;
   init_game(&game);
-  int moves[3][2][2] = {{{2,2},{3,2}},
-			{{1,1},{4,4}},
-			{{5,5},{6,6}}};
+  int moves[1][2][2] = {{{1,7},{2,6}}};
   int drops[3][2][2];
   int src[2], dst[2];
   int i;
@@ -149,39 +147,14 @@ int main(){
     memcpy(src, moves[i][0], sizeof(src));
     memcpy(dst, moves[i][1], sizeof(dst));
     printf("%i,%i to %i, %i\n", src[0], src[1], dst[0], dst[1]);
-    if (legalmove(&game, src, dst) == true){
-      mkmove(&game, src, dst);
+    if (legalmove(&game, 2, src, dst, false) == true){
+      mkmove(&game, 1, src, dst);
+    }
+    else{
+      printf("False\n");
     }
     dispBoard(&game);
   }
   return 0;  
 }
-
-void init_game(struct gm_status *game){
-  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
-				 {' ','R',' ',' ',' ',' ',' ','B',' '},
-				 {'P','P','P','P','P','P','P','P','P'},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {'p','p','p','p','p','p','p','p','p'},
-				 {' ','b',' ',' ',' ',' ',' ','r',' '},
-				 {'l','n','g','u','k','u','g','n','l'}};
-  memcpy(game->board,init_board,sizeof(init_board));
-
-  game->player = 1;
-
-  /*the equivalent of char game->history[32][4]*/
-  game->history = calloc(sizeof(char)*4, 32);
-  game->check_f = 0;
-  game->cmate_f = 0;
-
-  int i;
-  FORRANGE(i,0,38,1){
-    game->graveyard.challenging[i] = '\0';
-    game->graveyard.reigning[i] = '\0';
-  }
-}
 #endif
-
-						  

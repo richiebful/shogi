@@ -8,9 +8,9 @@ int legalmove(struct gm_status *game, int player,
 	      int *src, int *dst, int from_check_f){
   /*Convert coordinates to array dimensions*/
   int srank = src[0];
-  int sfile = 8 - src[1];
+  int sfile = src[1];
   int drank = dst[0];
-  int dfile = 8 - dst[1];
+  int dfile = dst[1];
 
   /*Get relative coordinates, which are useful for directional pieces*/
   int rel_dir = (player == REIGNING) ? 1 : -1;
@@ -30,7 +30,7 @@ int legalmove(struct gm_status *game, int player,
   }
   
   char piece = board[srank][sfile];
-  
+  char sPiece = board[drank][dfile];
   if (legaldest(game, player, dst[0], dst[1]) == false){
     return false;
   }
@@ -98,7 +98,7 @@ int legalmove(struct gm_status *game, int player,
     if (piece == 'R' || piece == 'r' || rook_lf == true){
       return rook_lf;
     }
-    else if (rooklf == false && (piece == 's' || piece == 'S')){
+    else if (rook_lf == false && (piece == 's' || piece == 'S')){
       //if it is upgraded rook and rooklf is false
       int i;
       int possible[4][2] = {{srank + 1, sfile},
@@ -127,9 +127,7 @@ int legalmove(struct gm_status *game, int player,
     else{
       direction = 1;
     }
-    printf("((%i + %i))", srank, sfile);
     int i, yInt = srank - slope*sfile;
-    printf("%f*x + %i", slope, yInt);
     for (i = sfile+direction; i != dfile; i += direction){
       //checks whether the move is blocked by a piece
       printf("%i, %i", i, (int)slope*i +yInt);
@@ -254,9 +252,7 @@ int inrange(int rank, int file){
  *a specific move's legality
  */ 
 int legaldest(struct gm_status *game, int player, int rank, int file){
-  file = 8 - file;
   char dpiece = game->board[rank][file];
-  printf("%c\t", dpiece);
   if (inrange(rank, file) == false){
     return false;
   }
@@ -284,7 +280,6 @@ int legaldest(struct gm_status *game, int player, int rank, int file){
  */
 
 int legalsrc(struct gm_status *game, int player, int rank, int file){
-  file = 8 - file;
   char spiece =  game->board[rank][file];
 
   if (inrange(rank, file) == false){
@@ -353,39 +348,9 @@ int legaldrop(struct gm_status *game, int player, char piece, int *dst){
 }
 
 #ifdef LEGAL_TEST
-void init_game(struct gm_status *game){
-  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
-				 {' ','R',' ',' ',' ',' ',' ','B',' '},
-				 {'P','P','P','P','P','P','P','P','P'},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {'p','p','p','p','p','p','p','p','p'},
-				 {' ','b',' ',' ',' ',' ',' ','r',' '},
-				 {'l','n','g','u','k','u','g','n','l'}};
-  memcpy(game->board,init_board,sizeof(init_board));
-
-  game->player = 1;
-
-  /*the equivalent of char game->history[150][4]*/
-  game->history = calloc(sizeof(char)*4, 32);
-
-  int i;
-  FORRANGE(i,0,38,1){
-    game->graveyard.challenging[i] = '\0';
-    game->graveyard.reigning[i] = '\0';
-  }
-  //set each player's clocks to 60:00
-  game->clock.player_t[0][0] = game->clock.player_t[1][0] = 60;
-  game->clock.player_t[0][1] = game->clock.player_t[1][1] = 0;
-  game->clock.advance_t = 15; //15s added per move
-}
-
-
 int main(void){
   struct gm_status game;
   init_game(&game);
-  bool fatal_f = 0;
   int legal_f = 0, i;
   //of form {{{srank,sfile},{drank,dfile}},...} 
   int trueCases[10][2][2]; 
@@ -397,7 +362,7 @@ int main(void){
     drank = trueCases[i][1][0];
     dfile = trueCases[i][1][1];
     legal_f = legalmove(&game, 1, trueCases[i][0], trueCases[i][1]);
-    printf("%i,%i to %i,%i returns %i", srank, sfile, drank, dfile, legal_f);
+    printf("%i,%i to %i,%i -> %i", srank, sfile, drank, dfile, legal_f);
   }
   FOREACH(falseCases, i){
     srank = falseCases[i][0][0];
@@ -407,7 +372,6 @@ int main(void){
     legal_f = legalmove(&game,1,  falseCases[i][0], falseCases[i][1]);
     printf("%i,%i to %i,%i returns %i\n", srank, sfile, drank, dfile, legal_f);
   }
-  printf("%i", legal_f);
   return 0;  
 }
 #endif

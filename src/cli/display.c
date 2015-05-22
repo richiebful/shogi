@@ -8,6 +8,9 @@ void dispBoard(struct gm_status *game){
   char board[9][9];
   memcpy(board, game->board, sizeof(board));
   int i, j;
+
+  printf("\n");
+
   for (i = 0; i < 9; i++){
     for (j = 0; j < 9; j++){
       char piece = board[i][j];
