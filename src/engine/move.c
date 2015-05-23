@@ -100,13 +100,13 @@ void mkdrop(struct gm_status *game, int player, char piece, int *dst){
 
 void ctocoords(int *converted, char *to_convert){
   //input is of form 7e, (file, rank)
-  //output is of form (8,6), (rank, file)
+  //output is of form (4,), (rank, file)
   char crank = to_convert[1];
   char cfile = to_convert[0];
   int irank; 
   int ifile;
   irank = crank - 'a';
-  ifile = cfile - '1';
+  ifile = 8 - (cfile - '1');
   converted[0] = irank;
   converted[1] = ifile;
 }

@@ -41,7 +41,7 @@ int legalmove(struct gm_status *game, int player,
     return false;
   }
   else if (from_check_f == false && 
-	   ischeck(test_game, player)){
+	   ischeck(&test_game, player)){
     /*checks if the player puts himself into check by making
       his move, if so, it is illegal.*/
     return false;

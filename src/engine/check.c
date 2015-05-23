@@ -4,11 +4,11 @@
 /**Tests whether a player is currently in check
  *
  */
-int ischeck(struct gm_status game, int player){
+int ischeck(struct gm_status *game, int player){
   int i, j;
   //board = game->board
   char board[9][9];
-  memcpy(board, game.board, sizeof(board));
+  memcpy(board, game->board, sizeof(board));
 
   int otherPlayer = (player) % 2 + 1;
   //coords stored in standard shogi form exc. (0-8);
@@ -39,7 +39,7 @@ int ischeck(struct gm_status game, int player){
     FORRANGE(j, 0, 9, 1){
       src[0] = i;
       src[1] = 8 - j;
-      if (legalmove(&game, otherPlayer, src, dst,
+      if (legalmove(game, otherPlayer, src, dst,
 		    true)==true){
 	exit_f = true;
 	break;
@@ -50,9 +50,9 @@ int ischeck(struct gm_status game, int player){
   return exit_f;
 }
 
-int ismate(struct gm_status game, int player){
+int ismate(struct gm_status *game, int player){
   int board[9][9];
-  memcpy(&board, &game.board, sizeof(board));
+  memcpy(&board, &game->board, sizeof(board));
 
   struct gm_status test_game;
   memcpy(&test_game, &game, sizeof(test_game));
@@ -76,7 +76,7 @@ int ismate(struct gm_status game, int player){
 	  dst[0] = k; dst[1] = 8 - l;
 	  if (legalmove(&test_game, player, src, dst, 1) == true){
 	    mkmove(&test_game, player, src, dst);
-	    if (!ischeck(test_game, player)){
+	    if (!ischeck(&test_game, player)){
 	      mate_f = false;
 	      return mate_f;
 	    }

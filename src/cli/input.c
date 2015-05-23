@@ -7,7 +7,7 @@
  *if return -1, input kills the program.
  */
  
-int processcmd(char *command, struct gm_status *game){
+int processcmd(struct gm_status *game, char *command){
   //printf("%s", command);
   if (strncmp(command, "show", 4) == 0){
     dispBoard(game);
@@ -63,7 +63,7 @@ int processcmd(char *command, struct gm_status *game){
     char dst_c[2], piece = command[0];
     snprintf(dst_c, 3, "%s", command+1);
     ctocoords(dst, dst_c);
-    int processed_f = processmv(*game, piece, src, dst);
+    int processed_f = processmv(game, piece, src, dst);
     if(legalmove(game, game->player, src, dst, 0)==true &&
        processed_f == true){
       mkmove(game, game->player, src, dst);
@@ -101,12 +101,12 @@ int processcmd(char *command, struct gm_status *game){
  *then executes the move function.
  */
 
-int processmv(struct gm_status game, char piece, int *src, int *dst){
+int processmv(struct gm_status *game, char piece, int *src, int *dst){
   printf("Piece: %c\n", piece);
-  if (game.player == CHALLENGING){
+  if (game->player == CHALLENGING){
     piece = tolower(piece);
   }
-  else if(game.player == REIGNING){
+  else if(game->player == REIGNING){
     piece = toupper(piece);
   }
 
@@ -122,13 +122,11 @@ int processmv(struct gm_status game, char piece, int *src, int *dst){
   char thisPiece;
   for (src[0] = 0; src[0] < 9; src[0]++){
     for (src[1] = 0; src[1] < 9; src[1]++){
-      thisPiece = game.board[src[0]][src[1]];
-      printf("SRC={%i, %i} DST={%i, %i}\n",
-	     src[0], src[1], dst[0], dst[1]);
+      thisPiece = game->board[src[0]][src[1]];
       /*tests whether a the selected piece on 
 	the board can make the move or not*/
       if (thisPiece ==  piece && 
-	  legalmove(&game, game.player, src, dst, 0)){
+	  legalmove(game, game->player, src, dst, 0)){
 	srank = src[0];
 	sfile = src[1];
 	n++;
@@ -154,50 +152,20 @@ int processmv(struct gm_status game, char piece, int *src, int *dst){
 int main(){
   struct gm_status game;
   init_game(&game);
-  char pieces[5] = "PBUNG";
-  int *src = malloc(2*sizeof(int));
-  int dsts[5][2] = {{3,0},{2,2},{1,4},{2,2},{2,1}};
+  char command[5][4] = {"B7g","P7f","B7g","G",""};
   int i, mv_f;
-  FOREACH(pieces, i){
-    mv_f = processmv(game, pieces[i], src, dsts[i]);
-    if (mv_f == true){
-      printf("%i,%i\n", src[0], src[1]);
-      mv_f = false;
+  FOREACH(command, i){
+    mv_f = processcmd(&game, command[i]);
+    if (mv_f == 1){
+      printf("Success\n");
+      mv_f = 0;
     }
     else{
       printf("Failure\n");
     }
+    dispBoard(&game);
   }
   return 0;
-}
-
-void init_game(struct gm_status *game){
-  const char init_board[9][9] = {"LNGUKUGNL",
-				 " R     B ",
-				 "PPPPPPPPP",
-				 "         ",
-				 "         ",
-				 "         ",
-				 "ppppppppp",
-				 " b     r ",
-				 "lngukugnl"};
-
-  memcpy(game->board,init_board,sizeof(init_board));
-
-  game->player = 2;
-
-  /*the equivalent of char game->history[150][5]*/
-  game->history = malloc(sizeof(char)*5*150);
-
-  int i;
-  FORRANGE(i,0,38,1){
-    game->graveyard.challenging[i] = '\0';
-    game->graveyard.reigning[i] = '\0';
-  }
-  //set each player's clocks to 60:00
-  game->clock.player_t[0][0] = game->clock.player_t[1][0] = 60;
-  game->clock.player_t[0][1] = game->clock.player_t[1][1] = 0;
-  game->clock.advance_t = 15; //15s added per move
 }
 
 #endif

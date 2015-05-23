@@ -2,7 +2,7 @@
 #include <shogi.h>
 
 void init_game(struct gm_status *game){
-  const char init_board[9][9] = {"LNGAKAGNL",
+  const char init_board[9][9] = {"LNGUKUGNL",
 				 " R     B ",
 				 "PPPPPPPPP",
 				 "         ",
@@ -10,7 +10,7 @@ void init_game(struct gm_status *game){
 				 "         ",
 				 "ppppppppp",
 				 " b     r ",
-				 "lngakagnl"};
+				 "lngukugnl"};
   memcpy(game->board,init_board,sizeof(init_board));
 
   game->player = 1;

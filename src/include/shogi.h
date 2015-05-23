@@ -8,7 +8,8 @@
 #include <ctype.h>
 #include <time.h>
 #include <math.h>
-#include <test.h>
+
+#define INPUT_TEST 1
 
 #define CHALLENGING 1
 #define REIGNING 2
@@ -51,12 +52,12 @@ void init_game(struct gm_status *game);
 void mkmove(struct gm_status *game, int player, int *src, int *dst);
 void mkdrop(struct gm_status *game, int player, char piece, int *dst);
 void ctocoords(int *converted, char *to_convert);
-int processcmd(char *command, struct gm_status *game);
-int processmv(struct gm_status game, char piece, int *src, int *dst);
+int processcmd(struct gm_status *game, char *command);
+int processmv(struct gm_status *game, char piece, int *src, int *dst);
 void dispBoard(struct gm_status *game);
 void dispClock(struct gm_status *game);
 void dispHelp();
 void updateClock(struct gm_status *game);
 void updateHist(struct gm_status *game, int *src, int *dst);
-int ischeck(struct gm_status game, int player);
-int ismate(struct gm_status game, int player);
+int ischeck(struct gm_status *game, int player);
+int ismate(struct gm_status *game, int player);
