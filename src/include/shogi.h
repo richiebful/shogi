@@ -9,8 +9,6 @@
 #include <time.h>
 #include <math.h>
 
-#define INPUT_TEST 1
-
 #define CHALLENGING 1
 #define REIGNING 2
 #define P1 1
@@ -39,7 +37,7 @@ struct gm_status{
   int player;
   struct droppable graveyard;
   bool check_f;
-  bool cmate_f;
+  bool mate_f;
 };
 
 int legaldest(struct gm_status *game, int player, int rank, int file);

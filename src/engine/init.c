@@ -27,4 +27,7 @@ void init_game(struct gm_status *game){
   game->clock.player_t[0][0] = game->clock.player_t[1][0] = 60;
   game->clock.player_t[0][1] = game->clock.player_t[1][1] = 0;
   game->clock.advance_t = 15; //15s added per move
+
+  game->check_f = false;
+  game->mate_f = false;
 }

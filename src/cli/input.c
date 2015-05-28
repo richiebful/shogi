@@ -19,11 +19,11 @@ int processcmd(struct gm_status *game, char *command){
   }
   else if (strncmp(command, "go", 2) == 0){
     //have AI make the current move
-    printf("AI is not complete yet");
+    printf("Sorry, AI is not complete yet\n");
     return 0;
   }
   else if (strncmp(command, "undo", 4) == 0){
-    printf("Undo has not been constructed yet");
+    printf("Undo has not been constructed yet\n");
     return 1;
   }
   else if (strncmp(command, "exit", 4) == 0){
