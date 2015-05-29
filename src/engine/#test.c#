@@ -1,0 +1,14 @@
+#include <shogi.h>
+
+int eprintf(char *format, ...){
+  #ifdef ERROR_F
+  va_list data;
+  va_start(data, 
+  printf(format, data);
+  #endif
+  
+}
+
+int main(){
+  eprintf
+}
