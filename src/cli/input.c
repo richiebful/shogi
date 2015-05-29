@@ -102,7 +102,11 @@ int processcmd(struct gm_status *game, char *command){
  */
 
 int processmv(struct gm_status *game, char piece, int *src, int *dst){
+
+  #ifdef ERROR_F
   printf("Piece: %c\n", piece);
+  #endif
+
   if (game->player == CHALLENGING){
     piece = tolower(piece);
   }
@@ -115,7 +119,10 @@ int processmv(struct gm_status *game, char piece, int *src, int *dst){
   /*Possible optimisation by early exit if 
    *legaldest() returns false*/
 
+  #ifdef ERROR_F
   printf("d-pos: (%i,%i)", drank, dfile);
+  #endif
+
   /*n is count of possible pieces executing the move*/
   int n = 0;
   int srank, sfile;//outputted in dst

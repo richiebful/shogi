@@ -9,6 +9,10 @@
 #include <time.h>
 #include <math.h>
 
+/*if testing, uncomment this
+ *#define ERROR_F
+ */
+
 #define CHALLENGING 1
 #define REIGNING 2
 #define P1 1

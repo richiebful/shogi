@@ -26,14 +26,14 @@ void dispBoard(struct gm_status *game){
 	printf(" \x1b[31m%c", piece-32);
       }
       if (j == 8){ //prints the rank no.
-	printf(" \x1b[37m%i", i+1);
+	printf(" \x1b[37m%c", i+97);
       }
     }
     printf("\n");
   }
   printf("\x1b[37m");
-  for(i = 8+97; i > 96; i--){
-    printf(" %c", i);
+  for(i = 9; i > 0; i--){
+    printf(" %i", i);
   }
   printf("\n\n");
   char p1Yard[38];
