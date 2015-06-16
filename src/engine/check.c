@@ -1,28 +1,17 @@
 /**\file*/
 #include <shogi.h>
 
-/**Tests whether a player is currently in check
- *
- */
+
 int ischeck(struct gm_status *game, int player){
   int i, j;
-  //board = game->board
   char board[9][9];
   memcpy(board, game->board, sizeof(board));
 
   int otherPlayer = (player) % 2 + 1;
-  //coords stored in standard shogi form exc. (0-8);
   int dst[2];
 
-  int king;
-  if (player == P1){
-    king = 'k';
-  }
-  if (player == P2){
-    king = 'K';
-  }
+  int king = 'k' - 32*(player-1);
   
-  //can optimize later by starting from player's side
   FORRANGE(i, 0, 9, 1){
     FORRANGE(j, 0, 9, 1){
       if (board[i][j] == king){
@@ -39,10 +28,8 @@ int ischeck(struct gm_status *game, int player){
     FORRANGE(j, 0, 9, 1){
       src[0] = i;
       src[1] = 8 - j;
-      if (legalmove(game, otherPlayer, src, dst,
-		    true)==true){
-	exit_f = true;
-	break;
+      if (legalmove(game, player, src, dst, true)){
+	return true;
       }
     }
   }
@@ -51,9 +38,6 @@ int ischeck(struct gm_status *game, int player){
 }
 
 int ismate(struct gm_status *game, int player){
-  int board[9][9];
-  memcpy(&board, &game->board, sizeof(board));
-
   struct gm_status test_game;
   memcpy(&test_game, &game, sizeof(test_game));
 
@@ -67,29 +51,24 @@ int ismate(struct gm_status *game, int player){
   int src[2], dst[2];
   
   /*Assume checkmate until it is disproven*/
-  bool mate_f = true;
   FORRANGE(i, 0, 9, 1){
     FORRANGE(j, 0, 9, 1){
       FORRANGE(k, 0, 9, 1){
 	FORRANGE(l, 0, 9, 1){
-	  src[0] = i; src[1] = 8 - j;
-	  dst[0] = k; dst[1] = 8 - l;
+	  src[0] = i; src[1] = j;
+	  dst[0] = k; dst[1] = l;
 	  if (legalmove(&test_game, player, src, dst, 1) == true){
 	    mkmove(&test_game, player, src, dst);
-	    if (!ischeck(&test_game, player)){
-	      mate_f = false;
-	      return mate_f;
+	    if (ischeck(&test_game, player) == false){
+	      return false;
 	    }
 	    memcpy(&test_game, &game, sizeof(test_game));
-	  }
-	  else{
-	    continue;
 	  }
 	}
       }
     }
   }
-  return mate_f;
+  return true;
 }
 
 #ifdef CHECK_TEST 
