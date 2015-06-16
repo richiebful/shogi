@@ -12,14 +12,11 @@ void mkmove(struct gm_status *game, int player, int *src, int *dst){
   int srank = src[0];
   int sfile = src[1];
   char spiece = game->board[srank][sfile];
-  /*dpiece is the board cell being attacked*/ 
   char dpiece = game->board[drank][dfile];
   game->board[srank][sfile] = ' ';
   game->board[drank][dfile] = spiece;
   
   int i;
-  /*captures a piece and places it into the 
-    capturing player's graveyard*/
   if (dpiece != ' '){
     if (player == P1){
       for (i = 0; i < 38; i++){
@@ -36,16 +33,14 @@ void mkmove(struct gm_status *game, int player, int *src, int *dst){
       }
     }
   }
-
   //updateHist(game, src, dst);
- 
   //updateClock(game);
 }
 
 void updateHist(struct gm_status *game, int *src, int *dst){
   /*This section adds move to the history*/
   char *history = game->history;
-  int step = 4;
+  const int step = 4;
   char *lastMove;
   int i = 0;
   while (*history != '\0' && i < sizeof(history)){

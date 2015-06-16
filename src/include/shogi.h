@@ -8,10 +8,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <math.h>
-
-/*if testing, uncomment this
- *#define ERROR_F
- */
+#include <vaargs.h>
 
 #define CHALLENGING 1
 #define REIGNING 2
