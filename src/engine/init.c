@@ -32,7 +32,7 @@ void init_game(struct gm_status *game){
   game->mate_f = false;
 }
 
-/*http://c-faq.com/varargs/handoff.html for more details on variadic error messages*/
+
 #ifdef ERROR_F
 int eprintf(char *format, ...){
   return true;
