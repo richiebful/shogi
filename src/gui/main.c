@@ -1349,6 +1349,10 @@ static void activate (GtkApplication *app,
   GtkWidget *grid;
   GtkWidget *button;
 
+  struct gm_stuct game;
+
+  init_game(*game);
+
   /* create a new window, and set its title */
   window = gtk_application_window_new (app);
   gtk_window_set_title (GTK_WINDOW (window), "Window");
@@ -1358,7 +1362,332 @@ static void activate (GtkApplication *app,
   grid = gtk_grid_new ();
 
   /* Pack the container in the window */
-  gtk_container_add (GTK_CONTAINER (window), 
+  gtk_container_add (GTK_CONTAINER (window));
+
+  button = gtk_button_new_with_label ("0");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle00), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
+
+  button = gtk_button_new_with_label ("0");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle01), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 0, 1, 1);
+
+  button = gtk_button_new_with_label ("0");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle02), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 2, 0, 1, 1);
+
+  button = gtk_button_new_with_label ("0");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle03), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 3, 0, 1, 1);
+
+  button = gtk_button_new_with_label ("0");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle04), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 0, 1, 1);
+
+  button = gtk_button_new_with_label ("0");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle05), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 0, 1, 1);
+
+  button = gtk_button_new_with_label ("0");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle06), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 6, 0, 1, 1);
+
+  button = gtk_button_new_with_label ("0");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle07), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 7, 0, 1, 1);
+
+  button = gtk_button_new_with_label ("0");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle08), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 8, 0, 1, 1);
+
+  button = gtk_button_new_with_label ("1");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle10), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 1, 1);
+
+  button = gtk_button_new_with_label ("1");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle11), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 1, 1, 1);
+
+  button = gtk_button_new_with_label ("1");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle12), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 2, 1, 1, 1);
+
+  button = gtk_button_new_with_label ("1");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle13), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 3, 1, 1, 1);
+
+  button = gtk_button_new_with_label ("1");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle14), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 1, 1, 1);
+
+  button = gtk_button_new_with_label ("1");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle15), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 1, 1, 1);
+
+  button = gtk_button_new_with_label ("1");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle16), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 6, 1, 1, 1);
+
+  button = gtk_button_new_with_label ("1");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle17), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 7, 1, 1, 1);
+
+  button = gtk_button_new_with_label ("1");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle18), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 8, 1, 1, 1);
+
+  button = gtk_button_new_with_label ("2");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle20), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 2, 1, 1);
+
+  button = gtk_button_new_with_label ("2");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle21), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 2, 1, 1);
+
+  button = gtk_button_new_with_label ("2");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle22), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 2, 2, 1, 1);
+
+  button = gtk_button_new_with_label ("2");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle23), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 3, 2, 1, 1);
+
+  button = gtk_button_new_with_label ("2");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle24), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 2, 1, 1);
+
+  button = gtk_button_new_with_label ("2");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle25), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 2, 1, 1);
+
+  button = gtk_button_new_with_label ("2");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle26), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 6, 2, 1, 1);
+
+  button = gtk_button_new_with_label ("2");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle27), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 7, 2, 1, 1);
+
+  button = gtk_button_new_with_label ("2");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle28), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 8, 2, 1, 1);
+
+  button = gtk_button_new_with_label ("3");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle30), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 3, 1, 1);
+
+  button = gtk_button_new_with_label ("3");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle31), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 3, 1, 1);
+
+  button = gtk_button_new_with_label ("3");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle32), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 2, 3, 1, 1);
+
+  button = gtk_button_new_with_label ("3");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle33), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 3, 3, 1, 1);
+
+  button = gtk_button_new_with_label ("3");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle34), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 3, 1, 1);
+
+  button = gtk_button_new_with_label ("3");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle35), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 3, 1, 1);
+
+  button = gtk_button_new_with_label ("3");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle36), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 6, 3, 1, 1);
+ 
+  button = gtk_button_new_with_label ("3");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle37), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 7, 3, 1, 1);
+ 
+  button = gtk_button_new_with_label ("3");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle38), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 8, 3, 1, 1);
+ 
+  button = gtk_button_new_with_label ("4");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle40), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 4, 1, 1);
+ 
+  button = gtk_button_new_with_label ("4");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle41), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 4, 1, 1);
+ 
+  button = gtk_button_new_with_label ("4");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle42), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 2, 4, 1, 1);
+ 
+  button = gtk_button_new_with_label ("4");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle43), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 3, 4, 1, 1);
+ 
+  button = gtk_button_new_with_label ("4");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle44), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 4, 1, 1);
+ 
+  button = gtk_button_new_with_label ("4");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle45), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 4, 1, 1);
+ 
+  button = gtk_button_new_with_label ("4");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle46), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 6, 4, 1, 1);
+ 
+  button = gtk_button_new_with_label ("4");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle47), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 7, 4, 1, 1);
+ 
+  button = gtk_button_new_with_label ("4");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle48), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 8, 4, 1, 1);
+ 
+  button = gtk_button_new_with_label ("5");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle50), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 5, 1, 1);
+ 
+  button = gtk_button_new_with_label ("5");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle51), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 5, 1, 1);
+ 
+  button = gtk_button_new_with_label ("5");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle52), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 2, 5, 1, 1);
+ 
+  button = gtk_button_new_with_label ("5");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle53), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 3, 5, 1, 1);
+ 
+  button = gtk_button_new_with_label ("5");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle54), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 5, 1, 1);
+ 
+  button = gtk_button_new_with_label ("5");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle55), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 5, 1, 1);
+ 
+  button = gtk_button_new_with_label ("5");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle56), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 6, 5, 1, 1);
+ 
+  button = gtk_button_new_with_label ("5");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle57), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 7, 5, 1, 1);
+ 
+  button = gtk_button_new_with_label ("5");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle58), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 8, 5, 1, 1);
+ 
+  button = gtk_button_new_with_label ("6");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle60), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 6, 1, 1);
+ 
+  button = gtk_button_new_with_label ("6");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle61), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 6, 1, 1);
+ 
+  button = gtk_button_new_with_label ("6");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle62), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 2, 6, 1, 1);
+ 
+  button = gtk_button_new_with_label ("6");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle63), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 3, 6, 1, 1);
+ 
+  button = gtk_button_new_with_label ("6");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle64), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 6, 1, 1);
+ 
+  button = gtk_button_new_with_label ("6");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle65), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 6, 1, 1);
+ 
+  button = gtk_button_new_with_label ("6");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle66), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 6, 6, 1, 1);
+ 
+  button = gtk_button_new_with_label ("6");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle67), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 7, 6, 1, 1);
+ 
+  button = gtk_button_new_with_label ("6");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle68), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 8, 6, 1, 1);
+ 
+  button = gtk_button_new_with_label ("7");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle70), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 7, 1, 1);
+ 
+  button = gtk_button_new_with_label ("7");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle71), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 7, 1, 1);
+ 
+  button = gtk_button_new_with_label ("7");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle72), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 2, 7, 1, 1);
+ 
+  button = gtk_button_new_with_label ("7");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle73), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 3, 7, 1, 1);
+ 
+  button = gtk_button_new_with_label ("7");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle74), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 7, 1, 1);
+ 
+  button = gtk_button_new_with_label ("7");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle75), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 7, 1, 1);
+ 
+  button = gtk_button_new_with_label ("7");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle76), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 6, 7, 1, 1);
+ 
+  button = gtk_button_new_with_label ("7");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle77), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 7, 7, 1, 1);
+ 
+  button = gtk_button_new_with_label ("7");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle78), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 8, 7, 1, 1);
+ 
+  button = gtk_button_new_with_label ("8");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle80), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 8, 1, 1);
+ 
+  button = gtk_button_new_with_label ("8");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle81), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 8, 1, 1);
+ 
+  button = gtk_button_new_with_label ("8");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle82), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 2, 8, 1, 1);
+ 
+  button = gtk_button_new_with_label ("8");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle83), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 3, 8, 1, 1);
+ 
+  button = gtk_button_new_with_label ("8");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle84), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 8, 1, 1);
+ 
+  button = gtk_button_new_with_label ("8");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle85), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 8, 1, 1);
+
+  button = gtk_button_new_with_label ("8");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle86), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 6, 8, 1, 1);
+ 
+  button = gtk_button_new_with_label ("8");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle87), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 7, 8, 1, 1);
+ 
+  button = gtk_button_new_with_label ("8");
+  g_signal_connect (button, "clicked", G_CALLBACK (handle88), NULL);
+  gtk_grid_attach (GTK_GRID (grid), button, 8, 8, 1, 1);
+
 
   button = gtk_button_new_with_label ("Button 2");
   g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
@@ -1381,6 +1710,7 @@ static void activate (GtkApplication *app,
    * This call recursively calls gtk_widget_show() on all widgets
    * that are contained in the window, directly or indirectly.
    */
+  refreshBoard(game);
   gtk_widget_show_all (window);
 
 }

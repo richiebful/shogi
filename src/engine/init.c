@@ -20,8 +20,8 @@ void init_game(struct gm_status *game){
 
   int i;
   FORRANGE(i,0,38,1){
-    game->graveyard.challenging[i] = '\0';
-    game->graveyard.reigning[i] = '\0';
+    game->graveyard[0][i] = '\0';
+    game->graveyard[1][i] = '\0';
   }
   //set each player's clocks to 60:00
   game->clock.player_t[0][0] = game->clock.player_t[1][0] = 60;
@@ -41,8 +41,8 @@ int eprintf(char *format, ...){
 #else
 int eprintf(char *format, ...){
   va_list argp;
-  va_start(argp, fmt);
-  vfprintf(format, argp);
+  va_start(argp, format);
+  vprintf(format, argp);
   va_end(argp);
 }
 #endif
