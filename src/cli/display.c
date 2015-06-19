@@ -72,19 +72,31 @@ void dispClock(struct gm_status *game){
   struct time_s clock;
   memcpy(&clock, &game->clock, sizeof(clock));
 
-  //display clock
-  printf("Black: %i:%.2i\n",
-	 clock.player_t[1][0],
-	 clock.player_t[1][1]);
-  printf("White: %i:%.2i\n",
-	 clock.player_t[0][0],
-	 clock.player_t[0][1]);
+  int seconds = clock.player_t[0] % 60;
+  int minutes = clock.player_t[0] / 60;
+
+  printf("Player 1: %i:%.2i\n",  minutes, seconds);
+
+  seconds = clock.player_t[1] % 60;
+  minutes = clock.player_t[1] / 60;
+  
+  printf("Player 2: %i:%.2i\n\n", minutes, seconds);
+	 
 }
 
-void updateClock(struct gm_status *game){
-  ;
+void dispHistory(struct gm_status *game){
+  struct hist_s *this_move = game->history;
+  char *moves = malloc(5*sizeof(char)*game->history->num);
+  int i = 5 * game->history->num - 5, j;
+  while (this_move->prev_move != NULL){
+    snprintf(moves+i, 5, "%s", this_move->move);
+    this_move = this_move->prev_move;
+    i -= 5;
+  }
+  for (i = 1, j=0; i < game->history->num; i++, j+=5){
+    printf("%i. %s\n", i, moves+j);
+  }
 }
-
 
 #ifdef DISPLAY_TEST
 int main(void){
@@ -117,7 +129,6 @@ void init_game(struct gm_status *game){
   }
   //set each player's clocks to 60:00
   game->clock.player_t[0][0] = game->clock.player_t[1][0] = 60;
-  game->clock.player_t[0][1] = game->clock.player_t[1][1] = 0;
   game->clock.last_t = time(NULL);
   game->clock.advance_t = 15; //15s added per move
 }

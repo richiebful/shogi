@@ -5,8 +5,8 @@
  * Input coordinates are in absolute terms, and move must be proven legal first.
  */
 
-void mkmove(struct gm_status *game, int player, int *src, int *dst){
-  //a 'd-' prefix means destination; a 's-' prefix means source
+void mkmove(struct gm_status *game, int player,
+	    int *src, int *dst, bool update_f){
   int drank = dst[0];
   int dfile = dst[1];
   int srank = src[0];
@@ -20,46 +20,45 @@ void mkmove(struct gm_status *game, int player, int *src, int *dst){
   if (dpiece != ' '){
     if (player == P1){
       for (i = 0; i < 38; i++){
-	if (game->graveyard[player][i] != '\0'){
-	  game->graveyard[player][i] = dpiece + 32;
+	if (game->graveyard[player-1][i] != '\0'){
+	  game->graveyard[player-1][i] = tolower(dpiece);
 	}
       }
     }
     else{
       for (i = 0; i < 38; i++){
-	if (game->graveyard[player][i] != '\0'){
-	  game->graveyard[player][i] = spiece - 32;
+	if (game->graveyard[player-1][i] != '\0'){
+	  game->graveyard[player-1][i] = toupper(spiece);
 	}
       }
     }
   }
-  //updateHist(game, src, dst);
-  //updateClock(game);
+  if (update_f == true){
+    long s_lost = updateClock(game);
+    char move[4];
+    int i_src[2] = {srank, sfile};
+    int i_dst[2] = {drank, dfile};
+    char c_src[2];
+    char c_dst[2];
+    coordsToC(c_src, i_src);
+    coordsToC(c_dst, i_dst);;
+    snprintf(move, 6, "%s%s", c_src, c_dst);
+    updateHistory(game, move, s_lost);
+  }
 }
 
-void updateHist(struct gm_status *game, int *src, int *dst){
+void updateHistory(struct gm_status *game, char *move, int tm_lost){
   /*This section adds move to the history*/
-  char *history = game->history;
-  const int step = 4;
-  char *lastMove;
-  int i = 0;
-  while (*history != '\0' && i < sizeof(history)){
-    lastMove = history;
-    history += step;
-    i += step;
-  }
+  struct hist_s *prev_move = game->history;
+  struct hist_s *this_move = malloc(sizeof(struct hist_s));
+  snprintf(prev_move->move, 5, "%s", move);
 
-  if (i + 1 == sizeof(game->history)){
-    /*Expand history to double its present size*/
-    char *nHistory = calloc(2*sizeof(game->history), sizeof(char)*4);
-    memcpy(nHistory, game->history, sizeof(*game->history));
-    free(game->history);
-    /*Re-establishes current place in history*/
-    history = game->history + i;
-  }
+  this_move->prev_move = prev_move;
+  game->history = this_move;
   
-  /*Copy move being made to current place in history*/
-  snprintf(history, 4, "%i%i%i%i", src[0], src[1], dst[0], dst[1]);
+  this_move->tm_lost = tm_lost;
+
+  this_move->num = prev_move->num + 1;
 }
 
 /*Takes a piece from the player's graveyard, and drops it.
@@ -67,25 +66,33 @@ void updateHist(struct gm_status *game, int *src, int *dst){
   Assumes the move is legal
 */
 
-void mkdrop(struct gm_status *game, int player, char piece, int *dst){
+void mkdrop(struct gm_status *game, int player,
+	    char piece, int *dst, bool update_f){
   int i = 0;
   if (player == P1){
-    while (game->graveyard[player][i] != piece){
+    while (game->graveyard[player-1][i] != piece){
       i++;
     }
-    game->graveyard[player][i] = '\0'; //remove the piece from the graveyard
+    game->graveyard[player-1][i] = '\0'; //remove the piece from the graveyard
   }
   else{
-    while (game->graveyard[player][i] != piece){
+    while (game->graveyard[player-1][i] != piece){
       i++;
     }
-    game->graveyard[player][i] = '\0';//remove piece from graveyard
+    game->graveyard[player-1][i] = '\0';//remove piece from graveyard
   }
   
-  int drank = 8 - dst[0];
+  int drank = dst[0];
   int dfile = dst[1];
   game->board[drank][dfile] = piece;
-  //clockUpdate(game);
+
+  if (update_f){
+    long s_lost = updateClock(game);
+    char move[4];
+    //inaccurate
+    snprintf(move, 4, "%c*%i%i", piece, drank, dfile);
+    updateHistory(game, move, s_lost);
+  }
 }
 
 /**Takes coordinates from characters to absolute coordinates in /
@@ -98,14 +105,24 @@ void ctocoords(int *converted, char *to_convert){
   //output is of form (4,), (rank, file)
   char crank = to_convert[1];
   char cfile = to_convert[0];
-  int irank; 
-  int ifile;
+  int irank, ifile;
   irank = crank - 'a';
   ifile = 8 - (cfile - '1');
   converted[0] = irank;
   converted[1] = ifile;
 }
-#ifdef UNDO_NEEDED
+
+void coordsToC(char *converted, int *to_convert){
+  int irank = to_convert[0];
+  int ifile = to_convert[1];
+  int crank, cfile;
+  crank = irank + 'a';
+  cfile = (8 - ifile) + '1';
+  converted[0] = cfile;
+  converted[1] = crank;
+}
+
+#ifdef UNDO
 /*Undoes the last move 
  *Returns 1 if successful, 0 if failure
  */

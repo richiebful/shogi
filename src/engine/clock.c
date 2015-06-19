@@ -1,6 +1,6 @@
 #include <shogi.h>
 
-void clockUpdate(struct gm_status *game){
+long updateClock(struct gm_status *game){
   struct time_s clock;
   memcpy(&clock, &game->clock, sizeof(clock));
 
@@ -9,21 +9,27 @@ void clockUpdate(struct gm_status *game){
 
   //get difference between last time and now
   time_t curr_t = time(NULL);
-  time_t diff_t = difftime(curr_t, clock.last_t);
+  int diff_t = difftime(curr_t, clock.last_t);
   
   //subtracts time from current player
-  clock.player_t[p][1] -= (int) diff_t % 60;
-  clock.player_t[p][0] -= (int) diff_t / 60;
-  if (clock.player_t[p][1] < 0){
-    clock.player_t[p][0]--;
-    clock.player_t[p][1] = 60 + clock.player_t[p][1];
-  }
+  clock.player_t[p] -= (int) abs(diff_t);
 
   //set clock.last_t to curr_t
   clock.last_t = curr_t;
 
   //transfer clock back to its rightful position
   memcpy(&game->clock, &clock, sizeof(clock));
+
+  return diff_t;
+}
+
+void incrementClock(struct gm_status *game){
+  struct time_s clock;
+  memcpy(&clock, &game->clock, sizeof(clock));
+
+  int p = game->player - 1;
+
+  clock.player_t[p] += clock.advance_t;
 }
 
 #ifdef CLOCK_DEBUG

@@ -34,20 +34,26 @@ int processcmd(struct gm_status *game, char *command){
 	   game->player, ((game->player)%2)+1);
     return -1;
   }
-  else if (islower(command[0]) &&
-	   isdigit(command[1]) &&
-	   sizeof(command) == 4){
-    /*copies command[0:2] to src
-     *and copies command[2:4] to dst
-     *input is of format 5e4e*/
-    char src_c[2], dst_c[2];
+  else if (strncmp(command, "clock", 5) == 0){
+    dispClock(game);
+    return 0;
+  }
+  else if (strncmp(command, "history", 7) == 0){
+    dispHistory(game);
+    return 0;
+  }
+  else if (isdigit(command[0]) &&
+	   islower(command[1]) &&
+	   strlen(command) == 4){
+     /*input is of format 5e4e*/
+    char src_c[3], dst_c[3];
     int src[2], dst[2];
-    snprintf(src_c, 2, "%s", command);
-    snprintf(dst_c, 2, "%s", command+2);
+    snprintf(src_c, 3, "%s", command);
+    snprintf(dst_c, 3, "%s", command+2);
     ctocoords(dst, dst_c);
     ctocoords(src, src_c);
     if (legalmove(game,game->player, src, dst, 0)==true){
-      mkmove(game, game->player, src, dst);
+      mkmove(game, game->player, src, dst, true);
       return 1;
     }
     else{
@@ -64,9 +70,9 @@ int processcmd(struct gm_status *game, char *command){
     snprintf(dst_c, 3, "%s", command+1);
     ctocoords(dst, dst_c);
     int processed_f = processmv(game, piece, src, dst);
-    if(legalmove(game, game->player, src, dst, 0)==true &&
-       processed_f == true){
-      mkmove(game, game->player, src, dst);
+    if(processed_f == true &&
+       legalmove(game, game->player, src, dst, 0)==true){
+      mkmove(game, game->player, src, dst, true);
       return 1;
     }
     else{
@@ -83,7 +89,7 @@ int processcmd(struct gm_status *game, char *command){
     snprintf(dst_c, 2, "%s", command+2);
     ctocoords(dst, dst_c);
     if (legaldrop(game, game->player, piece, dst) == true){
-      mkdrop(game, game->player, piece ,dst);
+      mkdrop(game, game->player, piece ,dst, true);
       return 1;
     }
     else{
@@ -102,11 +108,6 @@ int processcmd(struct gm_status *game, char *command){
  */
 
 int processmv(struct gm_status *game, char piece, int *src, int *dst){
-
-  #ifdef ERROR_F
-  printf("Piece: %c\n", piece);
-  #endif
-
   if (game->player == CHALLENGING){
     piece = tolower(piece);
   }
@@ -115,13 +116,8 @@ int processmv(struct gm_status *game, char piece, int *src, int *dst){
   }
 
   int drank =  dst[0],  dfile = dst[1];
-
   /*Possible optimisation by early exit if 
    *legaldest() returns false*/
-
-  #ifdef ERROR_F
-  printf("d-pos: (%i,%i)", drank, dfile);
-  #endif
 
   /*n is count of possible pieces executing the move*/
   int n = 0;

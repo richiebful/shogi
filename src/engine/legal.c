@@ -219,24 +219,30 @@ int legalmove(struct gm_status *game, int player,
 
   char board[9][9];
   memcpy(board, game->board, sizeof(board));
-  char piece = board[drank][dfile];
-
+  char piece = board[srank][sfile];
+  eprintf("%c from %i, %i to %i, %i", piece, srank, sfile, drank, dfile);
+  
   struct gm_status test_game;
   memcpy(&test_game, game, sizeof(test_game));
 
   if (legaldest(game, player, dst[0], dst[1]) == false){
+    eprintf("Dst fail\n");
     return false;
   }
   else if (legalsrc(game, player, src[0], src[1]) == false){
+    eprintf("Src fail\n");
     return false;
   }
   else if (drank == srank && dfile == sfile){
+    eprintf("equality fail\n");
     return false;
   }
   else if (from_check_f == false && ischeck(&test_game, player)){
+    eprintf("Check fail\n");
     return false;
   }
   else if (piece == 'P' || piece == 'p'){
+    eprintf("gets to pawn\n");
     return pawnLegalMove(game, player, src, dst);
   }
   else if (piece == 'R' || piece == 'r'){
@@ -303,7 +309,7 @@ int legalsrc(struct gm_status *game, int player, int rank, int file){
   else if (player == P1 && islower(spiece)){
     return true;
   }
-  else if (player == P2 && islower(spiece)){
+  else if (player == P2 && isupper(spiece)){
     return true;
   }
   else{
