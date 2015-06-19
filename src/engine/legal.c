@@ -221,8 +221,8 @@ int legalmove(struct gm_status *game, int player,
   memcpy(board, game->board, sizeof(board));
   char piece = board[drank][dfile];
 
-  struct gm_struct test_game;
-  memcpy(test_game, game, sizeof(game);
+  struct gm_status test_game;
+  memcpy(&test_game, game, sizeof(test_game));
 
   if (legaldest(game, player, dst[0], dst[1]) == false){
     return false;
@@ -269,6 +269,7 @@ int legalmove(struct gm_status *game, int player,
     return false;
   }
 }
+
 int inrange(int rank, int file){
     if (rank > 8 || rank < 0 || file > 8 || file < 0){
       return false;
@@ -333,7 +334,7 @@ int inGraveyard(struct gm_status *game, int player, char piece){
   return false;
 }
 
-int legalDrop(struct gm_status *game, int player, char piece, int *dst){
+int legaldrop(struct gm_status *game, int player, char piece, int *dst){
   int drank = dst[0];
   int dfile = dst[1];
   char board[9][9];

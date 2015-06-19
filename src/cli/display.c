@@ -38,8 +38,8 @@ void dispBoard(struct gm_status *game){
   printf("\n\n");
   char p1Yard[38];
   char p2Yard[38];
-  memcpy(p1Yard, game->graveyard.challenging, sizeof(p1Yard));
-  memcpy(p2Yard, game->graveyard.reigning, sizeof(p2Yard));
+  memcpy(p1Yard, game->graveyard[0], sizeof(p1Yard));
+  memcpy(p2Yard, game->graveyard[1], sizeof(p2Yard));
   for (i = 0; i < 38; i++){
     if (p1Yard[i] != '\0'){
       printf("\x1b[31m%c ", p1Yard[i]);

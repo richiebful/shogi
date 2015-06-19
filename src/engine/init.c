@@ -44,5 +44,6 @@ int eprintf(char *format, ...){
   va_start(argp, format);
   vprintf(format, argp);
   va_end(argp);
+  return true;
 }
 #endif

@@ -20,15 +20,15 @@ void mkmove(struct gm_status *game, int player, int *src, int *dst){
   if (dpiece != ' '){
     if (player == P1){
       for (i = 0; i < 38; i++){
-	if (game->graveyard.challenging[i] != '\0'){
-	  game->graveyard.challenging[i] = dpiece + 32;
+	if (game->graveyard[player][i] != '\0'){
+	  game->graveyard[player][i] = dpiece + 32;
 	}
       }
     }
     else{
       for (i = 0; i < 38; i++){
-	if (game->graveyard.reigning[i] != '\0'){
-	  game->graveyard.reigning[i] = spiece - 32;
+	if (game->graveyard[player][i] != '\0'){
+	  game->graveyard[player][i] = spiece - 32;
 	}
       }
     }
@@ -70,16 +70,16 @@ void updateHist(struct gm_status *game, int *src, int *dst){
 void mkdrop(struct gm_status *game, int player, char piece, int *dst){
   int i = 0;
   if (player == P1){
-    while (game->graveyard.challenging[i] != piece){
+    while (game->graveyard[player][i] != piece){
       i++;
     }
-    game->graveyard.challenging[i] = '\0'; //remove the piece from the graveyard
+    game->graveyard[player][i] = '\0'; //remove the piece from the graveyard
   }
   else{
-    while (game->graveyard.reigning[i] != piece){
+    while (game->graveyard[player][i] != piece){
       i++;
     }
-    game->graveyard.reigning[i] = '\0';//remove piece from graveyard
+    game->graveyard[player][i] = '\0';//remove piece from graveyard
   }
   
   int drank = 8 - dst[0];
