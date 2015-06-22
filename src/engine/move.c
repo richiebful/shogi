@@ -34,7 +34,7 @@ void mkmove(struct gm_status *game, int player,
     }
   }
   if (update_f == true){
-    long s_lost = updateClock(game);
+    time_t tm_executed = updateClock(game);
     char move[4];
     int i_src[2] = {srank, sfile};
     int i_dst[2] = {drank, dfile};
@@ -43,20 +43,23 @@ void mkmove(struct gm_status *game, int player,
     coordsToC(c_src, i_src);
     coordsToC(c_dst, i_dst);;
     snprintf(move, 6, "%s%s", c_src, c_dst);
-    updateHistory(game, move, s_lost);
+    updateHistory(game, move, tm_executed);
   }
 }
 
-void updateHistory(struct gm_status *game, char *move, int tm_lost){
+void updateHistory(struct gm_status *game, char *move, time_t tm_executed){
   /*This section adds move to the history*/
   struct hist_s *prev_move = game->history;
   struct hist_s *this_move = malloc(sizeof(struct hist_s));
   snprintf(prev_move->move, 5, "%s", move);
+  prev_move->next_move = this_move;
 
   this_move->prev_move = prev_move;
+  this_move->next_move = NULL;
+
   game->history = this_move;
   
-  this_move->tm_lost = tm_lost;
+  this_move->tm_executed = tm_executed;
 
   this_move->num = prev_move->num + 1;
 }

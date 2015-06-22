@@ -86,16 +86,17 @@ void dispClock(struct gm_status *game){
 
 void dispHistory(struct gm_status *game){
   struct hist_s *this_move = game->history;
-  char *moves = malloc(5*sizeof(char)*game->history->num);
-  int i = 5 * game->history->num - 5, j;
   while (this_move->prev_move != NULL){
-    snprintf(moves+i, 5, "%s", this_move->move);
     this_move = this_move->prev_move;
-    i -= 5;
   }
-  for (i = 1, j=0; i < game->history->num; i++, j+=5){
-    printf("%i. %s\n", i, moves+j);
+  char move[5];
+  int num;
+  do{
+    strcpy(move, this_move->move, 5*sizeof(char));
+    num = this_move->num;
+    printf("%i. %s", num, move);
   }
+  while (this_move->next_move != NULL);
 }
 
 #ifdef DISPLAY_TEST

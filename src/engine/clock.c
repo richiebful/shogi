@@ -1,6 +1,6 @@
 #include <shogi.h>
 
-long updateClock(struct gm_status *game){
+time_t updateClock(struct gm_status *game){
   struct time_s clock;
   memcpy(&clock, &game->clock, sizeof(clock));
 
@@ -20,7 +20,7 @@ long updateClock(struct gm_status *game){
   //transfer clock back to its rightful position
   memcpy(&game->clock, &clock, sizeof(clock));
 
-  return diff_t;
+  return curr_t;
 }
 
 void incrementClock(struct gm_status *game){

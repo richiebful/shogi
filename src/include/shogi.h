@@ -28,8 +28,9 @@ struct time_s{
 
 struct hist_s{
   char move[5];
-  long tm_lost;
+  time_t tm_executed;
   struct hist_s *prev_move;
+  struct hist_s *next_move;
   int num;
 };
 
