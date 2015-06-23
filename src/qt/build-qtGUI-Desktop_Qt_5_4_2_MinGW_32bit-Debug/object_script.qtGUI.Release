@@ -1,0 +1,15 @@
+INPUT(
+./release\main.o
+./release\eval.o
+./release\movegen.o
+./release\display.o
+./release\input.o
+./release\main.o
+./release\check.o
+./release\clock.o
+./release\init.o
+./release\legal.o
+./release\move.o
+./release\main.o
+./release\qrc_qml.o
+);

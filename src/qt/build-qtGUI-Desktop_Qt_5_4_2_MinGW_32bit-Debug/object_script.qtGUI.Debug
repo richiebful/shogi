@@ -1,0 +1,15 @@
+INPUT(
+./debug\main.o
+./debug\eval.o
+./debug\movegen.o
+./debug\display.o
+./debug\input.o
+./debug\main.o
+./debug\check.o
+./debug\clock.o
+./debug\init.o
+./debug\legal.o
+./debug\move.o
+./debug\main.o
+./debug\qrc_qml.o
+);
