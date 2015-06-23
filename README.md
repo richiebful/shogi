@@ -4,7 +4,7 @@ The object of the shogiAI project is to design a front-end for a text-based inte
 
 ##Status##
 
-Currently, the text-based interface and game engine are under construction, and are nearing 75% completion. This component of the project is stored in the [/src/interface](https://github.com/richiebful/shogi/tree/master/src/interface) and [/src/engine](https://github.com/richiebful/shogi/tree/master/src/engine) folders respectively. Any unit-testing files are currently in place to make testing go smoothly.
+Currently, the text-based interface and game engine are under construction, and are stable and running. This component of the project is stored in the [/src/interface](https://github.com/richiebful/shogi/tree/master/src/interface) and [/src/engine](https://github.com/richiebful/shogi/tree/master/src/engine) folders respectively. As time lapses, we plan to add history functionality to the interface. Following some feature additions, GUI and AI will be constructed and added to the project.
 
 ##Contribution##
 
