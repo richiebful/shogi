@@ -1,5 +1,7 @@
+
 #include <gtk/gtk.h>
 #include <gui.h>
+#include <shogi.h>
 
 static void
 print_hello (GtkWidget *widget,
@@ -335,9 +337,7 @@ static void activate(GtkApplication *app,
     row = rank + row_offset;
     for (file = 0; file < 9; file++){
       column = rank + col_offset;
-      button = gtk_button_new_with_label ("0");
-      g_signal_connect (button, "clicked", G_CALLBACK (handle\ rank\ file), NULL);
-      gtk_grid_attach (GTK_GRID (grid), button, row, column, 1, 1);
+      GEN_BOARD_BUTTON_BINDING(rank, file);
     }
   }
 
