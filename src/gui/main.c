@@ -1,7 +1,4 @@
-
-#include <gtk/gtk.h>
 #include <gui.h>
-#include <shogi.h>
 
 static void
 print_hello (GtkWidget *widget,
@@ -12,12 +9,12 @@ print_hello (GtkWidget *widget,
 
 /*Updates GUI*/
 void refreshBoard(struct gm_struct *game){
-  int offset_r  = 3, offset_f = 2;
+  int offset_r  = 3, offset_f = 2, y, x;
   char piece[2];
   GtkWidget *button;
   gchar *label;
-  for (int y = 0; i < 9; i++){
-    for (int x = 0; j < 9; j++){
+  for (y = 0; y < 9; y++){
+    for (x = 0; x < 9; x++){
       piece[0] = game->board[y][x];
       button = gtk_grid_get_child_at (GtkGrid *grid, (gint) (x+offset_r), (gint) (j+offset_f));
       gtk_button_set_label(button, piece);
@@ -25,12 +22,9 @@ void refreshBoard(struct gm_struct *game){
   }
 }
 
-void handleMove(struct gm_struct *game, int drank, int dfile){
-  int dst[2];
-  dst[0] = drank;
-  dst[1] = dfile;
-  if(legalmove(game, game->player, src_coords, dst, 0)){
-    mkmove(game, game->player, src_coords, dst);
+void handleMove(struct gm_struct *game, int *src, int *dst){
+  if(legalmove(game, game->player, src, dst, 0)){
+    mkmove(game, game->player, src, dst);
   }
   refreshBoard(game);
 } 
@@ -46,7 +40,7 @@ void handleDrop(struct gm_struct *game, int drank, int dfile){
 }
 
 void handleBoardButton(rank, file){
-  static int src_coords[2] = [-1, -1];
+  static int src_coords[2] = {-1, -1};
   static bool loc_f = false;
   if (loc_f == false){
     src_coords[0] = rank;
@@ -58,7 +52,8 @@ void handleBoardButton(rank, file){
       handleDrop(game, rank, file);
     }
     else{
-      handleMove(game, 0, 0);
+      int dst[2] = {rank, file};
+      handleMove(game, src_coords, dst);
     }
     loc_f = false;
   }
@@ -329,7 +324,7 @@ static void activate(GtkApplication *app,
   grid = gtk_grid_new ();
 
   /* Pack the container in the window */
-  gtk_container_add (GTK_CONTAINER (window));
+  gtk_container_add (GTK_CONTAINER (window), grid);
   
   int rank, file, row, column;
   const int row_offset, col_offset;
