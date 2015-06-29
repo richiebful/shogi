@@ -91,12 +91,11 @@ void dispHistory(struct gm_status *game){
   }
   char move[5];
   int num;
-  do{
-    strcpy(move, this_move->move, 5*sizeof(char));
+  while (this_move->next_move != NULL){
     num = this_move->num;
-    printf("%i. %s", num, move);
+    printf("%i. %s\n", num, this_move->move);
+    this_move = this_move->next_move;
   }
-  while (this_move->next_move != NULL);
 }
 
 #ifdef DISPLAY_TEST

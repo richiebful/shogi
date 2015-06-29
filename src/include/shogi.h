@@ -61,7 +61,7 @@ void mkdrop(struct gm_status *game, int player,
 	    char piece, int *dst, bool update_f);
 void ctocoords(int *converted, char *to_convert);
 void coordsToC(char *converted, int *to_convert);
-void updateHistory(struct gm_status *game, char *move, int s_lost);
+void updateHistory(struct gm_status *game, char *move, time_t tm_executed);
 /*check.c*/
 int ischeck(struct gm_status *game, int player);
 int ismate(struct gm_status *game, int player);

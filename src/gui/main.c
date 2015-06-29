@@ -10,6 +10,7 @@ print_hello (GtkWidget *widget,
 }
 
 /*Updates GUI*/
+/*
 void refreshBoard(struct gm_status *game){
   int offset_r  = 3, offset_f = 2, y, x;
   char piece[2];
@@ -22,7 +23,7 @@ void refreshBoard(struct gm_status *game){
       gtk_button_set_label(button, piece);
     }
   }
-}
+  }
 
 void handleMove(struct gm_struct *game, int *src, int *dst){
   if(legalmove(game, game->player, src, dst, 0)){
@@ -40,8 +41,9 @@ void handleDrop(struct gm_struct *game, int drank, int dfile){
   }
   refreshBoard(game);
 }
-
+*/
 void handleBoardButton(rank, file){
+  /*
   static int src_coords[2] = {-1, -1};
   static bool loc_f = false;
   if (loc_f == false){
@@ -58,7 +60,8 @@ void handleBoardButton(rank, file){
       handleMove(game, src_coords, dst);
     }
     loc_f = false;
-  }
+    }*/
+  printf("%i %i", rank, file);
 }
 
 void handler00(){
@@ -313,9 +316,9 @@ static void activate(GtkApplication *app,
   GtkWidget *grid;
   GtkWidget *button;
 
-  struct gm_status game;
+  //struct gm_status game;
 
-  init_game(*game);
+  //init_game(*game);
 
   /* create a new window, and set its title */
   window = gtk_application_window_new (app);
@@ -654,7 +657,7 @@ static void activate(GtkApplication *app,
 
   
 
-  refreshBoard(game);
+  //refreshBoard(game);
   gtk_widget_show_all (window);
 
 }

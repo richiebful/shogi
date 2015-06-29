@@ -4,5 +4,5 @@
   g_signal_connect (button, "clicked", G_CALLBACK (handle\ rank\ file), NULL); \
   gtk_grid_attach (GTK_GRID (grid), button, row, column, 1, 1);
 
-void refreshBoard(struct gm_struct *game);
+//void refreshBoard(struct gm_struct *game);
 
