@@ -1,5 +1,3 @@
-#include <gtk/gtk.h>
-#include <shogi.h>
 
 #define GEN_BOARD_BUTTON_BINDING(rank, file)	\
   button = gtk_button_new_with_label ("0"); \
