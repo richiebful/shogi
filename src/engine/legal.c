@@ -360,6 +360,27 @@ int legaldrop(struct gm_status *game, int player, char piece, int *dst){
   }
 }
 
+bool isUpgradablePiece(char piece){
+  piece = tolower(piece);
+  return (piece == 'g' || piece == 'r'||
+          piece == 'b' || piece == 'p'||
+          piece == 'n' || piece == 'l');
+}
+
+bool legalUpgrade(struct gm_status *game, int player, int *coords){
+  int rank = coords[0];
+  char piece = game->board[rank][coords[1]];
+  if (player == 1 && rank > 5 && isUpgradablePiece(piece)){
+    return true;
+  }
+  else if (player == 2 && rank < 3 && isUpgradablePiece(piece)){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
 #ifdef LEGAL_TEST
 int main(void){
   struct gm_status game;

@@ -45,7 +45,7 @@ int processcmd(struct gm_status *game, char *command){
   else if (isdigit(command[0]) &&
 	   islower(command[1]) &&
 	   strlen(command) == 4){
-     /*input is of format 5e4e*/
+     /*input is of format 5e4e(+)*/
     char src_c[3], dst_c[3];
     int src[2], dst[2];
     snprintf(src_c, 3, "%s", command);
@@ -53,7 +53,7 @@ int processcmd(struct gm_status *game, char *command){
     ctocoords(dst, dst_c);
     ctocoords(src, src_c);
     if (legalmove(game,game->player, src, dst, 0)==true){
-      mkmove(game, game->player, src, dst, true);
+      mkmove(game, game->player, src, dst, true, false);
       return 1;
     }
     else{
@@ -64,15 +64,17 @@ int processcmd(struct gm_status *game, char *command){
 	   (isdigit(command[1]) != 0) &&
 	   (islower(command[2]) != 0) &&
 	   (strlen(command) <= 5)){
-    //interpret move of form P4e
+    //interpret move of form P4e(+)
     int src[2], dst[2];
     char dst_c[2], piece = command[0];
     snprintf(dst_c, 3, "%s", command+1);
     ctocoords(dst, dst_c);
     int processed_f = processmv(game, piece, src, dst);
+    bool upgrade_f = (legalUpgrade(game, game->player, dst) &&
+                      command[3] == '+');
     if(processed_f == true &&
        legalmove(game, game->player, src, dst, 0)==true){
-      mkmove(game, game->player, src, dst, true);
+      mkmove(game, game->player, src, dst, true, false);
       return 1;
     }
     else{

@@ -27,7 +27,7 @@ struct time_s{
 };
 
 struct hist_s{
-  char move[5];
+  char move[6];
   time_t tm_executed;
   struct hist_s *prev_move;
   struct hist_s *next_move;
@@ -51,12 +51,13 @@ int legalmove(struct gm_status *game, int player, int *src, int *dst,
 int inrange(int rank, int file);
 int legalsrc(struct gm_status *game, int player, int rank, int file);
 int legaldrop(struct gm_status *game, int player, char piece, int *dst);
+bool legalUpgrade(struct gm_status *game, int player, int *coords);
 /*init.c*/
 void init_game(struct gm_status *game);
 int eprintf(char *format, ...);
 /*move.c*/
 void mkmove(struct gm_status *game, int player,
-	    int *src, int *dst, bool update_f);
+	    int *src, int *dst, bool update_f, bool upgrade_f);
 void mkdrop(struct gm_status *game, int player, 
 	    char piece, int *dst, bool update_f);
 void ctocoords(int *converted, char *to_convert);

@@ -58,7 +58,7 @@ int ismate(struct gm_status *game, int player){
 	  src[0] = i; src[1] = j;
 	  dst[0] = k; dst[1] = l;
 	  if (legalmove(&test_game, player, src, dst, 1) == true){
-	    mkmove(&test_game, player, src, dst, false);
+              mkmove(&test_game, player, src, dst, false, false);
 	    if (ischeck(&test_game, player) == false){
 	      return false;
 	    }
