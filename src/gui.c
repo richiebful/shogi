@@ -1,5 +1,5 @@
-#include <gui.h>
-#include <shogi.h>
+#include "gui.h"
+#include "shogi.h"
 #include <gtk/gtk.h>
 
 static void

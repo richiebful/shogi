@@ -1,5 +1,5 @@
 /** \file */
-#include <shogi.h>
+#include "shogi.h"
 
 /**
  *\brief Shows the board and graveyard

@@ -1,5 +1,5 @@
-#include <shogi.h>
-#include <ai.h>
+#include "shogi.h"
+#include "ai.h"
 
 /*This function generates children of an existing game state
  *Returns true if no failure

@@ -1,4 +1,4 @@
-#include <shogi.h>
+#include "shogi.h"
 
 int main(void){
   struct gm_status game;

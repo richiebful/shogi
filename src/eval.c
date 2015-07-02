@@ -1,5 +1,5 @@
-#include <shogi.h>
-#include <ai.h>
+#include "shogi.h"
+#include "ai.h"
 
 int scoreNode(struct tree_node *node,
 	      int player){

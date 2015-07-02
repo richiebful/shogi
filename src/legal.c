@@ -1,5 +1,5 @@
 /** \file */
-#include <shogi.h>
+#include "shogi.h"
 /*
  * Checks whether a move works *Coords are in absolute terms
  */

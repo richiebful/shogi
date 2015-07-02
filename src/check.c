@@ -1,5 +1,5 @@
 /**\file*/
-#include <shogi.h>
+#include "shogi.h"
 
 
 int ischeck(struct gm_status *game, int player){

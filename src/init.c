@@ -1,5 +1,5 @@
 /** \file */
-#include <shogi.h>
+#include "shogi.h"
 
 void init_game(struct gm_status *game){
   const char init_board[9][9] = {"LNGUKUGNL",

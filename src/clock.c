@@ -1,4 +1,4 @@
-#include <shogi.h>
+#include "shogi.h"
 
 time_t updateClock(struct gm_status *game){
   struct time_s clock;

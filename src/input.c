@@ -1,5 +1,5 @@
 /** \file */
-#include <shogi.h>
+#include "shogi.h"
 
 /*if return 1, continue to next player
  *if return 0, execute the commmand, if any,
