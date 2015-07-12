@@ -18,6 +18,7 @@
   for(var = beginning; var < end; var += increment)
 #define FOREACH(iterable, var) \
   for(var = 0; var < sizeof(iterable)/sizeof(iterable[0]); var++)
+#define changePlayer(player) player = player % 2 + 1
 
 struct time_s{
   //sec format
@@ -63,6 +64,7 @@ void mkdrop(struct gm_status *game, int player,
 void ctocoords(int *converted, char *to_convert);
 void coordsToC(char *converted, int *to_convert);
 void updateHistory(struct gm_status *game, char *move, time_t tm_executed);
+int digGrave(struct gm_status *game, int player, char piece);
 /*check.c*/
 int ischeck(struct gm_status *game, int player);
 int ismate(struct gm_status *game, int player);

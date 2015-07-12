@@ -1,5 +1,5 @@
 COMPILER = clang
-CFLAGS = -Wall -Ofast
+CFLAGS = -Wall
 INCLUDE = ./
 TARGET = shogi
 OBJDIR = ..

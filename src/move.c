@@ -1,6 +1,7 @@
 /** \file */
 #include "shogi.h"
 
+
 /* Moves a piece from one location on the board to another, and moves the "killed" piece to the killer's drop pile 
  * Input coordinates are in absolute terms, and move must be proven legal first.
  */
@@ -17,6 +18,24 @@ void mkmove(struct gm_status *game, int player,
   game->board[srank][sfile] = ' ';
   game->board[drank][dfile] = spiece;
   
+  digGrave(game, player, dpiece);
+
+  if (update_f == true){
+    time_t tm_executed = updateClock(game);
+    char move[4];
+    int i_src[2] = {srank, sfile};
+    int i_dst[2] = {drank, dfile};
+    char c_src[2];
+    char c_dst[2];
+    char upgrade_c = ' ' + upgrade_f * ('+' - ' ') ;
+    coordsToC(c_src, i_src);
+    coordsToC(c_dst, i_dst);
+    snprintf(move, 6, "%.2s%.3s%c", c_src, c_dst, upgrade_c);
+    updateHistory(game, move, tm_executed);
+  }
+}
+
+int digGrave(struct gm_status *game, int player, char piece){
   int i;
   if (dpiece != ' '){
     if (player == P1){
@@ -34,20 +53,9 @@ void mkmove(struct gm_status *game, int player,
       }
     }
   }
-  if (update_f == true){
-    time_t tm_executed = updateClock(game);
-    char move[4];
-    int i_src[2] = {srank, sfile};
-    int i_dst[2] = {drank, dfile};
-    char c_src[2];
-    char c_dst[2];
-    char upgrade_c = ' ' + upgrade_f * ('+' - ' ') ;
-    coordsToC(c_src, i_src);
-    coordsToC(c_dst, i_dst);
-    snprintf(move, 6, "%.2s%.3s%c", c_src, c_dst, upgrade_c);
-    updateHistory(game, move, tm_executed);
-  }
+  return true;
 }
+
 
 void updateHistory(struct gm_status *game, char *move, time_t tm_executed){
   /*This section adds move to the history*/
@@ -127,30 +135,7 @@ void coordsToC(char *converted, int *to_convert){
   converted[1] = crank;
 }
 
-#ifdef UNDO
-/*Undoes the last move 
- *Returns 1 if successful, 0 if failure
- */
-int undo(struct gm_status *game){
-  /*Makes a copy of game history*/
-  char *history = game->history;
-  int step = 4;
-  char *lastMove;
-  int i;
-  while (*history != '\0' && i < sizeof(history)){
-    lastMove = history;
-    history += step;
-    i += step;
-  }
-  
-  /*Flip-flops sources and destinations in history to reverse them*/
-  char src[2] = {*(lastMove+2), *(lastMove+3)};
-  char dst[2] = {*(lastMove), *(lastMove+1)};
 
-  mkmove(game, (game.player) % 2 + 1, src, dst);
-  snprintf(history, 4, "    ");
-}
-#endif
 
 #ifdef MOVE_TEST
 int main(){
