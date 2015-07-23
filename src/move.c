@@ -37,18 +37,18 @@ void mkmove(struct gm_status *game, int player,
 
 int digGrave(struct gm_status *game, int player, char piece){
   int i;
-  if (dpiece != ' '){
+  if (piece != ' '){
     if (player == P1){
       for (i = 0; i < 38; i++){
 	if (game->graveyard[player-1][i] != '\0'){
-	  game->graveyard[player-1][i] = tolower(dpiece);
+	  game->graveyard[player-1][i] = tolower(piece);
 	}
       }
     }
     else{
       for (i = 0; i < 38; i++){
 	if (game->graveyard[player-1][i] != '\0'){
-	  game->graveyard[player-1][i] = toupper(spiece);
+	  game->graveyard[player-1][i] = toupper(piece);
 	}
       }
     }
