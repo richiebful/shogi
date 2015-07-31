@@ -44,14 +44,17 @@ int processcmd(struct gm_status *game, char *command){
   }
   else if (isdigit(command[0]) &&
 	   islower(command[1]) &&
-	   strlen(command) == 4){
-     /*input is of format 5e4e(+)*/
+	   (strlen(command) == 4 ||
+            strlen(command) <= 5)){
+    /*input is of format 5e4e(+)*/
     char src_c[3], dst_c[3];
     int src[2], dst[2];
+    bool upgrade_f;
     snprintf(src_c, 3, "%s", command);
     snprintf(dst_c, 3, "%s", command+2);
     ctocoords(dst, dst_c);
     ctocoords(src, src_c);
+    upgrade_f =  (command[4] == '+');
     if (legalmove(game,game->player, src, dst, 0)==true){
       mkmove(game, game->player, src, dst, true, false);
       return 1;
@@ -74,7 +77,7 @@ int processcmd(struct gm_status *game, char *command){
                       command[3] == '+');
     if(processed_f == true &&
        legalmove(game, game->player, src, dst, 0)==true){
-      mkmove(game, game->player, src, dst, true, false);
+      mkmove(game, game->player, src, dst, true, upgrade_f);
       return 1;
     }
     else{
@@ -117,7 +120,6 @@ int processmv(struct gm_status *game, char piece, int *src, int *dst){
     piece = toupper(piece);
   }
 
-  int drank =  dst[0],  dfile = dst[1];
   /*Possible optimisation by early exit if 
    *legaldest() returns false*/
 

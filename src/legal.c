@@ -1,8 +1,6 @@
 /** \file */
 #include "shogi.h"
-/*
- * Checks whether a move works *Coords are in absolute terms
- */
+
 int rel_dir_gen(int player){
   return (player == REIGNING) ? 1 : -1;
 }
@@ -101,18 +99,17 @@ int bishopLegalMove(struct gm_status *game,
   int srank = src[0], sfile = src[1],
     drank = dst[0], dfile = dst[1];
   double slope, direction;
-  bool fatal_f = false;
   slope = (drank - srank) / (dfile - sfile);
-  if (slope != 1 && slope != -1) 
-    fatal_f = true;
+  if (slope != 1 && slope != -1)
+    return false;
   else if (dfile < sfile)
     direction = -1;
-  else 
+  else
     direction = 1;
   
   int i,  yInt = srank - slope * sfile;
   for (i = sfile + direction; i != dfile; i += direction) {
-    if (game->board[(int) slope * i + yInt][i] != ' ') {
+     if (game->board[(int) slope * i + yInt][i] != ' ') {
       return false;
     }
   }
@@ -215,12 +212,13 @@ int pawnLegalMove(struct gm_status *game,
 int legalmove(struct gm_status *game, int player,
 	      int *src, int *dst, int from_check_f){
   int srank = src[0], sfile = src[1],
-    drank = dst[0], dfile = dst[1];
+      drank = dst[0], dfile = dst[1];
 
   char board[9][9];
   memcpy(board, game->board, sizeof(board));
   char piece = board[srank][sfile];
-  eprintf("%c from %i, %i to %i, %i", piece, srank, sfile, drank, dfile);
+  eprintf("%c from %i, %i to %i, %i",
+          piece, srank, sfile, drank, dfile);
   
   struct gm_status test_game;
   memcpy(&test_game, game, sizeof(test_game));
@@ -370,10 +368,10 @@ bool isUpgradablePiece(char piece){
 bool legalUpgrade(struct gm_status *game, int player, int *coords){
   int rank = coords[0];
   char piece = game->board[rank][coords[1]];
-  if (player == 1 && rank > 5 && isUpgradablePiece(piece)){
+  if (player == 1 && rank < 5 && isUpgradablePiece(piece)){
     return true;
   }
-  else if (player == 2 && rank < 3 && isUpgradablePiece(piece)){
+  else if (player == 2 && rank > 3 && isUpgradablePiece(piece)){
     return true;
   }
   else{
@@ -404,9 +402,10 @@ int main(void){
     sfile = falseCases[i][0][1];
     drank = falseCases[i][1][0];
     dfile = falseCases[i][1][1];
-    legal_f = legalmove(&game, 1, falseCases[i][0], falseCases[i][1]);
-    printf("%i,%i to %i,%i returns %i\n", srank, sfile, drank, dfile,
-	   legal_f);
+    legal_f = legalmove(&game, 1,
+                        falseCases[i][0], falseCases[i][1]);
+    printf("%i,%i to %i,%i returns %i\n", srank, sfile,
+           drank, dfile, legal_f);
   }
   return 0;
 }

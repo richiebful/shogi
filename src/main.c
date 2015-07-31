@@ -4,8 +4,8 @@ int main(void){
   struct gm_status game;
   init_game(&game);
   int input_f = 0;
+  char *command = malloc(20*sizeof(char));
   while (true){
-    char command[20] = "NULL";
     input_f = 0;
     if (game.check_f == true){
       printf("Check.\n");

@@ -2,8 +2,20 @@
 #include "shogi.h"
 
 
-/* Moves a piece from one location on the board to another, and moves the "killed" piece to the killer's drop pile 
- * Input coordinates are in absolute terms, and move must be proven legal first.
+/** 
+ *\fn mkmove
+ * Moves a piece from one position to another, and upgrades
+ *   if necessary
+ *
+ *\param game the current game status
+ *\param player the player making the move
+ *\param src array of source coordinates
+ *\param dst array of destination coordinates
+ *\param update_f add move to history
+ *\param upgrade_f upgrade piece
+ *
+ *\pre move is legal, include upgrade
+ *\pre game includes a well-formed gm_status
  */
 
 void mkmove(struct gm_status *game, int player,
@@ -22,18 +34,27 @@ void mkmove(struct gm_status *game, int player,
 
   if (update_f == true){
     time_t tm_executed = updateClock(game);
-    char move[4];
+    char move[6];
     int i_src[2] = {srank, sfile};
     int i_dst[2] = {drank, dfile};
     char c_src[2];
     char c_dst[2];
-    char upgrade_c = ' ' + upgrade_f * ('+' - ' ') ;
+    char upgrade_c =  (upgrade_f) ? '+' : '\0';
     coordsToC(c_src, i_src);
     coordsToC(c_dst, i_dst);
-    snprintf(move, 6, "%.2s%.3s%c", c_src, c_dst, upgrade_c);
+    snprintf(move, 6, "%.2s%.2s%c", c_src, c_dst, upgrade_c);
     updateHistory(game, move, tm_executed);
   }
 }
+
+/**
+ * \fn digGrave
+ * Adds a piece to the given player's graveyard
+ *
+ * \param player who's graveyard the piece should be added to
+ * \param game the current game state
+ * \param piece the piece to be added
+ */
 
 int digGrave(struct gm_status *game, int player, char piece){
   int i;
@@ -56,8 +77,17 @@ int digGrave(struct gm_status *game, int player, char piece){
   return true;
 }
 
+/**
+ * \fn updateHistory
+ * Adds a given move to the history linked list
+ *
+ * \param game the current game state
+ * \param move a string showing the move in algebraic notation
+ * \param tm_executed the amount of time the move took to make 
+ */
 
-void updateHistory(struct gm_status *game, char *move, time_t tm_executed){
+void updateHistory(struct gm_status *game, char *move,
+                   time_t tm_executed){
   /*This section adds move to the history*/
   struct hist_s *prev_move = game->history;
   struct hist_s *this_move = malloc(sizeof(struct hist_s));
@@ -74,10 +104,18 @@ void updateHistory(struct gm_status *game, char *move, time_t tm_executed){
   this_move->num = prev_move->num + 1;
 }
 
-/*Takes a piece from the player's graveyard, and drops it.
-  Destination coordinates are in absolute terms
-  Assumes the move is legal
-*/
+/** 
+ * \fn mkdrop
+ * Drops a piece from the player's graveyard onto the board
+ *
+ * \param game the current game state
+ * \param player the player making the move
+ * \param piece the piece being dropped
+ * \param dst the coordinates of where the piece is being dropped
+ * \param update_f add the move to history?
+ *
+ * \pre Move is legal
+ */
 
 void mkdrop(struct gm_status *game, int player,
 	    char piece, int *dst, bool update_f){
@@ -108,9 +146,9 @@ void mkdrop(struct gm_status *game, int player,
   }
 }
 
-/**Takes coordinates from characters to absolute coordinates in /
-  integer form. This will make an string {<file><rank>} or "e4"
-  into {rank,file} or {3,4}.
+/**Converts algebraic notation to coordinates
+ * \param converted integer array output of coordinates
+ * \param to_convert character array input of algebraic notation
  */
 
 void ctocoords(int *converted, char *to_convert){
@@ -135,7 +173,12 @@ void coordsToC(char *converted, int *to_convert){
   converted[1] = crank;
 }
 
-
+bool undo(struct gm_status *game){
+  /*if (game->history->move != NULL){
+    
+    }*/
+  return true;
+}
 
 #ifdef MOVE_TEST
 int main(){
