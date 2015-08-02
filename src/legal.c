@@ -365,6 +365,13 @@ bool isUpgradablePiece(char piece){
           piece == 'n' || piece == 'l');
 }
 
+bool isUpgradedPiece(char piece){
+  piece = tolower(piece);
+  return (piece == 'h' || piece == 's' ||
+          piece == 'c' || piece == 'q' ||
+          piece == 'o' || piece == 'm');
+}
+
 bool legalUpgrade(struct gm_status *game, int player, int *coords){
   int rank = coords[0];
   char piece = game->board[rank][coords[1]];

@@ -28,7 +28,7 @@ void mkmove(struct gm_status *game, int player,
   char spiece = game->board[srank][sfile];
   char dpiece = game->board[drank][dfile];
   game->board[srank][sfile] = ' ';
-  game->board[drank][dfile] = spiece;
+  game->board[drank][dfile] = spiece + upgrade_f;
   
   digGrave(game, player, dpiece);
 

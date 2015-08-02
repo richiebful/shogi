@@ -12,28 +12,34 @@ void dispBoard(struct gm_status *game){
   printf("\n");
 
   for (i = 0; i < 9; i++){
+    printf(" ");
     for (j = 0; j < 9; j++){
       char piece = board[i][j];
+      char upgraded_f = ' ';
+      if (isUpgradedPiece(piece)){
+        upgraded_f = '+';
+        piece--;
+      }
       if (isupper(board[i][j])){
 	//print the piece out in white
-	printf(" \x1b[37m%c", piece);
+	printf("\x1b[37m%c%c", piece, upgraded_f);
       }
       else if(piece == ' '){
 	printf("  ");
       }
       else{
 	//print the piece out in red
-	printf(" \x1b[31m%c", piece-32);
+	printf("\x1b[31m%c%c", piece-32, upgraded_f);
       }
       if (j == 8){ //prints the rank no.
-	printf(" \x1b[37m%c", i+97);
+	printf("\x1b[37m%c ", i+97);
       }
     }
     printf("\n");
   }
-  printf("\x1b[37m");
+  printf("\x1b[37m ");
   for(i = 9; i > 0; i--){
-    printf(" %i", i);
+    printf("%i ", i);
   }
   printf("\n\n");
   char p1Yard[38];
@@ -89,7 +95,6 @@ void dispHistory(struct gm_status *game){
   while (this_move->prev_move != NULL){
     this_move = this_move->prev_move;
   }
-  char move[5];
   int num;
   while (this_move->next_move != NULL){
     num = this_move->num;
