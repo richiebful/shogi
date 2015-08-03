@@ -1,3 +1,4 @@
+
 /** \file */
 #include "shogi.h"
 
@@ -146,12 +147,14 @@ void mkdrop(struct gm_status *game, int player,
   }
 }
 
-/**Converts algebraic notation to coordinates
+/**
+ * \fn cToCoords
+ * Converts algebraic notation to coordinates
  * \param converted integer array output of coordinates
  * \param to_convert character array input of algebraic notation
  */
 
-void ctocoords(int *converted, char *to_convert){
+void cToCoords(int *converted, char *to_convert){
   //input is of form 7e, (file, rank)
   //output is of form (4,), (rank, file)
   char crank = to_convert[1];
@@ -174,9 +177,12 @@ void coordsToC(char *converted, int *to_convert){
 }
 
 bool undo(struct gm_status *game){
-  /*if (game->history->move != NULL){
-    
-    }*/
+  if (game->history->move != NULL){
+    int dst[2];
+    int src[2];
+    cToCoords(dst, game->history->move);
+    cToCoords(src, game->history->move+2);
+  }
   return true;
 }
 

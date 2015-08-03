@@ -52,8 +52,8 @@ int processcmd(struct gm_status *game, char *command){
     bool upgrade_f;
     snprintf(src_c, 3, "%s", command);
     snprintf(dst_c, 3, "%s", command+2);
-    ctocoords(dst, dst_c);
-    ctocoords(src, src_c);
+    cToCoords(dst, dst_c);
+    cToCoords(src, src_c);
     upgrade_f =  (command[4] == '+');
     if (legalmove(game,game->player, src, dst, 0)==true){
       mkmove(game, game->player, src, dst, true, false);
@@ -71,7 +71,7 @@ int processcmd(struct gm_status *game, char *command){
     int src[2], dst[2];
     char dst_c[2], piece = command[0];
     snprintf(dst_c, 3, "%s", command+1);
-    ctocoords(dst, dst_c);
+    cToCoords(dst, dst_c);
     int processed_f = processmv(game, piece, src, dst);
     bool upgrade_f = (legalUpgrade(game, game->player, dst) &&
                       command[3] == '+');
@@ -92,7 +92,7 @@ int processcmd(struct gm_status *game, char *command){
     char piece = command[0], dst_c[2];
     int dst[2];
     snprintf(dst_c, 2, "%s", command+2);
-    ctocoords(dst, dst_c);
+    cToCoords(dst, dst_c);
     if (legaldrop(game, game->player, piece, dst) == true){
       mkdrop(game, game->player, piece ,dst, true);
       return 1;

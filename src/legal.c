@@ -1,18 +1,30 @@
 /** \file */
 #include "shogi.h"
 
+/**
+ * \fn rel_dir_gen
+ * Determines the direction of the player, up or down, for lances/pawns
+ * \param player the player making the move
+ * \return -1 for down, 1 for up
+ */
 int rel_dir_gen(int player){
   return (player == REIGNING) ? 1 : -1;
 }
 
-int movesLikeGold(char piece){
-  return (piece == 'U' || piece == 'u' ||
-	  piece == 'H' || piece == 'h' ||
-	  piece == 'Q' || piece == 'q' ||
-	  piece == 'M' || piece == 'm' ||
-	  piece == 'O' || piece == 'o');
+/**
+ * \fn movesLikeGold
+ * Tells whether a piece moves like it is a gold general.
+ */
+bool movesLikeGold(char piece){
+  piece = tolower(piece); 
+  return (piece == 'u' || piece == 'h' ||
+	  piece == 'q' || piece == 'm' ||
+	  piece == 'o');
 }
 
+/**
+ *
+ */
 int goldLegalMove(struct gm_status *game,
 		  int player, int *src, int *dst){
   int srank = src[0], sfile = src[1],
