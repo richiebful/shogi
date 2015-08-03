@@ -20,6 +20,12 @@
   for(var = 0; var < sizeof(iterable)/sizeof(iterable[0]); var++)
 #define changePlayer(player) player = player % 2 + 1
 
+#define DROP_FMT 0
+#define PIECE_DST_FMT 1
+#define PIECE_DST_UP_FMT 2
+#define SRC_DST_FMT 3
+#define SRC_DST_UP_FMT 4
+
 struct time_s{
   //sec format
   int player_t[2];

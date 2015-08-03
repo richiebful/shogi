@@ -177,13 +177,58 @@ void coordsToC(char *converted, int *to_convert){
 }
 
 bool undo(struct gm_status *game){
-  if (game->history->move != NULL){
-    int dst[2];
-    int src[2];
-    cToCoords(dst, game->history->move);
-    cToCoords(src, game->history->move+2);
+  char move[6];
+  strncpy(move, game, 6);
+  if (move != NULL){
+    if (moveFormat(move) == PIECE_DST_FMT ||
+        moveFormat(move) == PIECE_DST_UP_FMT){
+      char src[3];
+      char dst[3];
+      cToCoords(dst, game);
+      cToCoords(src, game+2);
+      mkmove(game, otherPlayer, src, dst, false, false);
+      if (move[4] == '+'){
+        downgrade(game, dst);
+      }
+    }
+    else{
+      char piece = move[0];
+      char dst[3];
+      cToCoords(dst, move+1);
+      //figure something out for drops here
+    }
   }
   return true;
+}
+
+int moveFormat(char *move){
+  if (isupper(move[0]) != 0 &&
+      isdigit(command[1]) != 0 &&
+      islower(command[2]) != 0 &&
+      strlen(command) <= 5){
+    if (move[4] == '+')
+      return PIECE_DST_UP_FMT;
+    else
+      return PIECE_DST_FMT;
+  }
+  else if (isdigit(command[0]) &&
+	   islower(command[1]) &&
+	   (strlen(command) == 4 ||
+            strlen(command) <= 5)){
+    if (move[5] == '+')
+      return SRC_DST_UP_FMT;
+    else
+      return SRC_DST_FMT;
+  }
+  else if (isupper(command[0]) &&
+	   command[1] == '*' &&
+	   islower(command[2]) &&
+	   sizeof(command) == 4){
+    return DROP_FMT;
+  }
+  else{
+    return -1;
+  }
 }
 
 #ifdef MOVE_TEST
