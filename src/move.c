@@ -166,6 +166,13 @@ void cToCoords(int *converted, char *to_convert){
   converted[1] = ifile;
 }
 
+/**
+ * \fn coordsToC
+ * Converts coordinates to algebraic notation
+ * \param converted character array output of algebraic notation
+ * \param to_convert int array input of coordinates
+ */
+
 void coordsToC(char *converted, int *to_convert){
   int irank = to_convert[0];
   int ifile = to_convert[1];
@@ -176,54 +183,82 @@ void coordsToC(char *converted, int *to_convert){
   converted[1] = crank;
 }
 
+/**
+ * \fn downgrade
+ * Makes a piece downgrade on the board
+ * \param game the current game state
+ * \param dst int array input of destination coordinates
+ */
+
+bool downgrade(struct gm_status *game, int *dst){
+  char piece = game->board[dst[0]][dst[1]];
+  if (isUpgradedPiece(piece)){
+    game->board[dst[0]][dst[1]]--;
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+/**
+ * \fn undo
+ * Undoes the previous move
+ * \param game the current game state, including game history
+ */
+
 bool undo(struct gm_status *game){
   char move[6];
-  strncpy(move, game, 6);
-  if (move != NULL){
-    if (moveFormat(move) == PIECE_DST_FMT ||
-        moveFormat(move) == PIECE_DST_UP_FMT){
-      char src[3];
-      char dst[3];
-      cToCoords(dst, game);
-      cToCoords(src, game+2);
-      mkmove(game, otherPlayer, src, dst, false, false);
-      if (move[4] == '+'){
-        downgrade(game, dst);
-      }
-    }
-    else{
-      char piece = move[0];
-      char dst[3];
-      cToCoords(dst, move+1);
-      //figure something out for drops here
-    }
+  strncpy(move, game->history->move, 6);
+  if (moveFormat(move) == PIECE_DST_FMT ||
+      moveFormat(move) == PIECE_DST_UP_FMT){
+    int src[3];
+    int dst[3];
+    cToCoords(dst, move);
+    cToCoords(src, move+2);
+    mkmove(game, otherPlayer(game->player), src, dst, false, false);
+    if (move[4] == '+')
+      downgrade(game, dst);
+  }
+  else{
+    char piece = move[0];
+    int src[3];
+    cToCoords(src, move+1);
+    game->board[src[0]][src[1]] = ' ';
+    digGrave(game, otherPlayer(game->player), piece);
   }
   return true;
 }
 
+/**
+ * \fn moveFormat
+ * Undoes the previous move
+ * \param game the current game state, including game history
+ */
+
 int moveFormat(char *move){
   if (isupper(move[0]) != 0 &&
-      isdigit(command[1]) != 0 &&
-      islower(command[2]) != 0 &&
-      strlen(command) <= 5){
+      isdigit(move[1]) != 0 &&
+      islower(move[2]) != 0 &&
+      strlen(move) <= 5){
     if (move[4] == '+')
       return PIECE_DST_UP_FMT;
     else
       return PIECE_DST_FMT;
   }
-  else if (isdigit(command[0]) &&
-	   islower(command[1]) &&
-	   (strlen(command) == 4 ||
-            strlen(command) <= 5)){
+  else if (isdigit(move[0]) &&
+	   islower(move[1]) &&
+	   (strlen(move) == 4 ||
+            strlen(move) <= 5)){
     if (move[5] == '+')
       return SRC_DST_UP_FMT;
     else
       return SRC_DST_FMT;
   }
-  else if (isupper(command[0]) &&
-	   command[1] == '*' &&
-	   islower(command[2]) &&
-	   sizeof(command) == 4){
+  else if (isupper(move[0]) &&
+	   move[1] == '*' &&
+	   islower(move[2]) &&
+	   sizeof(move) == 4){
     return DROP_FMT;
   }
   else{
