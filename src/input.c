@@ -23,7 +23,7 @@ int processcmd(struct gm_status *game, char *command){
     return 0;
   }
   else if (strncmp(command, "undo", 4) == 0){
-    printf("Undo has not been constructed yet\n");
+    undo(game);
     return 1;
   }
   else if (strncmp(command, "exit", 4) == 0){

@@ -74,6 +74,7 @@ void updateHistory(struct gm_status *game, char *move, time_t tm_executed);
 int digGrave(struct gm_status *game, int player, char piece);
 bool isUpgradedPiece(char piece);
 int moveFormat(char *move);
+bool undo(struct gm_status *game);
 /*check.c*/
 int ischeck(struct gm_status *game, int player);
 int ismate(struct gm_status *game, int player);

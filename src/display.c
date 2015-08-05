@@ -95,10 +95,9 @@ void dispHistory(struct gm_status *game){
   while (this_move->prev_move != NULL){
     this_move = this_move->prev_move;
   }
-  int num;
-  while (this_move->next_move != NULL){
-    num = this_move->num;
-    printf("%i. %s\n", num, this_move->move);
+  int i;
+  for (i = 1; i <= game->history->num; i++){ 
+    printf("%i. %s\n", i, this_move->move);
     this_move = this_move->next_move;
   }
 }

@@ -90,19 +90,22 @@ int digGrave(struct gm_status *game, int player, char piece){
 void updateHistory(struct gm_status *game, char *move,
                    time_t tm_executed){
   /*This section adds move to the history*/
-  struct hist_s *prev_move = game->history;
   struct hist_s *this_move = malloc(sizeof(struct hist_s));
-  strncpy(prev_move->move, move, 6);
-  prev_move->next_move = this_move;
-
-  this_move->prev_move = prev_move;
-  this_move->next_move = NULL;
-
+  if (game->history != NULL){
+    struct hist_s *prev_move = game->history;
+    this_move->prev_move = prev_move;
+    prev_move->next_move = this_move;
+    this_move->num = prev_move->num + 1;
+  }
+  else{
+    this_move->prev_move = NULL;
+    this_move->num = 1;
+  }
   game->history = this_move;
-  
+  strncpy(this_move->move, move, 6);
   this_move->tm_executed = tm_executed;
-
-  this_move->num = prev_move->num + 1;
+  
+  this_move->next_move = NULL;
 }
 
 /** 
@@ -201,6 +204,11 @@ bool downgrade(struct gm_status *game, int *dst){
   }
 }
 
+bool popLastHistory(struct gm_status *game){
+  game->history = game->history->prev_move;
+  return true;
+}
+
 /**
  * \fn undo
  * Undoes the previous move
@@ -227,6 +235,7 @@ bool undo(struct gm_status *game){
     game->board[src[0]][src[1]] = ' ';
     digGrave(game, otherPlayer(game->player), piece);
   }
+  popLastHistory(game);  
   return true;
 }
 
