@@ -85,7 +85,7 @@ long updateClock(struct gm_status *game);
 void dispBoard(struct gm_status *game);
 void dispClock(struct gm_status *game);
 void dispHelp();
-void dispHistory(struct gm_status *game);
+bool dispHistory(struct gm_status *game);
 /*input.c*/
 int processcmd(struct gm_status *game, char *command);
 int processmv(struct gm_status *game, char piece, int *src, int *dst);

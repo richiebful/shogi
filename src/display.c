@@ -58,6 +58,8 @@ void dispBoard(struct gm_status *game){
     }
   }
   printf("\n");
+  //reset colours to default
+  printf("\x1b[0m");
 }
 
 
@@ -90,16 +92,19 @@ void dispClock(struct gm_status *game){
 	 
 }
 
-void dispHistory(struct gm_status *game){
+bool dispHistory(struct gm_status *game){
   struct hist_s *this_move = game->history;
-  while (this_move->prev_move != NULL){
-    this_move = this_move->prev_move;
+  if (game->history != NULL){
+    while (this_move->prev_move != NULL){
+      this_move = this_move->prev_move;
+    }
+    int i;
+    for (i = 1; i <= game->history->num; i++){ 
+      printf("%i. %s\n", i, this_move->move);
+      this_move = this_move->next_move;
+    }
   }
-  int i;
-  for (i = 1; i <= game->history->num; i++){ 
-    printf("%i. %s\n", i, this_move->move);
-    this_move = this_move->next_move;
-  }
+  return true;
 }
 
 #ifdef DISPLAY_TEST

@@ -128,13 +128,13 @@ void mkdrop(struct gm_status *game, int player,
     while (game->graveyard[player-1][i] != piece){
       i++;
     }
-    game->graveyard[player-1][i] = '\0'; //remove the piece from the graveyard
+    game->graveyard[player-1][i] = '\0';
   }
   else{
     while (game->graveyard[player-1][i] != piece){
       i++;
     }
-    game->graveyard[player-1][i] = '\0';//remove piece from graveyard
+    game->graveyard[player-1][i] = '\0';
   }
   
   int drank = dst[0];
@@ -144,7 +144,6 @@ void mkdrop(struct gm_status *game, int player,
   if (update_f){
     long s_lost = updateClock(game);
     char move[4];
-    //inaccurate
     snprintf(move, 4, "%c*%i%i", piece, drank, dfile);
     updateHistory(game, move, s_lost);
   }
@@ -205,7 +204,15 @@ bool downgrade(struct gm_status *game, int *dst){
 }
 
 bool popLastHistory(struct gm_status *game){
-  game->history = game->history->prev_move;
+  struct hist_s *moveForDeletion = game->history;
+  if (game->history->prev_move != NULL){
+    game->history = game->history->prev_move;
+    game->history->next_move = NULL;
+  }
+  else{
+    game->history = NULL;
+  }
+  free(moveForDeletion);
   return true;
 }
 
@@ -241,8 +248,14 @@ bool undo(struct gm_status *game){
 
 /**
  * \fn moveFormat
- * Undoes the previous move
+ * Figures the format of the move
  * \param game the current game state, including game history
+ * \return int expressing the format of the move
+ * \retval DROP_FMT (or 0), the move is of form P*7f
+ * \retval PIECE_DST_FMT (or 1), the move is of form B2b
+ * \retval PIECE_DST_UP_FMT (or 2), the move is of form B2b+
+ * \retval SRC_DST_FMT (or 3), the move is of form 8h2b
+ * \retval SRC_DST_UP_FMT (or 4), the move is of form 8h2b+
  */
 
 int moveFormat(char *move){
