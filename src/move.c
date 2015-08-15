@@ -1,4 +1,3 @@
-
 /** \file */
 #include "shogi.h"
 
@@ -220,13 +219,15 @@ bool popLastHistory(struct gm_status *game){
  * \fn undo
  * Undoes the previous move
  * \param game the current game state, including game history
+ * \pre moves in game history are valid
+ * \pre move  in game history are of P(*)d4(+) 
  */
 
 bool undo(struct gm_status *game){
   char move[6];
   strncpy(move, game->history->move, 6);
-  if (moveFormat(move) == PIECE_DST_FMT ||
-      moveFormat(move) == PIECE_DST_UP_FMT){
+  if (moveFormat(move) == SRC_DST_FMT ||
+      moveFormat(move) == SRC_DST_UP_FMT){
     int src[3];
     int dst[3];
     cToCoords(dst, move);
