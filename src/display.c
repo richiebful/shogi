@@ -94,8 +94,8 @@ void dispClock(struct gm_status *game){
 
 bool dispHistory(struct gm_status *game){
   struct hist_s *this_move = game->history;
-  if (game->history != NULL){
-    while (this_move->prev_move != NULL){
+  if (game->history->num != 0){
+    while (this_move->prev_move->num != 0){
       this_move = this_move->prev_move;
     }
     int i;

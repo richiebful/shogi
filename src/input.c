@@ -23,8 +23,10 @@ int processcmd(struct gm_status *game, char *command){
     return 0;
   }
   else if (strncmp(command, "undo", 4) == 0){
-    undo(game);
-    return 1;
+    if (undo(game) == true)
+      return 1;
+    else
+      return 0;
   }
   else if (strncmp(command, "exit", 4) == 0){
     return -1;

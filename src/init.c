@@ -15,7 +15,8 @@ void init_game(struct gm_status *game){
 
   game->player = 1;
 
-  game->history = NULL;
+  game->history = malloc(sizeof(struct hist_s));
+  game->history->num = 0;
 
   int i;
   FORRANGE(i,0,38,1){

@@ -245,7 +245,7 @@ bool undo(struct gm_status *game){
     game->board[src[0]][src[1]] = ' ';
     digGrave(game, otherPlayer(game->player), piece);
   }
-  popLastHistory(game);  
+  popLastHistory(game);
   return true;
 }
 
