@@ -1,4 +1,13 @@
 /** \file */
+#include <assert.h>
+#include <ctype.h>
+#include <math.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include "shogi.h"
 
 void init_game(struct gm_status *game){

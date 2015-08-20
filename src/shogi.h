@@ -1,25 +1,9 @@
 /** \file */
 
-#include <assert.h>
-#include <ctype.h>
-#include <math.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-
 #define CHALLENGING 1
 #define REIGNING 2
 #define P1 1
 #define P2 2
-#define FORRANGE(var, beginning, end, increment) \
-  for(var = beginning; var < end; var += increment)
-#define FOREACH(iterable, var) \
-  for(var = 0; var < sizeof(iterable)/sizeof(iterable[0]); var++)
-#define changePlayer(player) player = player % 2 + 1
-#define otherPlayer(player) player % 2 + 1
 
 #define DROP_FMT 0
 #define PIECE_DST_FMT 1

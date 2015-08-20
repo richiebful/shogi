@@ -1,22 +1,29 @@
 /**\file*/
+#include <assert.h>
+#include <ctype.h>
+#include <math.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include "shogi.h"
-
 
 int ischeck(struct gm_status *game, int player){
   int i, j;
   char board[9][9];
   memcpy(board, game->board, sizeof(board));
 
-  int otherPlayer = (player) % 2 + 1;
   int dst[2];
 
   int king = 'k' - 32*(player-1);
   
-  FORRANGE(i, 0, 9, 1){
-    FORRANGE(j, 0, 9, 1){
+  for (i = 0; i < 9; i++){
+    for (j = 0; j < 9; j++){
       if (board[i][j] == king){
 	dst[0] = i;
-	dst[1] = 8 - j;
+	dst[1] = j;
 	break;
       }
     }
@@ -24,10 +31,10 @@ int ischeck(struct gm_status *game, int player){
 
   int src[2];
   bool exit_f = false;
-  FORRANGE(i, 0, 9, 1){
-    FORRANGE(j, 0, 9, 1){
+  for (i = 0; i < 9; i++){
+    for (j = 0; j < 9; j++){
       src[0] = i;
-      src[1] = 8 - j;
+      src[1] = j;
       if (legalmove(game, player, src, dst, true)){
 	return true;
       }
@@ -51,10 +58,10 @@ int ismate(struct gm_status *game, int player){
   int src[2], dst[2];
   
   /*Assume checkmate until it is disproven*/
-  FORRANGE(i, 0, 9, 1){
-    FORRANGE(j, 0, 9, 1){
-      FORRANGE(k, 0, 9, 1){
-	FORRANGE(l, 0, 9, 1){
+  for(i= 0; i < 9; i++){
+    for (j = 0; j < 9; j++){
+      for (k = 0; k < 9; k++){
+	for (l = 0; l < 9; l++){
 	  src[0] = i; src[1] = j;
 	  dst[0] = k; dst[1] = l;
 	  if (legalmove(&test_game, player, src, dst, 1) == true){
@@ -98,7 +105,7 @@ void init_game(struct gm_status *game){
   game->history = malloc(sizeof(char)*5*150);
 
   int i;
-  FORRANGE(i,0,38,1){
+  for (i = 0; i < 38; i++){
     game->graveyard.challenging[i] = '\0';
     game->graveyard.reigning[i] = '\0';
   }
