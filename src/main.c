@@ -31,6 +31,7 @@ int main(void){
       game.mate_f = ismate(&game, game.player);
       if (game.mate_f == true){
 	printf("Checkmate.\n");
+	dispBoard(&game);
 	break;
       }
     }

@@ -13,23 +13,20 @@
 /**
  *\brief Shows the board and graveyard
  */
-void dispBoard(struct gm_status *game){
-  char board[9][9];
-  memcpy(board, game->board, sizeof(board));
+void dispBoard(char *board, char *graveyard){
   int i, j;
-
   printf("\n");
 
   for (i = 0; i < 9; i++){
     printf(" ");
     for (j = 0; j < 9; j++){
-      char piece = board[i][j];
+      char piece = board[i*9+j];
       char upgraded_f = ' ';
       if (isUpgradedPiece(piece)){
         upgraded_f = '+';
         piece--;
       }
-      if (isupper(board[i][j])){
+      if (isupper(piece)){
 	//print the piece out in white
 	printf("\x1b[37m%c%c", piece, upgraded_f);
       }
@@ -53,8 +50,8 @@ void dispBoard(struct gm_status *game){
   printf("\n\n");
   char p1Yard[38];
   char p2Yard[38];
-  memcpy(p1Yard, game->graveyard[0], sizeof(p1Yard));
-  memcpy(p2Yard, game->graveyard[1], sizeof(p2Yard));
+  memcpy(p1Yard, graveyard, sizeof(p1Yard));
+  memcpy(p2Yard, graveyard+38, sizeof(p2Yard));
   for (i = 0; i < 38; i++){
     if (p1Yard[i] != '\0'){
       printf("\x1b[31m%c ", p1Yard[i]);

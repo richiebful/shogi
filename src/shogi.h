@@ -66,7 +66,7 @@ int ismate(struct gm_status *game, int player);
 long updateClock(struct gm_status *game);
 
 /*display.c*/
-void dispBoard(struct gm_status *game);
+void dispBoard(char *board, char *graveyard);
 void dispClock(struct gm_status *game);
 void dispHelp();
 bool dispHistory(struct gm_status *game);

@@ -20,6 +20,7 @@ int ischeck(struct gm_status *game, int player){
   char board[9][9];
   int otherPlayer = player % 2 + 1;
   memcpy(board, game->board, sizeof(board));
+  printf("%i", player);
 
   int dst[2];
 
@@ -52,7 +53,7 @@ int ischeck(struct gm_status *game, int player){
 
 int ismate(struct gm_status *game, int player){
   struct gm_status test_game;
-  //int otherPlayer = player % 2 + 1;
+  printf("%i", player);
   memcpy(&test_game, &game, sizeof(test_game));
 
   /*Player must be in check to be in mate*/
@@ -71,7 +72,7 @@ int ismate(struct gm_status *game, int player){
 	for (l = 0; l < 9; l++){
 	  src[0] = i; src[1] = j;
 	  dst[0] = k; dst[1] = l;
-	  if (legalmove(&test_game, player, src, dst, 1) == true){
+	  if (legalmove(&test_game, player, src, dst, true) == true){
               mkmove(&test_game, player, src, dst, false, false);
 	    if (ischeck(&test_game, player) == false){
 	      return false;
