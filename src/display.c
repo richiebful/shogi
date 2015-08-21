@@ -13,7 +13,7 @@
 /**
  *\brief Shows the board and graveyard
  */
-void dispBoard(char *board, char *graveyard){
+void dispBoard(char *board){
   int i, j;
   printf("\n");
 
@@ -48,6 +48,11 @@ void dispBoard(char *board, char *graveyard){
     printf("%i ", i);
   }
   printf("\n\n");
+  //resets colour to default
+  printf("\x1b[0m");
+}
+
+void dispGraveyard(char *graveyard){
   char p1Yard[38];
   char p2Yard[38];
   memcpy(p1Yard, graveyard, sizeof(p1Yard));
