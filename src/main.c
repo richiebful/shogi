@@ -38,5 +38,6 @@ int main(void){
       break;
     }
   }
+  free(command);
   return 0;  
 }

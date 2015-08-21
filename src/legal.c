@@ -114,7 +114,6 @@ int lanceLegalMove(struct gm_status *game,
   }
 }
 
-/**This has major errors in the upgrade handling mechanism*/
 int bishopLegalMove(struct gm_status *game,
 		    int player, int *src, int *dst){
   int srank = src[0], sfile = src[1],
@@ -209,7 +208,7 @@ int upRookLegalMove(struct gm_status *game,
 			  {srank, sfile + 1},
 			  {srank, sfile - 1} };
   int  i;
-  FOREACH(possible, i){
+  for (i = 0; i < sizeof(possible)/sizeof(possible[0]); i++){
     if (possible[i][0] == drank && possible[i][1] == dfile){
       return true;
     }
@@ -296,12 +295,12 @@ int legalmove(struct gm_status *game, int player,
 }
 
 int inrange(int rank, int file){
-    if (rank > 8 || rank < 0 || file > 8 || file < 0){
-      return false;
-    }
-    else{
-      return true;
-    }
+  if (rank > 8 || rank < 0 || file > 8 || file < 0){
+    return false;
+  }
+  else{
+    return true;
+  }
 }
 
 int legaldest(struct gm_status *game, int player, int rank, int file){
@@ -351,7 +350,7 @@ int legalDropPiece(player, piece){
 int inGraveyard(struct gm_status *game, int player, char piece){
   int i,  graveyard[38];
   memcpy(graveyard, game->graveyard[player], sizeof(graveyard));
-  FOREACH(graveyard, i) {
+  for(i = 0; i < sizeof(graveyard)/sizeof(graveyard[0]); i++) {
     if (graveyard[i] == piece) {
       return true;
     }

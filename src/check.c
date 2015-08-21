@@ -10,9 +10,15 @@
 #include <time.h>
 #include "shogi.h"
 
+/**\fn ischeck
+ * \param game the current game state
+ * \param player, the player being evaluated for being in check
+ */
+
 int ischeck(struct gm_status *game, int player){
   int i, j;
   char board[9][9];
+  int otherPlayer = player % 2 + 1;
   memcpy(board, game->board, sizeof(board));
 
   int dst[2];
@@ -35,7 +41,7 @@ int ischeck(struct gm_status *game, int player){
     for (j = 0; j < 9; j++){
       src[0] = i;
       src[1] = j;
-      if (legalmove(game, player, src, dst, true)){
+      if (legalmove(game, otherPlayer, src, dst, true)){
 	return true;
       }
     }
@@ -46,6 +52,7 @@ int ischeck(struct gm_status *game, int player){
 
 int ismate(struct gm_status *game, int player){
   struct gm_status test_game;
+  //int otherPlayer = player % 2 + 1;
   memcpy(&test_game, &game, sizeof(test_game));
 
   /*Player must be in check to be in mate*/
@@ -78,41 +85,51 @@ int ismate(struct gm_status *game, int player){
   return true;
 }
 
-#ifdef CHECK_TEST 
+#ifdef CHECK_TEST
+
+int eprintf(char *format, ...){
+  va_list argp;
+  va_start(argp, format);
+  vprintf(format, argp);
+  va_end(argp);
+  return true;
+}
 
 int main(){
   struct gm_status game;
-  int player = 1;
   init_game(&game);
-  printf("%i",ischeck(game, player));
+  printf("%i",ischeck(&game, 2));
 }
 
 void init_game(struct gm_status *game){
-  const char init_board[9][9] = {{'L','N','G','U','K','U','G','N','L'},
-				 {' ','R',' ',' ',' ',' ',' ','B',' '},
-				 {'P','P','P','P','P','P','P','P','P'},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {' ',' ',' ',' ',' ',' ',' ',' ',' '},
-				 {'p','p','p','p','p','p','p','p','p'},
-				 {' ','b',' ',' ',' ',' ',' ','r',' '},
-				 {'l','n','g','u','k','u','g','n','l'}};
+  const char init_board[9][9] = {"LNGUKUGNL",
+				 " R     B ",
+				 "PPPPPPbPP",
+				 "         ",
+				 "         ",
+				 "         ",
+				 "ppppppppp",
+				 " b     r ",
+				 "lngukugnl"};
   memcpy(game->board,init_board,sizeof(init_board));
 
   game->player = 1;
 
-  /*the equivalent of char game->history[150][5]*/
-  game->history = malloc(sizeof(char)*5*150);
+  game->history = malloc(sizeof(struct hist_s));
+  game->history->num = 0;
 
   int i;
-  for (i = 0; i < 38; i++){
-    game->graveyard.challenging[i] = '\0';
-    game->graveyard.reigning[i] = '\0';
+  for(i = 0; i < 38; i++){
+    game->graveyard[0][i] = '\0';
+    game->graveyard[1][i] = '\0';
   }
   //set each player's clocks to 60:00
-  game->clock.player_t[0][0] = game->clock.player_t[1][0] = 60;
-  game->clock.player_t[0][1] = game->clock.player_t[1][1] = 0;
+  game->clock.player_t[0] = game->clock.player_t[1] = 3600;
   game->clock.advance_t = 15; //15s added per move
+  game->clock.last_t = time(NULL);
+
+  game->check_f = false;
+  game->mate_f = false;
 }
 
 #endif
