@@ -19,7 +19,8 @@
 int processcmd(struct gm_status *game, char *command){
   //printf("%s", command);
   if (strncmp(command, "show", 4) == 0){
-    dispBoard(game->board, game->graveyard);
+    dispBoard(game->board);
+    dispGraveyard(game->graveyard);
     return 0;
   }
   else if (strncmp(command, "help", 4) == 0){

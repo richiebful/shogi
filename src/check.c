@@ -20,7 +20,7 @@ int ischeck(struct gm_status *game, int player){
   char board[9][9];
   int otherPlayer = player % 2 + 1;
   memcpy(board, game->board, sizeof(board));
-  printf("%i", player);
+  printf("CheckTest:%i", player);
 
   int dst[2];
 

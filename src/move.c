@@ -64,21 +64,23 @@ void mkmove(struct gm_status *game, int player,
  * \param game the current game state
  * \param piece the piece to be added
  */
-
+//refactor, please
 int digGrave(struct gm_status *game, int player, char piece){
   int i;
   if (piece != ' '){
     if (player == P1){
       for (i = 0; i < 38; i++){
-	if (game->graveyard[player-1][i] != '\0'){
+	if (game->graveyard[player-1][i] == '\0'){
 	  game->graveyard[player-1][i] = tolower(piece);
+	  break;
 	}
       }
     }
     else{
       for (i = 0; i < 38; i++){
-	if (game->graveyard[player-1][i] != '\0'){
+	if (game->graveyard[player-1][i] == '\0'){
 	  game->graveyard[player-1][i] = toupper(piece);
+	  break;
 	}
       }
     }

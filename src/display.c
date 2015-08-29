@@ -13,14 +13,14 @@
 /**
  *\brief Shows the board and graveyard
  */
-void dispBoard(char *board){
+void dispBoard(char board[9][9]){
   int i, j;
   printf("\n");
 
   for (i = 0; i < 9; i++){
     printf(" ");
     for (j = 0; j < 9; j++){
-      char piece = board[i*9+j];
+      char piece = board[i][j];
       char upgraded_f = ' ';
       if (isUpgradedPiece(piece)){
         upgraded_f = '+';
@@ -52,11 +52,12 @@ void dispBoard(char *board){
   printf("\x1b[0m");
 }
 
-void dispGraveyard(char *graveyard){
+void dispGraveyard(char graveyard[2][38]){
   char p1Yard[38];
   char p2Yard[38];
-  memcpy(p1Yard, graveyard, sizeof(p1Yard));
-  memcpy(p2Yard, graveyard+38, sizeof(p2Yard));
+  memcpy(p1Yard, graveyard[0], sizeof(p1Yard));
+  memcpy(p2Yard, graveyard[1], sizeof(p2Yard));
+  int i;
   for (i = 0; i < 38; i++){
     if (p1Yard[i] != '\0'){
       printf("\x1b[31m%c ", p1Yard[i]);
@@ -69,7 +70,7 @@ void dispGraveyard(char *graveyard){
     }
   }
   printf("\n");
-  //reset colours to default
+  //reset colour to default
   printf("\x1b[0m");
 }
 
