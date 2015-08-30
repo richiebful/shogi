@@ -33,10 +33,13 @@ int processcmd(struct gm_status *game, char *command){
     return 0;
   }
   else if (strncmp(command, "undo", 4) == 0){
-    if (undo(game) == true)
+    if (undo(game) == true){
       return 1;
-    else
+    }
+    else{
+      printf("There are no moves to undo\n");
       return 0;
+    }
   }
   else if (strncmp(command, "exit", 4) == 0){
     return -1;
@@ -54,10 +57,8 @@ int processcmd(struct gm_status *game, char *command){
     dispHistory(game);
     return 0;
   }
-  else if (isdigit(command[0]) &&
-	   islower(command[1]) &&
-	   (strlen(command) == 4 ||
-            strlen(command) <= 5)){
+  else if (moveFormat(command) == SRC_DST_FMT ||
+	   moveFormat(command) == SRC_DST_UP_FMT){
     /*input is of format 5e4e(+)*/
     char src_c[3], dst_c[3];
     int src[2], dst[2];
@@ -66,7 +67,7 @@ int processcmd(struct gm_status *game, char *command){
     snprintf(dst_c, 3, "%s", command+2);
     cToCoords(dst, dst_c);
     cToCoords(src, src_c);
-    upgrade_f =  (command[4] == '+');
+    upgrade_f = (command[4] == '+');
     if (legalmove(game,game->player, src, dst, 0)==true){
       mkmove(game, game->player, src, dst, true, false);
       return 1;
@@ -75,10 +76,8 @@ int processcmd(struct gm_status *game, char *command){
       return 0;
     }
   }
-  else if ((isupper(command[0]) != 0) &&
-	   (isdigit(command[1]) != 0) &&
-	   (islower(command[2]) != 0) &&
-	   (strlen(command) <= 5)){
+  else if (moveFormat(command) == PIECE_DST_FMT ||
+	   moveFormat(command) == PIECE_DST_UP_FMT){
     //interpret move of form P4e(+)
     int src[2], dst[2];
     char dst_c[2], piece = command[0];
@@ -96,10 +95,7 @@ int processcmd(struct gm_status *game, char *command){
       return 0;
     }
   }
-  else if (isupper(command[0]) &&
-	   command[1] == '*' &&
-	   islower(command[2]) &&
-	   sizeof(command) == 4){
+  else if (moveFormat(command) == DROP_FMT){
     //inteprets drop of form P*4e
     char piece = command[0], dst_c[2];
     int dst[2];

@@ -245,24 +245,19 @@ int legalmove(struct gm_status *game, int player,
   mkmove(&test_game, player, src, dst, 0, 0);
 
   if (legaldest(game, player, dst[0], dst[1]) == false){
-    printf("Dst fail\n");
     return false;
   }
   else if (legalsrc(game, player, src[0], src[1]) == false){
-    printf("Src fail\n");
     return false;
   }
   else if (drank == srank && dfile == sfile){
-    printf("equality fail\n");
     return false;
   }
   else if (from_check_f == false && ischeck(&test_game, player)){
     dispBoard(test_game.board);
-    printf("Check fail\n");
     return false;
   }
   else if (piece == 'P' || piece == 'p'){
-    eprintf("gets to pawn\n");
     return pawnLegalMove(game, player, src, dst);
   }
   else if (piece == 'R' || piece == 'r'){

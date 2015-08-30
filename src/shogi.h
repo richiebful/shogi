@@ -11,7 +11,7 @@
 #define SRC_DST_FMT 3
 #define SRC_DST_UP_FMT 4
 
-#define ERROR_F
+//#define ERROR_F
 
 struct time_s{
   //sec format
