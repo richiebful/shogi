@@ -2,13 +2,12 @@
 
 /*Game tree node*/
 struct tree_node{
-  int potential;
-  int raw_score;
   int score;
   int src[2], dst[2];
   struct gm_status *game;
   struct tree_node *parent;
   struct tree_node *children;
+  struct tree_node *best;
 };
 
 /*Stores values for piece valuation*/

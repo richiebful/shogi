@@ -52,8 +52,7 @@ int generateChildren(struct gm_status *curr_game,
             memcpy(node[node_i]->game, last_game,
                    sizeof(last_game));
 
-            node[node_i].raw_score = scoreNode(node[this_node]);
-            node[node_i].score = 0;
+            node[node_i].score = scoreNode(node[this_node]);
             node[node_i].parent = &parent;
             node[node_i].children = NULL;
             memcpy(node[node_i].src, src, sizeof(src));
