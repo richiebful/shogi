@@ -15,7 +15,7 @@
  *Returns true if no failure
  *Returns false if it fails to generate legal moves
  */
-int generateChildren(struct gm_status *curr_game,
+int generateChildren(struct gm_status * curr_game,
                      struct tree_node * node_set,
                      struct tree_node * parent){
 

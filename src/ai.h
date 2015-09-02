@@ -1,14 +1,33 @@
 #define treetop (struct tree_node);
 
 /*Game tree node*/
-struct tree_node{
+struct move_node{
   int score;
-  int src[2], dst[2];
-  struct gm_status *game;
-  struct tree_node *parent;
-  struct tree_node *children;
-  struct tree_node *best;
-};
+  int dst[2];
+  char piece;
+  union{
+    struct move_node *c;
+    struct drop_node *c;
+  }children;
+  union{
+    struct move_node *p;
+    struct drop_node *p;
+  }parents;
+}
+
+struct drop_node{
+  int score;
+  int dst[2];
+  char piece;
+  union{
+    struct move_node *c;
+    struct drop_node *c;
+  }children;
+  union{
+    struct move_node *p;
+    struct drop_node *p;
+  }parents;
+}
 
 /*Stores values for piece valuation*/
 struct ai_score_book{
@@ -20,7 +39,6 @@ struct ai_score_book{
 /*Determines the difficulty of the game AI*/
 struct gm_ai_profile{
   int depth;
-  int threshold; //highest allowable score for node
   int level; //official level 1-9
   struct ai_score_book score_book;
 }ai_profile;
