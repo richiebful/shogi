@@ -40,8 +40,8 @@ struct gm_status{
 
 /*legal.c*/
 int legaldest(struct gm_status *game, int player, int rank, int file);
-int legalmove(struct gm_status *game, int player, int *src, int *dst, 
-	      int from_check_f);
+int legalmove(struct gm_status *game, int player,
+	      int *src, int *dst, int from_check_f);
 int inrange(int rank, int file);
 int legalsrc(struct gm_status *game, int player, int rank, int file);
 int legaldrop(struct gm_status *game, int player, char piece, int *dst);

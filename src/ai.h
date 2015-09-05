@@ -1,33 +1,16 @@
 #define treetop (struct tree_node);
 
 /*Game tree node*/
-struct move_node{
+struct tree_node{
   int score;
+  union{
+    char piece;
+    int src[2];
+  };
   int dst[2];
-  char piece;
-  union{
-    struct move_node *c;
-    struct drop_node *c;
-  }children;
-  union{
-    struct move_node *p;
-    struct drop_node *p;
-  }parents;
-}
-
-struct drop_node{
-  int score;
-  int dst[2];
-  char piece;
-  union{
-    struct move_node *c;
-    struct drop_node *c;
-  }children;
-  union{
-    struct move_node *p;
-    struct drop_node *p;
-  }parents;
-}
+  struct tree_node *children;
+  struct tree_node *parent;
+};
 
 /*Stores values for piece valuation*/
 struct ai_score_book{
