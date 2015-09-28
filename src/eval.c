@@ -21,32 +21,21 @@ int scoreNode(struct tree_node *node,
 
   int loc[2];
   int last_score, this_score;
-	char this_piece;
+  char this_piece;
   FORRANGE(loc[0], 0, 10, 1){
     FORRANGE(loc[1], 0, 10, 1){
-      thisPiece = board[i][j];
-      FOREACH(pcValue->name, k){
-        if (pcValue->name[k] == thisPiece){
-          scorePiece(game.board, loc, thisPiece);
-        }
-      }
+      thisPiece = board[loc[0]][loc[1]];
+      score += scorePiece(board, loc, thisPiece);
     }
-  }
-
-  if (this_player == player){
-    score = this_score - last_score;
-  }
-  else{
-    score = last_score - this_score;
-  }
+  } 
   return score;
 }
 
 int scorePiece(int *board[], int *loc, char piece){
-	int i, j;
-	FOREACH(board, i){
-		FOREACH(board[0], j){
-			if(legalmove())
-		}
-	}
+  int i;
+  for (int i = 0; i < sizeof(pcValuation); i++){
+    if (name[i] = piece){
+      return score[i];
+    }
+  }
 }
