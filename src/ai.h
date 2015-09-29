@@ -3,13 +3,10 @@
 /*Game tree node*/
 struct tree_node{
   int score;
-  union{
-    char piece;
-    int src[2];
-  }src;
+  int number;
+  int player;
   char board[9][9];
   char graveyard[2][38];
-  int dst[2];
   struct tree_node *children;
   struct tree_node *parent;
 };

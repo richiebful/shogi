@@ -15,14 +15,17 @@ int findBestMove(struct gm_status *game, int depth){
   
 }
 
-int generateNodes(char board[9][9], char graveyard[2][38]){
- 
-}
-
-int generateDrops(char board[9][9]){
-
-}
-
-int generateMoves(struct tree_node *parent){
-    
+int generateNodes(struct tree_node *parent){
+  int src[2], dst[2];
+  int player = parent->player;
+  for (src[0] = 0; src[0] < 9; src[0]++){
+    for (src[1] = 0; src[1] < 9; src[1]++){
+      for (dst[0] = 0; dst[0] < 9; dst[0]++){
+	for (dst[1] = 0; dst[1] < 9; dst[1]++){
+	  if (legalmove())
+	    makemove(game, player,);
+	}
+      }
+    }
+  }
 }
