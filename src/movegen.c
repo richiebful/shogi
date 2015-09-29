@@ -23,7 +23,7 @@ int generateNodes(struct tree_node *parent){
       for (dst[0] = 0; dst[0] < 9; dst[0]++){
 	for (dst[1] = 0; dst[1] < 9; dst[1]++){
 	  if (legalmove())
-	    makemove(game, player,);
+	    makemove(parent->board, parent->graveyard, src, dst);
 	}
       }
     }

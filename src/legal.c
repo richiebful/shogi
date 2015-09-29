@@ -158,13 +158,11 @@ int rookLegalDirection(int *src, int *dst){
 	  (drank == srank && dfile != sfile));
 }
 
-int rookLegalMove(struct gm_status *game,
+int rookLegalMove(char board[8][8],
 		  int player, int *src, int *dst){
   int srank = src[0], sfile = src[1],
     drank = dst[0], dfile = dst[1];
   int i;
-  char board[9][9];
-  memcpy(board, game->board, sizeof(board));
   if (rookLegalDirection(src, dst)){
     return false;
   }
@@ -216,8 +214,7 @@ int upRookLegalMove(struct gm_status *game,
   return false;
 }
 
-int pawnLegalMove(struct gm_status *game,
-		  int player, int *src, int *dst){
+int pawnLegalMove(int player, int *src, int *dst){
   int srank = src[0], sfile = src[1],
     drank = dst[0], dfile = dst[1];
   int rel_dir = rel_dir_gen(player);
@@ -229,25 +226,23 @@ int pawnLegalMove(struct gm_status *game,
   }
 }
 
-int legalmove(struct gm_status *game, int player,
+int legalmove(int board[9][9], int player,
 	      int *src, int *dst, int from_check_f){
   int srank = src[0], sfile = src[1],
       drank = dst[0], dfile = dst[1];
 
-  char board[9][9];
-  memcpy(board, game->board, sizeof(board));
   char piece = board[srank][sfile];
   eprintf("%c from %i, %i to %i, %i",
           piece, srank, sfile, drank, dfile);
   
-  struct gm_status test_game;
+  int test_game[9][9];
   memcpy(&test_game, game, sizeof(test_game));
-  mkmove(&test_game, player, src, dst, 0, 0);
+  mkmove(game, player, src, dst, 0, 0);
 
-  if (legaldest(game, player, dst[0], dst[1]) == false){
+  if (legaldest(board, player, dst[0], dst[1]) == false){
     return false;
   }
-  else if (legalsrc(game, player, src[0], src[1]) == false){
+  else if (legalsrc(board, player, src[0], src[1]) == false){
     return false;
   }
   else if (drank == srank && dfile == sfile){
@@ -258,10 +253,10 @@ int legalmove(struct gm_status *game, int player,
     return false;
   }
   else if (piece == 'P' || piece == 'p'){
-    return pawnLegalMove(game, player, src, dst);
+    return pawnLegalMove(player, src, dst);
   }
   else if (piece == 'R' || piece == 'r'){
-    return rookLegalMove(game, player, src, dst);
+    return rookLegalMove(board, player, src, dst);
   }
   else if (piece == 'S' || piece == 's'){
     return (rookLegalMove(game, player, src, dst)||
@@ -300,8 +295,8 @@ int inrange(int rank, int file){
   }
 }
 
-int legaldest(struct gm_status *game, int player, int rank, int file){
-  char dpiece = game->board[rank][file];
+int legaldest(char board[8][8], int player, int rank, int file){
+  char dpiece = board[rank][file];
   if (inrange(rank, file) == false){
     return false; 
   }
@@ -316,8 +311,8 @@ int legaldest(struct gm_status *game, int player, int rank, int file){
   }
 }
 
-int legalsrc(struct gm_status *game, int player, int rank, int file){
-  char spiece = game->board[rank][file];
+int legalsrc(char board[8][8], int player, int rank, int file){
+  char spiece = board[rank][file];
   if (inrange(rank, file) == false){
     return false;
   }
@@ -344,7 +339,7 @@ int legalDropPiece(player, piece){
   }
 }
 
-int inGraveyard(struct gm_status *game, int player, char piece){
+int inGraveyard(char graveyard[2][38], int player, char piece){
   int i,  graveyard[38];
   memcpy(graveyard, game->graveyard[player], sizeof(graveyard));
   for(i = 0; i < sizeof(graveyard)/sizeof(graveyard[0]); i++) {

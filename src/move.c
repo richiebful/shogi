@@ -27,9 +27,8 @@
  *\pre game includes a well-formed gm_status
  */
 
-void mkmove(struct gm_status *game, int player,
-	    int *src, int *dst,
-	    bool update_f, bool upgrade_f){
+int makeMove(char board[9][9], char graveyard[2][38],
+	       int *src, int *dst){
   int drank = dst[0];
   int dfile = dst[1];
   int srank = src[0];
@@ -39,8 +38,13 @@ void mkmove(struct gm_status *game, int player,
   game->board[srank][sfile] = ' ';
   game->board[drank][dfile] = spiece + upgrade_f;
   
-  digGrave(game, player, dpiece);
+  digGrave(graveyard, player, dpiece);
+}
 
+void gmMakeMove(struct gm_status *game, int player,
+	    int *src, int *dst,
+	    bool update_f, bool upgrade_f){
+  makeMove(game, 
   if (update_f == true){
     time_t tm_executed = updateClock(game);
     char move[6];
@@ -64,22 +68,22 @@ void mkmove(struct gm_status *game, int player,
  * \param game the current game state
  * \param piece the piece to be added
  */
-//refactor, please
-int digGrave(struct gm_status *game, int player, char piece){
+
+int digGrave(char graveyard[2][38], int player, char piece){
   int i;
   if (piece != ' '){
     if (player == P1){
       for (i = 0; i < 38; i++){
-	if (game->graveyard[player-1][i] == '\0'){
-	  game->graveyard[player-1][i] = tolower(piece);
+	if (graveyard[player-1][i] == '\0'){
+	  graveyard[player-1][i] = tolower(piece);
 	  break;
 	}
       }
     }
     else{
       for (i = 0; i < 38; i++){
-	if (game->graveyard[player-1][i] == '\0'){
-	  game->graveyard[player-1][i] = toupper(piece);
+	if (graveyard[player-1][i] == '\0'){
+	  graveyard[player-1][i] = toupper(piece);
 	  break;
 	}
       }
