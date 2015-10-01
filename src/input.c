@@ -68,8 +68,8 @@ int processcmd(struct gm_status *game, char *command){
     cToCoords(dst, dst_c);
     cToCoords(src, src_c);
     upgrade_f = (command[4] == '+');
-    if (legalmove(game,game->player, src, dst, 0)==true){
-      mkmove(game, game->player, src, dst, true, false);
+    if (legalmove(game->board, game->player, src, dst, 0)==true){
+      gmMakeMove(game, game->player, src, dst, true, false);
       return 1;
     }
     else{
@@ -102,7 +102,7 @@ int processcmd(struct gm_status *game, char *command){
     snprintf(dst_c, 2, "%s", command+2);
     cToCoords(dst, dst_c);
     if (legaldrop(game, game->player, piece, dst) == true){
-      mkdrop(game, game->player, piece ,dst, true);
+      mkdrop(game->board, game->graveyard, game->player, piece ,dst, true);
       return 1;
     }
     else{

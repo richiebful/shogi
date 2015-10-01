@@ -39,31 +39,34 @@ struct gm_status{
 };
 
 /*legal.c*/
-int legaldest(struct gm_status *game, int player, int rank, int file);
-int legalmove(struct gm_status *game, int player,
+int legaldest(char board[9][9], int player, int rank, int file);
+int legalmove(char board[9][9], int player,
 	      int *src, int *dst, int from_check_f);
 int inrange(int rank, int file);
-int legalsrc(struct gm_status *game, int player, int rank, int file);
-int legaldrop(struct gm_status *game, int player, char piece, int *dst);
+int legalsrc(char board[9][9], int player, int rank, int file);
+int legaldrop(char board[9][9], char graveyard[2][38], int player, char piece, int *dst);
 bool legalUpgrade(struct gm_status *game, int player, int *coords);
 /*init.c*/
 void init_game(struct gm_status *game);
 int eprintf(char *format, ...);
 /*move.c*/
-void mkmove(struct gm_status *game, int player,
-	    int *src, int *dst, bool update_f, bool upgrade_f);
+void makeMove(char board[9][9], char graveyard[2][38],
+	      int player, int *src, int *dst, bool upgrade_f);
+void gmMakeMove(struct gm_status *game, int player,
+		int *src, int *dst,
+		bool update_f, bool upgrade_f);
 void mkdrop(struct gm_status *game, int player, 
 	    char piece, int *dst, bool update_f);
 void cToCoords(int *converted, char *to_convert);
 void coordsToC(char *converted, int *to_convert);
 void updateHistory(struct gm_status *game, char *move, time_t tm_executed);
-int digGrave(struct gm_status *game, int player, char piece);
+int digGrave(char graveyard[2][38], int player, char piece);
 bool isUpgradedPiece(char piece);
 int moveFormat(char *move);
 bool undo(struct gm_status *game);
 /*check.c*/
-int ischeck(struct gm_status *game, int player);
-int ismate(struct gm_status *game, int player);
+int ischeck(char board[9][9], int player);
+int ismate(char board[9][9], int player);
 /*clock.c*/
 long updateClock(struct gm_status *game);
 

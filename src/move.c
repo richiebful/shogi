@@ -27,24 +27,29 @@
  *\pre game includes a well-formed gm_status
  */
 
-int makeMove(char board[9][9], char graveyard[2][38],
-	       int *src, int *dst){
+void makeMove(char board[9][9], char graveyard[2][38],
+	     int player, int *src, int *dst, bool upgrade_f){
   int drank = dst[0];
   int dfile = dst[1];
   int srank = src[0];
   int sfile = src[1];
-  char spiece = game->board[srank][sfile];
-  char dpiece = game->board[drank][dfile];
-  game->board[srank][sfile] = ' ';
-  game->board[drank][dfile] = spiece + upgrade_f;
+  char spiece = board[srank][sfile];
+  char dpiece = board[drank][dfile];
+  board[srank][sfile] = ' ';
+  board[drank][dfile] = spiece + upgrade_f;
   
   digGrave(graveyard, player, dpiece);
 }
 
 void gmMakeMove(struct gm_status *game, int player,
-	    int *src, int *dst,
-	    bool update_f, bool upgrade_f){
-  makeMove(game, 
+		int *src, int *dst,
+		bool update_f, bool upgrade_f){
+  int drank = dst[0];
+  int dfile = dst[1];
+  int srank = src[0];
+  int sfile = src[1];
+  makeMove(game->board, game->graveyard, player,
+	   src, dst, upgrade_f);
   if (update_f == true){
     time_t tm_executed = updateClock(game);
     char move[6];

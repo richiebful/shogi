@@ -15,11 +15,9 @@
  * \param player, the player being evaluated for being in check
  */
 
-int ischeck(struct gm_status *game, int player){
+int ischeck(char board[9][9], int player){
   int i, j;
-  char board[9][9];
   int otherPlayer = player % 2 + 1;
-  memcpy(board, game->board, sizeof(board));
 
   int dst[2];
 
@@ -36,26 +34,26 @@ int ischeck(struct gm_status *game, int player){
   }
 
   int src[2];
-  bool exit_f = false;
   for (i = 0; i < 9; i++){
     for (j = 0; j < 9; j++){
       src[0] = i;
       src[1] = j;
-      if (legalmove(game, otherPlayer, src, dst, true)){
+      if (legalmove(board, otherPlayer, src, dst, true)){
 	return true;
       }
     }
   }
-  return exit_f;
+  return false;
 }
 
-int ismate(struct gm_status *game, int player){
-  struct gm_status test_game;
+int ismate(char board[9][9], int player){
+  char test_board[9][9];
+  memcpy(&test_board, &board, sizeof(test_board));
+  
   player = player % 2 + 1;
-  memcpy(&test_game, &game, sizeof(test_game));
 
   /*Player must be in check to be in mate*/
-  if (ischeck(game, player)==false){
+  if (ischeck(board, player)==false){
     return false;
   }
   /*test all possible following moves, then determine 
@@ -71,12 +69,12 @@ int ismate(struct gm_status *game, int player){
 	for (l = 0; l < 9; l++){
 	  src[0] = i; src[1] = j;
 	  dst[0] = k; dst[1] = l;
-	  if (legalmove(&test_game, player, src, dst, true) == true){
-              mkmove(&test_game, player, src, dst, false, false);
-	    if (ischeck(&test_game, player) == false){
+	  if (legalmove(test_board, player, src, dst, true) == true){
+              mkmove(test_board, player, src, dst, false, false);
+	    if (ischeck(test_board, player) == false){
 	      return false;
 	    }
-	    memcpy(&test_game, &game, sizeof(test_game));
+	    memcpy(test_board, &board, sizeof(test_board));
 	  }
 	}
       }
