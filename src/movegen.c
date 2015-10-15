@@ -22,8 +22,9 @@ int generateNodes(struct tree_node *parent){
     for (src[1] = 0; src[1] < 9; src[1]++){
       for (dst[0] = 0; dst[0] < 9; dst[0]++){
 	for (dst[1] = 0; dst[1] < 9; dst[1]++){
-	  if (legalmove())
-	    makemove(parent->board, parent->graveyard, src, dst);
+	  //redefine function wrapper to copy to new node
+	  //consider both options, however
+	  makemove(parent->board, parent->graveyard, src, dst);
 	}
       }
     }
