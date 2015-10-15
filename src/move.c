@@ -48,7 +48,7 @@ void gmMakeMove(struct gm_status *game, int player,
   int dfile = dst[1];
   int srank = src[0];
   int sfile = src[1];
-  makeMove(game->board, game->graveyard, player,
+  makeMove(game->board, game->graveyard, game->player,
 	   src, dst, upgrade_f);
   if (update_f == true){
     time_t tm_executed = updateClock(game);
@@ -127,40 +127,37 @@ void updateHistory(struct gm_status *game, char *move,
   this_move->next_move = NULL;
 }
 
-/** 
- * \fn mkdrop
- * Drops a piece from the player's graveyard onto the board
- *
- * \param game the current game state
- * \param player the player making the move
- * \param piece the piece being dropped
- * \param dst the coordinates of where the piece is being dropped
- * \param update_f add the move to history?
- *
- * \pre Move is legal
- */
-
-void mkdrop(struct gm_status *game, int player,
-	    char piece, int *dst, bool update_f){
+void removeGrave(int graveyard[2][38], int player, char piece){
   int i = 0;
   if (player == P1){
-    while (game->graveyard[player-1][i] != piece){
+    while (graveyard[player-1][i] != piece){
       i++;
     }
-    game->graveyard[player-1][i] = '\0';
+    graveyard[player-1][i] = '\0';
   }
   else{
-    while (game->graveyard[player-1][i] != piece){
+    while (graveyard[player-1][i] != piece){
       i++;
     }
-    game->graveyard[player-1][i] = '\0';
+    graveyard[player-1][i] = '\0';
   }
-  
+}
+
+void makeDrop(char board[9][9], char graveyard[2][38], int player,
+	    char piece, int *dst, bool update_f){
+  removeGrave(graveyard, player, piece);
   int drank = dst[0];
   int dfile = dst[1];
-  game->board[drank][dfile] = piece;
+  board[drank][dfile] = piece;
+}
 
+void gmMakeDrop(struct gm_status *game, int player, char piece,
+		int *dst, bool update_f){
+  mkdrop(game->board, game->graveyard, player,
+	 piece, dst, update_f);
   if (update_f){
+    int drank = dst[0];
+    int dfile = dst[1];
     long s_lost = updateClock(game);
     char move[4];
     snprintf(move, 4, "%c*%i%i", piece, drank, dfile);
@@ -258,7 +255,7 @@ bool undo(struct gm_status *game){
     int dst[3];
     cToCoords(dst, move);
     cToCoords(src, move+2);
-    mkmove(game, otherPlayer(game->player), src, dst, false, false);
+    gmMakeMove(game, otherPlayer(game->player), src, dst, false, false);
     if (move[4] == '+')
       downgrade(game, dst);
   }

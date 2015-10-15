@@ -68,8 +68,8 @@ int processcmd(struct gm_status *game, char *command){
     cToCoords(dst, dst_c);
     cToCoords(src, src_c);
     upgrade_f = (command[4] == '+');
-    if (legalmove(game->board, game->player, src, dst, 0)==true){
-      gmMakeMove(game, game->player, src, dst, true, false);
+    if (legalMove(game->board, game->player, src, dst, 0)==true){
+      gmMakeMove(game, game->player, src, dst, upgrade_f, false);
       return 1;
     }
     else{
@@ -87,8 +87,8 @@ int processcmd(struct gm_status *game, char *command){
     bool upgrade_f = (legalUpgrade(game, game->player, dst) &&
                       command[3] == '+');
     if(processed_f == true &&
-       legalmove(game, game->player, src, dst, 0)==true){
-      mkmove(game, game->player, src, dst, true, upgrade_f);
+       gmLegalMove(game, src, dst, 0)==true){
+      gmMakeMove(game, game->player, src, dst, upgrade_f, true);
       return 1;
     }
     else{
@@ -101,8 +101,9 @@ int processcmd(struct gm_status *game, char *command){
     int dst[2];
     snprintf(dst_c, 2, "%s", command+2);
     cToCoords(dst, dst_c);
-    if (legaldrop(game, game->player, piece, dst) == true){
-      mkdrop(game->board, game->graveyard, game->player, piece ,dst, true);
+    if (legaldrop(game->board, game->graveyard, game->player,
+		  piece, dst) == true){
+      gmMakeDrop(game, game->player, piece, dst, true);
       return 1;
     }
     else{
@@ -141,7 +142,7 @@ int processmv(struct gm_status *game, char piece, int *src, int *dst){
       /*tests whether a the selected piece on 
 	the board can make the move or not*/
       if (thisPiece ==  piece && 
-	  legalmove(game, game->player, src, dst, 0)){
+	  legalMove(game->board, game->player, src, dst, 0)){
 	srank = src[0];
 	sfile = src[1];
 	n++;

@@ -40,8 +40,10 @@ struct gm_status{
 
 /*legal.c*/
 int legaldest(char board[9][9], int player, int rank, int file);
-int legalmove(char board[9][9], int player,
+int legalMove(char board[9][9], int player,
 	      int *src, int *dst, int from_check_f);
+int gmLegalMove(struct gm_status *game, int *src, int *dst,
+		int from_check_f);
 int inrange(int rank, int file);
 int legalsrc(char board[9][9], int player, int rank, int file);
 int legaldrop(char board[9][9], char graveyard[2][38], int player, char piece, int *dst);
@@ -54,9 +56,11 @@ void makeMove(char board[9][9], char graveyard[2][38],
 	      int player, int *src, int *dst, bool upgrade_f);
 void gmMakeMove(struct gm_status *game, int player,
 		int *src, int *dst,
-		bool update_f, bool upgrade_f);
-void mkdrop(struct gm_status *game, int player, 
-	    char piece, int *dst, bool update_f);
+		bool upgrade_f, bool update_f);
+void makeDrop(char board[9][9], char graveyard[2][38],
+	      int player, char piece, int *dst, bool update_f);
+void gmMakeDrop(struct gm_status *game, int player, char piece,
+		int *dst, bool update_f);
 void cToCoords(int *converted, char *to_convert);
 void coordsToC(char *converted, int *to_convert);
 void updateHistory(struct gm_status *game, char *move, time_t tm_executed);
