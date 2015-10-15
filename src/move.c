@@ -127,7 +127,7 @@ void updateHistory(struct gm_status *game, char *move,
   this_move->next_move = NULL;
 }
 
-void removeGrave(int graveyard[2][38], int player, char piece){
+void removeGrave(char graveyard[2][38], int player, char piece){
   int i = 0;
   if (player == P1){
     while (graveyard[player-1][i] != piece){
@@ -153,7 +153,7 @@ void makeDrop(char board[9][9], char graveyard[2][38], int player,
 
 void gmMakeDrop(struct gm_status *game, int player, char piece,
 		int *dst, bool update_f){
-  mkdrop(game->board, game->graveyard, player,
+  makeDrop(game->board, game->graveyard, player,
 	 piece, dst, update_f);
   if (update_f){
     int drank = dst[0];
@@ -264,7 +264,7 @@ bool undo(struct gm_status *game){
     int src[3];
     cToCoords(src, move+1);
     game->board[src[0]][src[1]] = ' ';
-    digGrave(game, otherPlayer(game->player), piece);
+    digGrave(game->graveyard, otherPlayer(game->player), piece);
   }
   popLastHistory(game);  
   return true;

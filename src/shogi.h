@@ -70,7 +70,7 @@ int moveFormat(char *move);
 bool undo(struct gm_status *game);
 /*check.c*/
 int ischeck(char board[9][9], int player);
-int ismate(char board[9][9], int player);
+int ismate(char board[9][9], char graveyard[2][38], int player);
 /*clock.c*/
 long updateClock(struct gm_status *game);
 

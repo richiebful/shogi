@@ -238,7 +238,7 @@ int legalMove(char board[9][9], int player,
   
   int test_board[9][9];
   memcpy(&test_board, board, sizeof(test_board));
-  mkmove(&test_board, player, src, dst, 0, 0);
+  makeMove(&test_board, player, src, dst, 0, 0);
 
   if (legaldest(board, player, dst[0], dst[1]) == false){
     return false;

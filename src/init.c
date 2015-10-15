@@ -28,7 +28,7 @@ void init_game(struct gm_status *game){
   game->history->num = 0;
 
   int i;
-  FORRANGE(i,0,38,1){
+  for (i = 0; i < 38; i++){
     game->graveyard[0][i] = '\0';
     game->graveyard[1][i] = '\0';
   }

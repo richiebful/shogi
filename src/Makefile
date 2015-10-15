@@ -1,6 +1,6 @@
 COMPILER = clang
 CFLAGS = -Wall
-INCLUDE = ./
+INCLUDE = ./ 
 TARGET = shogi
 OBJDIR = ../obj
 SOURCES = main.c init.c check.c legal.c move.c input.c display.c clock.c

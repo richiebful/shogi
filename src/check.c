@@ -38,7 +38,7 @@ int ischeck(char board[9][9], int player){
     for (j = 0; j < 9; j++){
       src[0] = i;
       src[1] = j;
-      if (legalmove(board, otherPlayer, src, dst, true)){
+      if (legalMove(board, otherPlayer, src, dst, true)){
 	return true;
       }
     }
@@ -46,7 +46,7 @@ int ischeck(char board[9][9], int player){
   return false;
 }
 
-int ismate(char board[9][9], int player){
+int ismate(char board[9][9], char graveyard[2][38], int player){
   char test_board[9][9];
   memcpy(&test_board, &board, sizeof(test_board));
   
@@ -69,8 +69,8 @@ int ismate(char board[9][9], int player){
 	for (l = 0; l < 9; l++){
 	  src[0] = i; src[1] = j;
 	  dst[0] = k; dst[1] = l;
-	  if (legalmove(test_board, player, src, dst, true) == true){
-              mkmove(test_board, player, src, dst, false, false);
+	  if (legalMove(test_board, player, src, dst, true) == true){
+	    makeMove(test_board, graveyard, player, src, dst, false);
 	    if (ischeck(test_board, player) == false){
 	      return false;
 	    }
