@@ -236,9 +236,10 @@ int legalMove(char board[9][9], int player,
   eprintf("%c from %i, %i to %i, %i",
           piece, srank, sfile, drank, dfile);
   
-  int test_board[9][9];
+  char test_board[9][9];
+  char naGraveyard[2][38];
   memcpy(&test_board, board, sizeof(test_board));
-  makeMove(&test_board, player, src, dst, 0, 0);
+  makeMove(test_board, naGraveyard , player, src, dst, 0);
 
   if (legaldest(board, player, dst[0], dst[1]) == false){
     return false;
