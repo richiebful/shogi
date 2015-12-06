@@ -237,8 +237,9 @@ int legalMove(char board[9][9], int player,
           piece, srank, sfile, drank, dfile);
   
   int test_board[9][9];
+  int blank[2][38];
   memcpy(&test_board, board, sizeof(test_board));
-  makeMove(&test_board, player, src, dst, 0, 0);
+  makeMove(&test_board, &blank, player, src, dst, 0);
 
   if (legaldest(board, player, dst[0], dst[1]) == false){
     return false;
@@ -383,13 +384,14 @@ bool isUpgradedPiece(char piece){
           piece == 'o' || piece == 'm');
 }
 
-bool legalUpgrade(struct gm_status *game, int player, int *coords){
-  int rank = coords[0];
-  char piece = game->board[rank][coords[1]];
-  if (player == 1 && rank < 5 && isUpgradablePiece(piece)){
+bool legalUpgrade(int board[8][8], int player, int *coords){
+  int rank = coords[0],
+    file = coords[1];
+  char piece = game->board[rank][file];
+  if (player == 1 && rank > 5 && isUpgradablePiece(piece)){
     return true;
   }
-  else if (player == 2 && rank > 3 && isUpgradablePiece(piece)){
+  else if (player == 2 && rank < 3 && isUpgradablePiece(piece)){
     return true;
   }
   else{
