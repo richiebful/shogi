@@ -235,7 +235,7 @@ int legalMove(char board[9][9], int player,
   char piece = board[srank][sfile];
   eprintf("%c from %i, %i to %i, %i",
           piece, srank, sfile, drank, dfile);
-  
+ 
   int test_board[9][9];
   int blank[2][38];
   memcpy(&test_board, board, sizeof(test_board));
@@ -384,10 +384,10 @@ bool isUpgradedPiece(char piece){
           piece == 'o' || piece == 'm');
 }
 
-bool legalUpgrade(int board[8][8], int player, int *coords){
+bool legalUpgrade(char board[9][9], int player, int *coords){
   int rank = coords[0],
     file = coords[1];
-  char piece = game->board[rank][file];
+  char piece = board[rank][file];
   if (player == 1 && rank > 5 && isUpgradablePiece(piece)){
     return true;
   }

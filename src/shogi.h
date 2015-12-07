@@ -2,7 +2,7 @@
 
 #define CHALLENGING 1
 #define REIGNING 2
-#define P1 1
+#define P1 11
 #define P2 2
 
 #define DROP_FMT 0
@@ -47,7 +47,7 @@ int gmLegalMove(struct gm_status *game, int *src, int *dst,
 int inrange(int rank, int file);
 int legalsrc(char board[9][9], int player, int rank, int file);
 int legaldrop(char board[9][9], char graveyard[2][38], int player, char piece, int *dst);
-bool legalUpgrade(struct gm_status *game, int player, int *coords);
+bool legalUpgrade(char board[9][9], int player, int *coords);
 /*init.c*/
 void init_game(struct gm_status *game);
 int eprintf(char *format, ...);

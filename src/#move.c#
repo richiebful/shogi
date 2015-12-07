@@ -43,7 +43,7 @@ void makeMove(char board[9][9], char graveyard[2][38],
 
 void gmMakeMove(struct gm_status *game, int player,
 		int *src, int *dst,
-		bool upgrade_f, bool update_f){
+		bool update_f, bool upgrade_f){
   int drank = dst[0];
   int dfile = dst[1];
   int srank = src[0];

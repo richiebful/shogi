@@ -67,7 +67,8 @@ int processcmd(struct gm_status *game, char *command){
     snprintf(dst_c, 3, "%s", command+2);
     cToCoords(dst, dst_c);
     cToCoords(src, src_c);
-    upgrade_f = (command[4] == '+');
+    upgrade_f = (legalUpgrade(game, game->player, dst) &&
+		 command[4] == '+');
     if (legalMove(game->board, game->player, src, dst, 0)==true){
       gmMakeMove(game, game->player, src, dst, upgrade_f, false);
       return 1;
