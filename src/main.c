@@ -27,7 +27,7 @@ int main(void){
     }
     if (input_f == 1){
       game.player = game.player % 2 + 1;
-      game.check_f = ischeck(&game, game.player);
+      game.check_f = ischeck(game.board, game.player);
       game.mate_f = ismate(&game.board, &game.graveyard, game.player);
       if (game.mate_f == true){
 	printf("Checkmate.\n");

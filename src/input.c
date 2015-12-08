@@ -57,9 +57,8 @@ int processcmd(struct gm_status *game, char *command){
     dispHistory(game);
     return 0;
   }
-  else if (moveFormat(command) == SRC_DST_FMT ||
-	   moveFormat(command) == SRC_DST_UP_FMT){
-    /*input is of format 5e4e(+)*/
+  else if (moveFormat(command) == SRC_DST_FMT){
+    /*input is of format 5e4e*/
     char src_c[3], dst_c[3];
     int src[2], dst[2];
     bool upgrade_f;
@@ -67,9 +66,10 @@ int processcmd(struct gm_status *game, char *command){
     snprintf(dst_c, 3, "%s", command+2);
     cToCoords(dst, dst_c);
     cToCoords(src, src_c);
-    upgrade_f = (legalUpgrade(game, game->player, dst) &&
+    char piece = game->board[src[0]][src[1]];
+    upgrade_f = (legalUpgrade(game->board, game->player, piece, dst[0]) &&
 		 command[4] == '+');
-    if (legalMove(game->board, game->player, src, dst, 0)==true){
+    if (gmLegalMove(game, src, dst)==true){
       gmMakeMove(game, game->player, src, dst, upgrade_f, false);
       return 1;
     }
@@ -77,19 +77,53 @@ int processcmd(struct gm_status *game, char *command){
       return 0;
     }
   }
-  else if (moveFormat(command) == PIECE_DST_FMT ||
-	   moveFormat(command) == PIECE_DST_UP_FMT){
-    //interpret move of form P4e(+)
+  else if (moveFormat(command) == SRC_DST_UP_FMT){
+    /*input is of format 5e4e+*/
+    char src_c[3], dst_c[3];
+    int src[2], dst[2];
+    bool upgrade_f;
+    snprintf(src_c, 3, "%s", command);
+    snprintf(dst_c, 3, "%s", command+2);
+    cToCoords(dst, dst_c);
+    cToCoords(src, src_c);
+    char piece = game->board[src[0]][src[1]];
+    upgrade_f = (legalUpgrade(game->board, game->player, piece, dst[0]) &&
+		 command[4] == '+');
+    if (gmLegalMove(game, src, dst)==true){
+      gmMakeMove(game, game->player, src, dst, upgrade_f, false);
+      return 1;
+    }
+    else{
+      return 0;
+    }
+  }
+  else if (moveFormat(command) == PIECE_DST_FMT){
     int src[2], dst[2];
     char dst_c[2], piece = command[0];
     snprintf(dst_c, 3, "%s", command+1);
     cToCoords(dst, dst_c);
     int processed_f = processmv(game, piece, src, dst);
-    bool upgrade_f = (legalUpgrade(game, game->player, dst) &&
-                      command[3] == '+');
+    if(processed_f &&
+       gmLegalMove(game, src, dst)){
+      gmMakeMove(game, game->player, src, dst, false, true);
+      return 1;
+    }
+    else{
+      return 0;
+    }
+  }
+  else if (moveFormat(command) == PIECE_DST_UP_FMT){
+    //interpret move of form P4e+
+    int src[2], dst[2];
+    char dst_c[2], piece = command[0];
+    snprintf(dst_c, 3, "%s", command+1);
+    cToCoords(dst, dst_c);
+    int processed_f = processmv(game, piece, src, dst);
+    printf("%c", piece);
     if(processed_f == true &&
-       gmLegalMove(game, src, dst, 0)==true){
-      gmMakeMove(game, game->player, src, dst, upgrade_f, true);
+       gmLegalMove(game, src, dst)==true &&
+       legalUpgrade(game->board, piece, game->player, dst[0])){
+      gmMakeMove(game, game->player, src, dst, true, true);
       return 1;
     }
     else{
@@ -123,10 +157,10 @@ int processcmd(struct gm_status *game, char *command){
  */
 
 int processmv(struct gm_status *game, char piece, int *src, int *dst){
-  if (game->player == CHALLENGING){
+  if (game->player == 1){
     piece = tolower(piece);
   }
-  else if(game->player == REIGNING){
+  else if(game->player == 2){
     piece = toupper(piece);
   }
 
@@ -135,13 +169,15 @@ int processmv(struct gm_status *game, char piece, int *src, int *dst){
 
   /*n is count of possible pieces executing the move*/
   int n = 0;
-  int srank, sfile;//outputted in dst
+  int srank, sfile; //outputted in dst
   char thisPiece;
   for (src[0] = 0; src[0] < 9; src[0]++){
     for (src[1] = 0; src[1] < 9; src[1]++){
       thisPiece = game->board[src[0]][src[1]];
       /*tests whether a the selected piece on 
 	the board can make the move or not*/
+      //printf("%c: %i,%i to %i,%i", piece, src[0], src[1], dst[0], dst[1]);
+      //printf(":%i\n", legalMove(game->board, game->player, src, dst, 0));
       if (thisPiece ==  piece && 
 	  legalMove(game->board, game->player, src, dst, 0)){
 	srank = src[0];

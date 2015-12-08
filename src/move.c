@@ -77,7 +77,7 @@ void gmMakeMove(struct gm_status *game, int player,
 int digGrave(char graveyard[2][38], int player, char piece){
   int i;
   if (piece != ' '){
-    if (player == P1){
+    if (player == 1){
       for (i = 0; i < 38; i++){
 	if (graveyard[player-1][i] == '\0'){
 	  graveyard[player-1][i] = tolower(piece);
@@ -129,7 +129,7 @@ void updateHistory(struct gm_status *game, char *move,
 
 void removeGrave(char graveyard[2][38], int player, char piece){
   int i = 0;
-  if (player == P1){
+  if (player == 1){
     while (graveyard[player-1][i] != piece){
       i++;
     }
@@ -287,7 +287,7 @@ int moveFormat(char *move){
       isdigit(move[1]) != 0 &&
       islower(move[2]) != 0 &&
       strlen(move) <= 5){
-    if (move[4] == '+')
+    if (move[3] == '+')
       return PIECE_DST_UP_FMT;
     else
       return PIECE_DST_FMT;
@@ -296,7 +296,7 @@ int moveFormat(char *move){
       islower(move[1]) &&
       (strlen(move) == 4 ||
        strlen(move) <= 5)){
-    if (move[5] == '+')
+    if (move[4] == '+')
       return SRC_DST_UP_FMT;
     else
       return SRC_DST_FMT;

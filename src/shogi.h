@@ -1,10 +1,5 @@
 /** \file */
 
-#define CHALLENGING 1
-#define REIGNING 2
-#define P1 11
-#define P2 2
-
 #define DROP_FMT 0
 #define PIECE_DST_FMT 1
 #define PIECE_DST_UP_FMT 2
@@ -42,12 +37,11 @@ struct gm_status{
 int legaldest(char board[9][9], int player, int rank, int file);
 int legalMove(char board[9][9], int player,
 	      int *src, int *dst, int from_check_f);
-int gmLegalMove(struct gm_status *game, int *src, int *dst,
-		int from_check_f);
+int gmLegalMove(struct gm_status *game, int *src, int *dst);
 int inrange(int rank, int file);
-int legalsrc(char board[9][9], int player, int rank, int file);
+int legalsrc(char piece, int player, int rank, int file);
 int legaldrop(char board[9][9], char graveyard[2][38], int player, char piece, int *dst);
-bool legalUpgrade(char board[9][9], int player, int *coords);
+bool legalUpgrade(char board[9][9], char piece, int player, int rank);
 /*init.c*/
 void init_game(struct gm_status *game);
 int eprintf(char *format, ...);
