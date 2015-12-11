@@ -60,13 +60,13 @@ void dispGraveyard(char graveyard[2][38]){
   int i;
   for (i = 0; i < 38; i++){
     if (p1Yard[i] != '\0'){
-      printf("\x1b[31m%c ", p1Yard[i]);
+      printf("\x1b[31m%c ", toupper(p1Yard[i]));
     }
   }
   printf("\n");
   for (i = 0; i < 38; i++){
     if (p2Yard[i] != '\0'){
-      printf("\x1b[37m%c ", p2Yard[i]);
+      printf("\x1b[37m%c ", toupper(p2Yard[i]));
     }
   }
   printf("\n");

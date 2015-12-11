@@ -15,29 +15,31 @@
  * \param player, the player being evaluated for being in check
  */
 
+int wherePiece(char board[9][9], int loc[2], char piece){
+  for (loc[0] = 0; loc[0] < 9; loc[0]++){
+    for (loc[1] = 0; loc[1] < 9; loc[1]++){
+      eprintf("%i, %i\n", loc[0], loc[1]);
+      if (board[loc[0]][loc[1]] == piece){
+	return true;
+      }
+    }
+  }
+  return false;
+}
+
 int ischeck(char board[9][9], int player){
-  int i, j;
   int otherPlayer = player % 2 + 1;
 
   int dst[2];
 
-  int king = 'k' - 32*(player-1);
+  char king = (player == 1) ? 'k' : 'K';
   
-  for (i = 0; i < 9; i++){
-    for (j = 0; j < 9; j++){
-      if (board[i][j] == king){
-	dst[0] = i;
-	dst[1] = j;
-	break;
-      }
-    }
-  }
+  wherePiece(board, dst, king);
 
+  eprintf("%i, %i is king\n", dst[0], dst[1]);
   int src[2];
-  for (i = 0; i < 9; i++){
-    for (j = 0; j < 9; j++){
-      src[0] = i;
-      src[1] = j;
+  for (src[0] = 0; src[0] < 9; src[0]++){
+    for (src[1] = 0; src[1] < 9; src[1]++){
       if (legalMove(board, otherPlayer, src, dst, true)){
 	return true;
       }

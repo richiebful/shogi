@@ -146,6 +146,7 @@ void removeGrave(char graveyard[2][38], int player, char piece){
 void makeDrop(char board[9][9], char graveyard[2][38], int player,
 	    char piece, int *dst, bool update_f){
   removeGrave(graveyard, player, piece);
+  piece = (player == 1) ? tolower(piece) : toupper(piece);
   int drank = dst[0];
   int dfile = dst[1];
   board[drank][dfile] = piece;
@@ -294,17 +295,17 @@ int moveFormat(char *move){
   }
   if (isdigit(move[0]) &&
       islower(move[1]) &&
-      (strlen(move) == 4 ||
-       strlen(move) <= 5)){
+      strlen(move) <= 5){
     if (move[4] == '+')
       return SRC_DST_UP_FMT;
     else
       return SRC_DST_FMT;
   }
   if (isupper(move[0]) &&
-	   move[1] == '*' &&
-	   islower(move[2]) &&
-	   sizeof(move) == 4){
+      move[1] == '*' &&
+      isdigit(move[2]) &&
+      isalpha(move[3]) &&
+      strlen(move) <= 5){
     return DROP_FMT;
   }
   else{

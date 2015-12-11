@@ -14,7 +14,7 @@ int main(void){
   struct gm_status game;
   init_game(&game);
   int input_f = 0;
-  char *command = malloc(20*sizeof(char));
+  char command[10];
   while (true){
     input_f = 0;
     if (game.check_f == true){
@@ -40,6 +40,5 @@ int main(void){
       break;
     }
   }
-  free(command);
   return 0;  
 }

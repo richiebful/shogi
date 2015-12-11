@@ -17,7 +17,7 @@
  */
  
 int processcmd(struct gm_status *game, char *command){
-  //printf("%s", command);
+  eprintf("%s", command);
   if (strncmp(command, "show", 4) == 0){
     dispBoard(game->board);
     dispGraveyard(game->graveyard);
@@ -99,7 +99,7 @@ int processcmd(struct gm_status *game, char *command){
   }
   else if (moveFormat(command) == PIECE_DST_FMT){
     int src[2], dst[2];
-    char dst_c[2], piece = command[0];
+    char dst_c[3], piece = command[0];
     snprintf(dst_c, 3, "%s", command+1);
     cToCoords(dst, dst_c);
     int processed_f = processmv(game, piece, src, dst);
@@ -115,7 +115,7 @@ int processcmd(struct gm_status *game, char *command){
   else if (moveFormat(command) == PIECE_DST_UP_FMT){
     //interpret move of form P4e+
     int src[2], dst[2];
-    char dst_c[2], piece = command[0];
+    char dst_c[3], piece = command[0];
     snprintf(dst_c, 3, "%s", command+1);
     cToCoords(dst, dst_c);
     int processed_f = processmv(game, piece, src, dst);
@@ -132,10 +132,11 @@ int processcmd(struct gm_status *game, char *command){
   }
   else if (moveFormat(command) == DROP_FMT){
     //inteprets drop of form P*4e
-    char piece = command[0], dst_c[2];
+    char piece = command[0], dst_c[3];
     int dst[2];
-    snprintf(dst_c, 2, "%s", command+2);
+    snprintf(dst_c, 3, "%s", command+2);
     cToCoords(dst, dst_c);
+    printf("%c", piece);
     if (legaldrop(game->board, game->graveyard, game->player,
 		  piece, dst) == true){
       gmMakeDrop(game, game->player, piece, dst, true);

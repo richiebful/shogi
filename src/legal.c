@@ -17,7 +17,7 @@
  * \return -1 for down, 1 for up
  */
 int rel_dir_gen(int player){
-  return (player == 1) ? 1 : -1;
+  return (player == 1) ? -1 : 1;
 }
 
 /**
@@ -115,8 +115,10 @@ int bishopLegalMove(char board[9][9],
 		    int player, int *src, int *dst){
   int srank = src[0], sfile = src[1],
     drank = dst[0], dfile = dst[1];
-  double slope, direction;
-  slope = (drank - srank) / (dfile - sfile);
+  eprintf("%i, %i to %i, %i", srank, sfile, drank, dfile);
+  float slope;
+  int direction;
+  slope = (float) (drank - srank) / (dfile - sfile);
   if (slope != 1 && slope != -1)
     return false;
   else if (dfile < sfile)
@@ -124,12 +126,14 @@ int bishopLegalMove(char board[9][9],
   else
     direction = 1;
   
-  int i,  yInt = srank - slope * sfile;
-  for (i = sfile + direction; i != dfile; i += direction) {
-     if (board[(int) slope * i + yInt][i] != ' ') {
-      return false;
+  int i,  rankInt = srank - slope * sfile;
+  eprintf("%f*x+%i=y, %i", slope, rankInt, direction);
+  for (i = sfile + direction; i != dfile; i += direction){
+    if (board[(int)slope * i + rankInt][i] != ' '){
+       return false;
     }
   }
+  eprintf("Bishop returns true\n");
   return true;
 }
 
@@ -213,17 +217,12 @@ int pawnLegalMove(int player, int *src, int *dst){
   int srank = src[0], sfile = src[1],
     drank = dst[0], dfile = dst[1];
   int rel_dir = rel_dir_gen(player);
-  if (srank + rel_dir == drank && sfile == dfile){
-    return true;
-  }
-  else{
-    return false;
-  }
+  eprintf("%i from %i, %i to %i, %i\n", player, srank, sfile, drank, dfile);
+  return srank + rel_dir == drank && sfile == dfile;
 }
 
 int gmLegalMove(struct gm_status *game, int *src, int *dst){
-  return legalMove(game->board, game->player,
-		   src, dst, false);
+  return legalMove(game->board, game->player, src, dst, false);
 }
 
 int legalMove(char board[9][9], int player,
@@ -235,10 +234,10 @@ int legalMove(char board[9][9], int player,
   eprintf("P%i with %c from %i, %i to %i, %i \n",
           player, piece, srank, sfile, drank, dfile);
  
-  int test_board[9][9];
-  int blank[2][38];
+  char test_board[9][9];
+  char blank[2][38];
   memcpy(&test_board, board, sizeof(test_board));
-  makeMove(&test_board, &blank, player, src, dst, 0);
+  makeMove(test_board, blank, player, src, dst, 0);
 
   if (legaldest(board, player, dst[0], dst[1]) == false){
     return false;
@@ -250,12 +249,10 @@ int legalMove(char board[9][9], int player,
     return false;
   }
   else if (from_check_f == false && ischeck(test_board, player)){
-    eprintf("checkFail");
-    dispBoard(test_board);
     return false;
   }
   else if (piece == 'P' || piece == 'p'){
-    eprintf("trigger pawn \n");
+    eprintf("trigger pawn %i \n", pawnLegalMove(player, src, dst));
     return pawnLegalMove(player, src, dst);
   }
   else if (piece == 'R' || piece == 'r'){
@@ -266,7 +263,7 @@ int legalMove(char board[9][9], int player,
 	    upRookLegalMove(player, src, dst));
   }
   else if (piece == 'B' || piece == 'b'){
-    return bishopLegalMove(board, player, src, dst);
+    return bishopLegalMove(board, player ,src, dst);
   }
   else if (piece == 'C' || piece == 'c'){
     return (bishopLegalMove(board, player, src, dst) ||
@@ -330,18 +327,6 @@ int legalsrc(char piece, int player, int rank, int file){
   }
 }
 
-int legalDropPiece(player, piece){
-  if (isupper(piece) && player == 2){
-    return true;
-  }
-  else if (islower(piece) && player == 1){
-    return true;
-  }
-  else{
-    return false;
-  }
-}
-
 int inGraveyard(char graveyard[2][38], int player, char piece){
   int i;
   for(i = 0; i < sizeof(graveyard[0])/sizeof(char); i++) {
@@ -357,13 +342,8 @@ int legaldrop(char board[9][9], char graveyard[2][38],
   int drank = dst[0];
   int dfile = dst[1];
   char dpiece = board[drank][dfile];
+  printf("%c*(%i, %i)", piece, drank, dfile);
   if (dpiece != ' ') {
-    return false;
-  } 
-  else if (legaldest(board, player, drank, dfile) == false) {
-    return false;
-  }
-  else if (legalDropPiece(player, piece) == false){
     return false;
   }
   else{
