@@ -136,7 +136,7 @@ int processcmd(struct gm_status *game, char *command){
     int dst[2];
     snprintf(dst_c, 3, "%s", command+2);
     cToCoords(dst, dst_c);
-    printf("%c", piece);
+    eprintf("%c", piece);
     if (legaldrop(game->board, game->graveyard, game->player,
 		  piece, dst) == true){
       gmMakeDrop(game, game->player, piece, dst, true);

@@ -342,7 +342,7 @@ int legaldrop(char board[9][9], char graveyard[2][38],
   int drank = dst[0];
   int dfile = dst[1];
   char dpiece = board[drank][dfile];
-  printf("%c*(%i, %i)", piece, drank, dfile);
+  eprintf("%c*(%i, %i)", piece, drank, dfile);
   if (dpiece != ' ') {
     return false;
   }

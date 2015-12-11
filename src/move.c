@@ -142,11 +142,11 @@ void gmMakeDrop(struct gm_status *game, int player, char piece,
   makeDrop(game->board, game->graveyard, player,
 	 piece, dst, update_f);
   if (update_f){
-    int drank = dst[0];
-    int dfile = dst[1];
+    char c_dst[3];
+    coordsToC(c_dst, dst);
     long s_lost = updateClock(game);
-    char move[4];
-    snprintf(move, 4, "%c*%i%i", piece, drank, dfile);
+    char move[5];
+    snprintf(move, 5, "%c*%c%c", piece, c_dst[0], c_dst[1]);
     updateHistory(game, move, s_lost);
   }
 }
@@ -248,7 +248,8 @@ bool undo(struct gm_status *game){
   else if (moveFormat(move) == DROP_FMT){
     char piece = move[0];
     int src[3];
-    cToCoords(src, move+1);
+    eprintf("N%c, %c%c", piece, move[2], move[3]);
+    cToCoords(src, move+2);
     game->board[src[0]][src[1]] = ' ';
     digGrave(game->graveyard, otherPlayer(game->player), piece);
   }
@@ -278,19 +279,19 @@ int moveFormat(char *move){
     else
       return PIECE_DST_FMT;
   }
-  if (isdigit(move[0]) &&
-      islower(move[1]) &&
-      strlen(move) <= 5){
+  else if (isdigit(move[0]) &&
+           islower(move[1]) &&
+           strlen(move) <= 5){
     if (move[4] == '+')
       return SRC_DST_UP_FMT;
     else
       return SRC_DST_FMT;
   }
-  if (isupper(move[0]) &&
-      move[1] == '*' &&
-      isdigit(move[2]) &&
-      isalpha(move[3]) &&
-      strlen(move) <= 5){
+  else if (isupper(move[0]) &&
+           move[1] == '*' &&
+           isdigit(move[2]) &&
+           isalpha(move[3]) &&
+           strlen(move) <= 5){
     return DROP_FMT;
   }
   else{
