@@ -330,7 +330,7 @@ int legalsrc(char piece, int player, int rank, int file){
 int inGraveyard(char graveyard[2][38], int player, char piece){
   int i;
   for(i = 0; i < sizeof(graveyard[0])/sizeof(char); i++) {
-    if (graveyard[player][i] == piece) {
+    if (graveyard[player-1][i] == piece) {
       return true;
     }
   }

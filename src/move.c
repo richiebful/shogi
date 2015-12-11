@@ -76,21 +76,13 @@ void gmMakeMove(struct gm_status *game, int player,
 
 int digGrave(char graveyard[2][38], int player, char piece){
   int i;
+  if (isUpgradedPiece(piece))
+    piece--;
   if (piece != ' '){
-    if (player == 1){
-      for (i = 0; i < 38; i++){
-	if (graveyard[player-1][i] == '\0'){
-	  graveyard[player-1][i] = tolower(piece);
-	  break;
-	}
-      }
-    }
-    else{
-      for (i = 0; i < 38; i++){
-	if (graveyard[player-1][i] == '\0'){
-	  graveyard[player-1][i] = toupper(piece);
-	  break;
-	}
+    for (i = 0; i < 38; i++){
+      if (graveyard[player-1][i] == '\0'){
+	graveyard[player-1][i] = piece;
+	break;
       }
     }
   }
@@ -127,20 +119,13 @@ void updateHistory(struct gm_status *game, char *move,
   this_move->next_move = NULL;
 }
 
+//assumes item in grave
 void removeGrave(char graveyard[2][38], int player, char piece){
   int i = 0;
-  if (player == 1){
-    while (graveyard[player-1][i] != piece){
-      i++;
-    }
-    graveyard[player-1][i] = '\0';
+  while (graveyard[player-1][i] != piece){
+    i++;
   }
-  else{
-    while (graveyard[player-1][i] != piece){
-      i++;
-    }
-    graveyard[player-1][i] = '\0';
-  }
+  graveyard[player-1][i] = '\0';
 }
 
 void makeDrop(char board[9][9], char graveyard[2][38], int player,
@@ -260,7 +245,7 @@ bool undo(struct gm_status *game){
     if (move[4] == '+')
       downgrade(game, dst);
   }
-  else{
+  else if (moveFormat(move) == DROP_FMT){
     char piece = move[0];
     int src[3];
     cToCoords(src, move+1);
