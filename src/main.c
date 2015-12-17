@@ -10,7 +10,7 @@
 #include <time.h>
 #include "shogi.h"
 
-int main(void){
+int main(int argc, char *argv[]){
   struct gm_status game;
   init_game(&game);
   int input_f = 0;
