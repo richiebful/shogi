@@ -9,16 +9,6 @@ struct tree_node{
   struct tree_node *parent;
 };
 
-struct board_entry{
-  char board[8][8];
-  SLIST_ENTRY(board_entry) entries;
-};
-
-struct grave_entry{
-  char graveyard[2][38];
-  SLIST_ENTRY(grave_entry) entries;
-};
-
 /*Stores values for piece valuation*/
 struct ai_score_book{
   char piece[14];

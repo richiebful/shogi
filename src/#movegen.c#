@@ -40,11 +40,11 @@ void pushBoardEntry(char board[9][9]){
 }
 
 void pushGraveyardDelta(char delta){
-  pushGraveyardEntry();
+  //pushGraveyardEntry();
 }
 
 void pushBoardDelta(char delta){
-  pushBoardEntry(something);
+  //pushBoardEntry(something);
 }
 
 //makes root of search from a game status
