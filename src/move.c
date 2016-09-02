@@ -129,7 +129,7 @@ void removeGrave(char graveyard[2][38], int player, char piece){
 }
 
 void makeDrop(char board[9][9], char graveyard[2][38], int player,
-	    char piece, int *dst, bool update_f){
+	    char piece, int *dst){
   removeGrave(graveyard, player, piece);
   piece = (player == 1) ? tolower(piece) : toupper(piece);
   int drank = dst[0];
@@ -140,7 +140,7 @@ void makeDrop(char board[9][9], char graveyard[2][38], int player,
 void gmMakeDrop(struct gm_status *game, int player, char piece,
 		int *dst, bool update_f){
   makeDrop(game->board, game->graveyard, player,
-	 piece, dst, update_f);
+	 piece, dst);
   if (update_f){
     char c_dst[3];
     coordsToC(c_dst, dst);

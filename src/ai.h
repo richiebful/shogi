@@ -3,20 +3,9 @@
 /*Game tree node*/
 struct tree_node{
   int score;
-  char graveyardDelta; //determine type
-  char boardDelta; //determine type
+  char *delta;
   struct tree_node *children;
   struct tree_node *parent;
-};
-
-struct board_entry{
-  char board[8][8];
-  SLIST_ENTRY(board_entry) entries;
-};
-
-struct grave_entry{
-  char graveyard[2][38];
-  SLIST_ENTRY(grave_entry) entries;
 };
 
 /*Stores values for piece valuation*/
