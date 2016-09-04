@@ -1,12 +1,6 @@
-#define treetop (struct tree_node);
-
-/*Game tree node*/
-struct tree_node{
-  int score;
-  char *delta;
-  struct tree_node *children;
-  struct tree_node *parent;
-};
+/** @file */
+#pragma once
+#include <sys/queue.h>
 
 /*Stores values for piece valuation*/
 struct ai_score_book{
@@ -25,10 +19,10 @@ struct gm_ai_profile{
 #define NO_PIECES 14
 #define MAIN_STAGES 4
 
-struct pcValuation{
+/*struct pcValuation{
   char name[14] = "PLNGUBRQMOHCSK";
   short score[14] = {7, 20, 20, 35, 40, 90, 95, 15, 25, 25, 35, 99, 97, 100};
-}pcValue;
+  }pcValue; */
 
 #ifdef ADVANCED_VALUE
 struct pcValuation{

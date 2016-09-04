@@ -1,5 +1,8 @@
 /** \file */
 
+#include <time.h>
+#include <stdbool.h>
+
 #define DROP_FMT 0
 #define PIECE_DST_FMT 1
 #define PIECE_DST_UP_FMT 2
@@ -36,14 +39,11 @@ struct gm_status{
 };
 
 /*legal.c*/
-int legaldest(char board[9][9], int player, int rank, int file);
 int legalMove(char board[9][9], int player,
 	      int *src, int *dst, int from_check_f);
 int gmLegalMove(struct gm_status *game, int *src, int *dst);
-int inrange(int rank, int file);
-int legalsrc(char piece, int player, int rank, int file);
 int legalDrop(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player, char piece, int *dst);
-bool legalUpgrade(char board[9][9], char piece, int player, int coords[2]);
+bool legalUpgrade(char board[9][9], char piece, int player, int *loc);
 /*init.c*/
 void init_game(struct gm_status *game);
 int eprintf(char *format, ...);
@@ -77,5 +77,5 @@ void dispHelp();
 bool dispHistory(struct gm_status *game);
 void dispGraveyard(char graveyard[2][GRAVEYARD_MAX]);
 /*input.c*/
-int processcmd(struct gm_status *game, char *command);
-int processmv(struct gm_status *game, char piece, int *src, int *dst);
+int processCmd(struct gm_status *game, char *command);
+int processMv(struct gm_status *game, char piece, int *src, int *dst);
