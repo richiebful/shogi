@@ -9,6 +9,7 @@
 #include <string.h>
 #include <time.h>
 #include "shogi.h"
+#include "legal.h"
 
 /**
  *\brief Shows the board and graveyard
@@ -84,24 +85,6 @@ void dispHelp(void){
   printf("show\tshows board and graveyard from your pov\n");
   printf("P*5e\tdrop pawn at 5e\t");
   printf("revert\tgo back a move, or several\n");
-}
-
-void dispClock(struct gm_status *game){
-  updateClock(game);
-
-  struct time_s clock;
-  memcpy(&clock, &game->clock, sizeof(clock));
-
-  int seconds = clock.player_t[0] % 60;
-  int minutes = clock.player_t[0] / 60;
-
-  printf("Player 1: %i:%.2i\n",  minutes, seconds);
-
-  seconds = clock.player_t[1] % 60;
-  minutes = clock.player_t[1] / 60;
-  
-  printf("Player 2: %i:%.2i\n\n", minutes, seconds);
-	 
 }
 
 bool dispHistory(struct gm_status *game){

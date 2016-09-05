@@ -9,18 +9,22 @@
 #include <string.h>
 #include <time.h>
 #include "shogi.h"
+#include "move.h"
 
+void cToCoords(int *converted, char *to_convert);
+void updateHistory(struct gm_status *game, char *move, time_t tm_executed);
+int digGrave(char graveyard[2][GRAVEYARD_MAX], int player, char piece);
 
 /** 
  *\fn mkmove
  * Moves a piece from one position to another, and upgrades
  *   if necessary
  *
- *\param game the current game status
+ *\param board the game board to modify
+ *\param graveyard the graveyard to modify
  *\param player the player making the move
  *\param src array of source coordinates
  *\param dst array of destination coordinates
- *\param update_f add move to history
  *\param upgrade_f upgrade piece
  *
  *\pre move is legal, include upgrade
@@ -41,6 +45,22 @@ void makeMove(char board[9][9], char graveyard[2][38],
   digGrave(graveyard, player, dpiece);
 }
 
+
+/** 
+ * \fn mkmove
+ * Moves a piece from one position to another, and upgrades
+ *   if necessary
+ *
+ * \param game the game state to modify
+ * \param player the player making the move
+ * \param src array of source coordinates
+ * \param dst array of destination coordinates
+ * \param upgrade_f upgrade piece
+ * \param update_f whether to add to history or not
+ *
+ * \pre move is legal, including upgrade
+ * \pre game is a well-formed gm_status
+ */
 void gmMakeMove(struct gm_status *game, int player,
 		int *src, int *dst,
 		bool upgrade_f, bool update_f){
@@ -68,9 +88,9 @@ void gmMakeMove(struct gm_status *game, int player,
 /**
  * \fn digGrave
  * Adds a piece to the given player's graveyard
- *
- * \param player who's graveyard the piece should be added to
+ * 
  * \param game the current game state
+ * \param player who's graveyard the piece should be added to
  * \param piece the piece to be added
  */
 

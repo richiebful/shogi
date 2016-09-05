@@ -7,6 +7,9 @@
 #include "ai.h"
 #include "movegen.h"
 
+/**
+ * Adds a new updated graveyard to the top of the stack 
+ */
 void pushGraveyardEntry(char graveyard[2][GRAVEYARD_MAX]){
     struct grave_entry *nEntry;
     nEntry = malloc(sizeof(struct grave_entry));
@@ -16,6 +19,9 @@ void pushGraveyardEntry(char graveyard[2][GRAVEYARD_MAX]){
     SLIST_INSERT_HEAD(&graveHead, nEntry, entries);
 }
 
+/**
+ * Adds a new updated board to the top of the stack 
+ */
 void pushBoardEntry(char board[9][9]){
     struct board_entry *nEntry;
     nEntry = malloc(sizeof(struct board_entry));
@@ -26,6 +32,8 @@ void pushBoardEntry(char board[9][9]){
 }
 
 /**
+ * Modifies board/graveyard based on the delta contained in tree_node
+ * @see tree_node
  * @pre delta is a six-byte null-terminated string
  * @param delta first char is an addition, second char is a subtraction from the graveyard
  */
@@ -45,9 +53,25 @@ void applyDelta(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player, 
     }
 }
 
-///@todo implement this
+/**
+ * Connects the parent and the child in the decision tree
+ */
 void attachNode(struct tree_node *parent, struct tree_node *child){
+    //add parent pointer to child
+    child->parent = parent;
     
+    //allocate more memory to store more child pointers if necessary
+    if (parent->childCapacity < parent->childCount){
+        struct tree_node *temp = calloc(__SIZEOF_POINTER__, 2 * parent->childCapacity);
+        memcpy(temp, parent->children, parent->childCapacity * __SIZEOF_POINTER__);
+        parent->children = temp;
+        
+        parent->childCapacity = 2 * parent->childCapacity;
+    }
+    
+    //add pointer to child
+    *(parent->children + parent->childCount) = *child;
+    parent->childCount++;
 }
 
 ///makes root of search from a game status
@@ -59,7 +83,11 @@ void buildRoot(struct gm_status *game, struct tree_node *root){
     pushBoardEntry(game->board);
 }
 
-struct tree_node *generateMoveNode(struct tree_node *parent, int player, int *src, int *dst, bool isUpgrade){
+/**
+ * Creates a new decision tree node for moving a piece on the board
+ * @todo make board and graveyard parameters
+ */
+struct tree_node *generateMoveNode(int player, int *src, int *dst, bool isUpgrade){
     struct tree_node *child;
     child = malloc(sizeof(struct tree_node));
 
@@ -71,10 +99,14 @@ struct tree_node *generateMoveNode(struct tree_node *parent, int player, int *sr
     memcpy(graveyard, SLIST_FIRST(&graveHead)->graveyard, sizeof(graveyard));
 
     applyDelta(board, graveyard, player, child->delta);
-    scoreNode(board, graveyard, player, child->delta);
+    //scoreNode(board, graveyard, player, child->delta);
     return child;
 }
 
+/**
+ * Creates a new decision tree node for dropping a piece on the board
+ * @todo make board and graveyard parameters
+ */
 struct tree_node *generateDropNode(int player, char piece, int *dst){
     struct tree_node *child;
     child = malloc(sizeof(struct tree_node));
@@ -87,30 +119,17 @@ struct tree_node *generateDropNode(int player, char piece, int *dst){
     memcpy(graveyard, SLIST_FIRST(&graveHead)->graveyard, sizeof(graveyard));
 
     applyDelta(board, graveyard, player, child->delta);
-    scoreNode(board, graveyard, player, child->delta);
+    //scoreNode(board, graveyard, player, child->delta);
     return child;
 }
 
 /**
  * Returns the player who is making the game tree node's move 1 or 2
- * @param currPlayer is the current gm_status's player opposed to forcasted moves in the game tree
+ * @param parent the decision tree node of the previous move
+ * @param player the player making this move
  */
-int getNodePlayer(int currPlayer){
-    struct board_entry *entry;
-    int i = 0;
-    //counts number of entries in stack - 1
-    if ((entry = SLIST_FIRST(&boardHead))){
-        while ((entry = &(SLIST_NEXT(&entry, entries)))){
-            i++;
-        }
-    }
-    return (currPlayer + i) % 2 + 1;
-}
-
-int generateChildNodes(struct gm_status *game, struct tree_node *parent){
+int generateChildNodes(struct tree_node *parent, int player){
     int src[2], dst[2];
-    int player = getNodePlayer(game->player);
-
     char board[9][9], graveyard[2][GRAVEYARD_MAX];
     memcpy(board, SLIST_FIRST(&boardHead)->board, 9*9);
     memcpy(graveyard, SLIST_FIRST(&graveHead)->graveyard, 2*GRAVEYARD_MAX);
@@ -123,13 +142,11 @@ int generateChildNodes(struct gm_status *game, struct tree_node *parent){
                 for (src[1] = 0; src[1] < 9; src[1]++){
                     if (legalMove(board, player, src, dst, false)){
                         //be sure to not modify currBoard, currGraveyard
-                        child = generateMoveNode(parent, player,
-                            src, dst, false);
+                        child = generateMoveNode(player, src, dst, false);
                         attachNode(parent, child);
                         piece = board[src[0]][src[1]];
                         if (legalUpgrade(board, piece, player, dst)){
-                            child = generateMoveNode(parent, player,
-                                src, dst, true);
+                            child = generateMoveNode(player, src, dst, true);
                             attachNode(parent, child);
                         }
                     }
@@ -141,7 +158,7 @@ int generateChildNodes(struct gm_status *game, struct tree_node *parent){
             for (i = 0; i < GRAVEYARD_MAX; i++){
                 if ((piece = graveyard[player - 1][i]) &&
                     legalDrop(board, graveyard, player, piece, dst)){
-                    child = generateDropNode(parent, player, piece, dst);
+                    child = generateDropNode(player, piece, dst);
                     attachNode(parent, child);
                 }
             }
