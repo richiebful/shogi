@@ -53,24 +53,23 @@ void dispBoard(char board[9][9]){
   printf("\x1b[0m");
 }
 
-void dispGraveyard(char graveyard[2][38]){
-  char p1Yard[38];
-  char p2Yard[38];
-  memcpy(p1Yard, graveyard[0], sizeof(p1Yard));
-  memcpy(p2Yard, graveyard[1], sizeof(p2Yard));
+void dispGraveyard(char graveyard[2][GRAVEYARD_MAX]){
   int i;
-  for (i = 0; i < 38; i++){
-    if (p1Yard[i] != '\0'){
-      printf("\x1b[31m%c ", toupper(p1Yard[i]));
+  for (i = 0; i < 2; i++){
+    int j;
+    for (j = 0; j < GRAVEYARD_MAX; j++){
+        if (graveyard[i][j]){
+            if (i == 0){
+                printf("\x1b[31m%c ", toupper(graveyard[i][j]));
+            }
+            else{
+                printf("\x1b[37m%c ", toupper(graveyard[i][j]));
+            }
+        }
     }
+    printf("\n");
   }
-  printf("\n");
-  for (i = 0; i < 38; i++){
-    if (p2Yard[i] != '\0'){
-      printf("\x1b[37m%c ", toupper(p2Yard[i]));
-    }
-  }
-  printf("\n");
+  
   //reset colour to default
   printf("\x1b[0m");
 }

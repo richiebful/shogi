@@ -18,7 +18,7 @@ int lanceLegalMove(char board[9][9], int player, int *src, int *dst);
 int bishopLegalMove(char board[9][9], int player, int *src, int *dst);
 int upBishopLegalMove(int player, int *src, int *dst);
 int rookLegalDirection(int *src, int *dst);
-int rookLegalMove(char board[9][9], int player, int *src, int *dst);
+int rookLegalMove(char board[9][9], int *src, int *dst);
 int upRookLegalMove(int player, int *src, int *dst);
 int pawnLegalMove(int player, int *src, int *dst);
 int relativeDirectionOf(int player);
@@ -58,7 +58,7 @@ int legalMove(char board[9][9], int player,
   else if (drank == srank && dfile == sfile){
     return false;
   }
-  else if (from_check_f == false && ischeck(test_board, player)){
+  else if (from_check_f == false && isCheck(test_board, player)){
     return false;
   }
   else if (piece == 'P' || piece == 'p'){
@@ -66,10 +66,10 @@ int legalMove(char board[9][9], int player,
     return pawnLegalMove(player, src, dst);
   }
   else if (piece == 'R' || piece == 'r'){
-    return rookLegalMove(board, player, src, dst);
+    return rookLegalMove(board, src, dst);
   }
   else if (piece == 'S' || piece == 's'){
-    return (rookLegalMove(board, player, src, dst)||
+    return (rookLegalMove(board, src, dst)||
 	    upRookLegalMove(player, src, dst));
   }
   else if (piece == 'B' || piece == 'b'){
@@ -158,7 +158,7 @@ int isMate(char board[9][9], char graveyard[2][38], int player){
   player = player % 2 + 1;
 
   /*Player must be in check to be in mate*/
-  if (ischeck(board, player)==false){
+  if (isCheck(board, player)==false){
     return false;
   }
   /*test all possible following moves, then determine 
@@ -176,7 +176,7 @@ int isMate(char board[9][9], char graveyard[2][38], int player){
 	  dst[0] = k; dst[1] = l;
 	  if (legalMove(test_board, player, src, dst, true) == true){
 	    makeMove(test_board, graveyard, player, src, dst, false);
-	    if (ischeck(test_board, player) == false){
+	    if (isCheck(test_board, player) == false){
 	      return false;
 	    }
 	    memcpy(test_board, &board, sizeof(test_board));
@@ -330,49 +330,45 @@ int upBishopLegalMove(int player, int *src, int *dst){
 }
 
 int rookLegalDirection(int *src, int *dst){
-  int srank = src[0], sfile = src[1],
-    drank = dst[0], dfile = dst[1];
-  return ((drank != srank && dfile == sfile) ||
-	  (drank == srank && dfile != sfile));
+  int srank = src[0], sfile = src[1], drank = dst[0], dfile = dst[1];
+  return (srank != drank && sfile == dfile) || (srank == drank && sfile != dfile);
 }
 
-int rookLegalMove(char board[9][9],
-		  int player, int *src, int *dst){
-  int srank = src[0], sfile = src[1],
-    drank = dst[0], dfile = dst[1];
-  int i;
-  if (rookLegalDirection(src, dst)){
-    return false;
-  }
-  else if (drank > srank){
-    for (i = srank + 1; i != drank; ++i){
-      if (board[i][sfile] != ' ') {
-	return false;
-      }
+int rookLegalMove(char board[9][9], int *src, int *dst){ 
+    int srank = src[0], sfile = src[1], drank = dst[0], dfile = dst[1];
+    int i;
+    if (!rookLegalDirection(src, dst)){
+        return false;
     }
-  }
-  else if (drank < srank){
-    for (i = srank - 1; i != drank; --i){
-      if (board[i][sfile] != ' '){ 
-	return false;
-      }
+    else if (drank > srank){
+        for (i = srank + 1; i != drank; ++i){
+            if (board[i][sfile] != ' ') {
+                return false;
+            }
+        }
     }
-  }
-  else if (dfile > sfile){
-    for (i = sfile + 1; i != dfile; ++i){
-      if (board[srank][i] != ' '){
-	return false;
-      }
+    else if (drank < srank){
+        for (i = srank - 1; i != drank; --i){
+            if (board[i][sfile] != ' '){ 
+                return false;
+            }
+        }
     }
-  }
-  else{
-    for (i = sfile - 1; i != dfile; --i){
-      if (board[srank][i] != ' '){
-	return false;
-      }
+    else if (dfile > sfile){    
+        for (i = sfile + 1; i != dfile; ++i){
+            if (board[srank][i] != ' '){
+                return false;
+            }
+        }
     }
-  }
-  return true;
+    else{
+        for (i = sfile - 1; i != dfile; --i){
+            if (board[srank][i] != ' '){
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 int upRookLegalMove(int player, int *src, int *dst){

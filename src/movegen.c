@@ -7,6 +7,8 @@
 #include "ai.h"
 #include "movegen.h"
 
+#define MOVEGEN_TEST
+
 /**
  * Adds a new updated graveyard to the top of the stack 
  */
@@ -39,10 +41,14 @@ void pushBoardEntry(char board[9][9]){
  */
 void applyDelta(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player, char *delta){
     if (delta[0]){
+        printf("is move\n");
         int src[2], dst[2];
-        cToCoords(src, delta);
-        cToCoords(src, delta + 2);
+        src[0] = delta[0] - '0';
+        src[1] = delta[1] - '0';
+        dst[0] = delta[2] - '0';
+        dst[1] = delta[3] - '0';
         bool upgrade_f = delta[5];
+        printf("%d, %d to %d, %d with upgrade_f = %d", src[0], src[1], dst[0], dst[1], upgrade_f);
         makeMove(board, graveyard, player, src, dst, upgrade_f);
     }
     else{
@@ -62,7 +68,9 @@ void attachNode(struct tree_node *parent, struct tree_node *child){
     
     //allocate more memory to store more child pointers if necessary
     if (parent->childCapacity < parent->childCount){
-        struct tree_node *temp = calloc(__SIZEOF_POINTER__, 2 * parent->childCapacity);
+        printf("ensures capacity");
+        struct tree_node **temp = calloc(2 * parent->childCapacity, __SIZEOF_POINTER__);
+        printf("tempsize %d\n",__SIZEOF_POINTER__);
         memcpy(temp, parent->children, parent->childCapacity * __SIZEOF_POINTER__);
         parent->children = temp;
         
@@ -70,7 +78,7 @@ void attachNode(struct tree_node *parent, struct tree_node *child){
     }
     
     //add pointer to child
-    *(parent->children + parent->childCount) = *child;
+    *(parent->children + parent->childCount) = child;
     parent->childCount++;
 }
 
@@ -81,6 +89,11 @@ void buildRoot(struct gm_status *game, struct tree_node *root){
     SLIST_INIT(&graveHead);
     pushGraveyardEntry(game->graveyard);
     pushBoardEntry(game->board);
+    
+    size_t childCapacity = 16;
+    root->children = calloc(sizeof(struct tree_node), childCapacity);
+    root->childCapacity = childCapacity;
+    root->childCount = 0;
 }
 
 /**
@@ -90,9 +103,11 @@ void buildRoot(struct gm_status *game, struct tree_node *root){
 struct tree_node *generateMoveNode(int player, int *src, int *dst, bool isUpgrade){
     struct tree_node *child;
     child = malloc(sizeof(struct tree_node));
-
+    child->childCount = 0;
+    
     child->delta = calloc(sizeof(char), 6);
     sprintf(child->delta, "%1d%1d%1d%1d%1d", src[0], src[1], dst[0], dst[1], isUpgrade);
+    printf("%s,", child->delta);
 
     char graveyard[2][38], board[9][9];
     memcpy(board, SLIST_FIRST(&boardHead)->board, sizeof(board)); //hopefully copies top of stack
@@ -112,6 +127,7 @@ struct tree_node *generateDropNode(int player, char piece, int *dst){
     child = malloc(sizeof(struct tree_node));
 
     child->delta = calloc(sizeof(char), 6);
+    child->childCount = 0;
     sprintf(child->delta, "\0%c%1d%1d", piece, dst[0], dst[1]);
 
     char graveyard[2][38], board[9][9];
@@ -133,7 +149,7 @@ int generateChildNodes(struct tree_node *parent, int player){
     char board[9][9], graveyard[2][GRAVEYARD_MAX];
     memcpy(board, SLIST_FIRST(&boardHead)->board, 9*9);
     memcpy(graveyard, SLIST_FIRST(&graveHead)->graveyard, 2*GRAVEYARD_MAX);
-
+    
     char piece;
     struct tree_node *child;
     for (dst[0] = 0; dst[0] < 9; dst[0]++){
@@ -166,6 +182,19 @@ int generateChildNodes(struct tree_node *parent, int player){
     } 
 }
 
+void recursiveFree(struct tree_node *parent){
+    printf("recursiveChildCount = %d\n", parent->childCount);
+    if (parent->childCount > 0){
+        for (int i = 0; i < parent->childCount; i++){
+            printf("\ni = %d\nenters recursion\n", i);
+            recursiveFree(*(parent->children + i));
+            printf("\nexits recursion\n");
+        }
+    }
+    printf("frees");
+    free(parent);
+}
+
 
 #ifdef MOVEGEN_TEST
 
@@ -176,7 +205,11 @@ int main(void){
   dispGraveyard(game->graveyard);
   struct tree_node *root = malloc(sizeof(struct tree_node));
   buildRoot(game, root);
-  generateChildNodes(game, root);
+  generateChildNodes(root, game->player);
+  printf("childCount = %d\n", root->childCount);
+  printf("childCapacity = %d\n", root->childCapacity);
+  recursiveFree(root);
+  free(game);
 }
 
 #endif

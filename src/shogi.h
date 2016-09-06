@@ -57,6 +57,7 @@ void makeDrop(char board[9][9], char graveyard[2][GRAVEYARD_MAX],
 void gmMakeDrop(struct gm_status *game, int player, char piece,
 		int *dst, bool update_f);
 void coordsToC(char *converted, int *to_convert);
+void cToCoords(int *converted, char *to_convert);
 /*display.c*/
 void dispBoard(char board[9][9]);
 void dispHelp();

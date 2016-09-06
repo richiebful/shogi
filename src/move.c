@@ -10,6 +10,8 @@
 #include <time.h>
 #include "shogi.h"
 #include "move.h"
+#include "clock.h"
+#include "legal.h"
 
 void cToCoords(int *converted, char *to_convert);
 void updateHistory(struct gm_status *game, char *move, time_t tm_executed);
@@ -71,7 +73,7 @@ void gmMakeMove(struct gm_status *game, int player,
   makeMove(game->board, game->graveyard, game->player,
 	   src, dst, upgrade_f);
   if (update_f == true){
-    time_t tm_executed = updateClock(game);
+    time_t tm_executed = updateClock(&game->clock, game->player);
     char move[6];
     int i_src[2] = {srank, sfile};
     int i_dst[2] = {drank, dfile};
@@ -164,14 +166,14 @@ void gmMakeDrop(struct gm_status *game, int player, char piece,
   if (update_f){
     char c_dst[3];
     coordsToC(c_dst, dst);
-    long s_lost = updateClock(game);
+    long s_lost = updateClock(&game->clock, game->player);
     char move[5];
     snprintf(move, 5, "%c*%c%c", piece, c_dst[0], c_dst[1]);
     updateHistory(game, move, s_lost);
   }
 }
 
-int otherPlayer(player){
+int otherPlayer(int player){
   return player % 2 + 1;
 }
 
