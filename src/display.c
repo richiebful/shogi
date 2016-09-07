@@ -9,6 +9,7 @@
 #include <string.h>
 #include <time.h>
 #include "shogi.h"
+#include "legal.h"
 
 /**
  *\brief Shows the board and graveyard
@@ -52,24 +53,23 @@ void dispBoard(char board[9][9]){
   printf("\x1b[0m");
 }
 
-void dispGraveyard(char graveyard[2][38]){
-  char p1Yard[38];
-  char p2Yard[38];
-  memcpy(p1Yard, graveyard[0], sizeof(p1Yard));
-  memcpy(p2Yard, graveyard[1], sizeof(p2Yard));
+void dispGraveyard(char graveyard[2][GRAVEYARD_MAX]){
   int i;
-  for (i = 0; i < 38; i++){
-    if (p1Yard[i] != '\0'){
-      printf("\x1b[31m%c ", toupper(p1Yard[i]));
+  for (i = 0; i < 2; i++){
+    int j;
+    for (j = 0; j < GRAVEYARD_MAX; j++){
+        if (graveyard[i][j]){
+            if (i == 0){
+                printf("\x1b[31m%c ", toupper(graveyard[i][j]));
+            }
+            else{
+                printf("\x1b[37m%c ", toupper(graveyard[i][j]));
+            }
+        }
     }
+    printf("\n");
   }
-  printf("\n");
-  for (i = 0; i < 38; i++){
-    if (p2Yard[i] != '\0'){
-      printf("\x1b[37m%c ", toupper(p2Yard[i]));
-    }
-  }
-  printf("\n");
+  
   //reset colour to default
   printf("\x1b[0m");
 }
@@ -84,24 +84,6 @@ void dispHelp(void){
   printf("show\tshows board and graveyard from your pov\n");
   printf("P*5e\tdrop pawn at 5e\t");
   printf("revert\tgo back a move, or several\n");
-}
-
-void dispClock(struct gm_status *game){
-  updateClock(game);
-
-  struct time_s clock;
-  memcpy(&clock, &game->clock, sizeof(clock));
-
-  int seconds = clock.player_t[0] % 60;
-  int minutes = clock.player_t[0] / 60;
-
-  printf("Player 1: %i:%.2i\n",  minutes, seconds);
-
-  seconds = clock.player_t[1] % 60;
-  minutes = clock.player_t[1] / 60;
-  
-  printf("Player 2: %i:%.2i\n\n", minutes, seconds);
-	 
 }
 
 bool dispHistory(struct gm_status *game){

@@ -11,31 +11,30 @@
 #include <time.h>
 #include "shogi.h"
 
-time_t updateClock(struct gm_status *game){
-  struct time_s clock;
-  memcpy(&clock, &game->clock, sizeof(clock));
-
-  int p = game->player - 1;
-
+long int updateClock(struct time_s *clock, int player){
   time_t curr_t = time(NULL);
-  int diff_t = difftime(curr_t, clock.last_t);
+  int diff_t = difftime(curr_t, clock->last_t);
   
-  clock.player_t[p] -= (int) abs(diff_t);
+  clock->player_t[player - 1] -= (int) abs(diff_t);
 
-  clock.last_t = curr_t;
-
-  memcpy(&game->clock, &clock, sizeof(clock));
+  clock->last_t = curr_t;
 
   return curr_t;
 }
 
-void incrementClock(struct gm_status *game){
-  struct time_s clock;
-  memcpy(&clock, &game->clock, sizeof(clock));
+void dispClock(struct time_s *clock, int player){
+  updateClock(clock, player);
 
-  int p = game->player - 1;
+  int seconds = clock->player_t[0] % 60;
+  int minutes = clock->player_t[0] / 60;
 
-  clock.player_t[p] += clock.advance_t;
+  printf("Player 1: %i:%.2i\n",  minutes, seconds);
+
+  seconds = clock->player_t[1] % 60;
+  minutes = clock->player_t[1] / 60;
+  
+  printf("Player 2: %i:%.2i\n\n", minutes, seconds);
+	 
 }
 
 #ifdef CLOCK_DEBUG

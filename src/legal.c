@@ -9,14 +9,192 @@
 #include <string.h>
 #include <time.h>
 #include "shogi.h"
+#include "legal.h"
+
+int goldLegalMove(int player, int *src, int *dst);
+int silverLegalMove(int player, int *src, int *dst);
+int kingLegalMove(int player, int *src, int *dst);
+int lanceLegalMove(char board[9][9], int player, int *src, int *dst);
+int bishopLegalMove(char board[9][9], int player, int *src, int *dst);
+int upBishopLegalMove(int player, int *src, int *dst);
+int rookLegalDirection(int *src, int *dst);
+int rookLegalMove(char board[9][9], int *src, int *dst);
+int upRookLegalMove(int player, int *src, int *dst);
+int pawnLegalMove(int player, int *src, int *dst);
+int relativeDirectionOf(int player);
+bool movesLikeGold(char piece);
+int inRange(int rank, int file);
+int legalSrc(char piece, int player, int rank, int file);
+int legalDest(char board[9][9], int player, int rank, int file);
+int inGraveyard(char graveyard[2][38], int player, char piece);
+bool isUpgradablePiece(char piece);
+bool isUpgradedPiece(char piece);
+int wherePiece(char board[9][9], int loc[2], char piece);
+
+int gmLegalMove(struct gm_status *game, int *src, int *dst){
+  return legalMove(game->board, game->player, src, dst, false);
+}
+
+int legalMove(char board[9][9], int player,
+	      int *src, int *dst, int from_check_f){
+  int srank = src[0], sfile = src[1],
+      drank = dst[0], dfile = dst[1];
+
+  char piece = board[srank][sfile];
+  eprintf("P%i with %c from %i, %i to %i, %i \n",
+          player, piece, srank, sfile, drank, dfile);
+ 
+  char test_board[9][9];
+  char blank[2][38];
+  memcpy(&test_board, board, sizeof(test_board));
+  makeMove(test_board, blank, player, src, dst, 0);
+
+  if (legalDest(board, player, dst[0], dst[1]) == false){
+    return false;
+  }
+  else if (legalSrc(piece, player, src[0], src[1]) == false){
+    return false;
+  }
+  else if (drank == srank && dfile == sfile){
+    return false;
+  }
+  else if (from_check_f == false && isCheck(test_board, player)){
+    return false;
+  }
+  else if (piece == 'P' || piece == 'p'){
+    eprintf("trigger pawn %i \n", pawnLegalMove(player, src, dst));
+    return pawnLegalMove(player, src, dst);
+  }
+  else if (piece == 'R' || piece == 'r'){
+    return rookLegalMove(board, src, dst);
+  }
+  else if (piece == 'S' || piece == 's'){
+    return (rookLegalMove(board, src, dst)||
+	    upRookLegalMove(player, src, dst));
+  }
+  else if (piece == 'B' || piece == 'b'){
+    return bishopLegalMove(board, player ,src, dst);
+  }
+  else if (piece == 'C' || piece == 'c'){
+    return (bishopLegalMove(board, player, src, dst) ||
+	    upBishopLegalMove(player, src, dst));
+  }
+  else if (piece == 'L' || piece == 'l'){
+    return lanceLegalMove(board, player, src, dst);
+  }
+  else if (piece == 'K' || piece == 'k'){
+    return kingLegalMove(player, src, dst);
+  }
+  else if (piece == 'G' || piece == 'g'){
+    return silverLegalMove(player, src, dst);
+  }
+  else if (movesLikeGold(piece)){
+    return goldLegalMove(player, src, dst);
+  }
+  else{
+    return false;
+  }
+}
+
+bool legalUpgrade(char board[9][9], char piece, int player, int *loc){
+  char rank = *loc, file = *(loc + 1);
+  eprintf("R:%i, Piece:%c, Player:%i", rank, piece, player);
+  if (player == 1 && rank < 3 && isUpgradablePiece(piece)){
+    return true;
+  }
+  else if (player == 2 && rank > 5 && isUpgradablePiece(piece)){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
 
 /**
- * \fn rel_dir_gen
+ * @todo one pawn per file rule
+ */
+int legalDrop(char board[9][9], char graveyard[2][38],
+	      int player, char piece, int *dst){
+  int drank = dst[0];
+  int dfile = dst[1];
+  char dpiece = board[drank][dfile];
+  eprintf("%c*(%i, %i)", piece, drank, dfile);
+  if (dpiece != ' ') {
+    return false;
+  }
+  else{
+    return inGraveyard(graveyard, player, piece);
+  }
+}
+
+/**
+ * \param player who might be in check
+ */
+int isCheck(char board[9][9], int player){
+  int otherPlayer = player % 2 + 1;
+
+  int dst[2];
+
+  char king = (player == 1) ? 'k' : 'K';
+  
+  wherePiece(board, dst, king);
+
+  eprintf("%i, %i is king\n", dst[0], dst[1]);
+  int src[2];
+  for (src[0] = 0; src[0] < 9; src[0]++){
+    for (src[1] = 0; src[1] < 9; src[1]++){
+      if (legalMove(board, otherPlayer, src, dst, true)){
+	return true;
+      }
+    }
+  }
+  return false;
+}
+
+int isMate(char board[9][9], char graveyard[2][38], int player){
+  char test_board[9][9];
+  memcpy(&test_board, &board, sizeof(test_board));
+  
+  player = player % 2 + 1;
+
+  /*Player must be in check to be in mate*/
+  if (isCheck(board, player)==false){
+    return false;
+  }
+  /*test all possible following moves, then determine 
+   *whether check still
+   *exists under the new game state*/
+  int i, j, k, l;
+  int src[2], dst[2];
+  
+  /*Assume checkmate until it is disproven*/
+  for(i= 0; i < 9; i++){
+    for (j = 0; j < 9; j++){
+      for (k = 0; k < 9; k++){
+	for (l = 0; l < 9; l++){
+	  src[0] = i; src[1] = j;
+	  dst[0] = k; dst[1] = l;
+	  if (legalMove(test_board, player, src, dst, true) == true){
+	    makeMove(test_board, graveyard, player, src, dst, false);
+	    if (isCheck(test_board, player) == false){
+	      return false;
+	    }
+	    memcpy(test_board, &board, sizeof(test_board));
+	  }
+	}
+      }
+    }
+  }
+  return true;
+}
+
+/**
+ * \fn relativeDirectionOf
  * Determines the direction of the player, up or down, for lances/pawns
  * \param player the player making the move
  * \return -1 for down, 1 for up
  */
-int rel_dir_gen(int player){
+int relativeDirectionOf(int player){
   return (player == 1) ? -1 : 1;
 }
 
@@ -37,7 +215,7 @@ bool movesLikeGold(char piece){
 int goldLegalMove(int player, int *src, int *dst){
   int srank = src[0], sfile = src[1],
     drank = dst[0], dfile = dst[1];
-  int rel_dir = rel_dir_gen(player);
+  int rel_dir = relativeDirectionOf(player);
   int possible[6][2] = { {srank + rel_dir, sfile - 1},
 			 {srank + rel_dir, sfile},
 			 {srank + rel_dir, sfile + 1},
@@ -56,7 +234,7 @@ int goldLegalMove(int player, int *src, int *dst){
 int silverLegalMove(int player, int *src, int *dst){
   int srank = src[0], sfile = src[1],
     drank = dst[0], dfile = dst[1];
-  int rel_dir = rel_dir_gen(player);
+  int rel_dir = relativeDirectionOf(player);
   int  possible[5][2] = { {srank + rel_dir, sfile - 1},
 			  {srank + rel_dir, sfile},
 			  {srank + rel_dir, sfile + 1},
@@ -93,7 +271,7 @@ int lanceLegalMove(char board[9][9],
 		   int player, int *src, int *dst){
   int srank = src[0], sfile = src[1],
     drank = dst[0], dfile = dst[1];
-  int direction = rel_dir_gen(player);
+  int direction = relativeDirectionOf(player);
   if (sfile != dfile){
     return false; 
   }
@@ -152,49 +330,45 @@ int upBishopLegalMove(int player, int *src, int *dst){
 }
 
 int rookLegalDirection(int *src, int *dst){
-  int srank = src[0], sfile = src[1],
-    drank = dst[0], dfile = dst[1];
-  return ((drank != srank && dfile == sfile) ||
-	  (drank == srank && dfile != sfile));
+  int srank = src[0], sfile = src[1], drank = dst[0], dfile = dst[1];
+  return (srank != drank && sfile == dfile) || (srank == drank && sfile != dfile);
 }
 
-int rookLegalMove(char board[9][9],
-		  int player, int *src, int *dst){
-  int srank = src[0], sfile = src[1],
-    drank = dst[0], dfile = dst[1];
-  int i;
-  if (rookLegalDirection(src, dst)){
-    return false;
-  }
-  else if (drank > srank){
-    for (i = srank + 1; i != drank; ++i){
-      if (board[i][sfile] != ' ') {
-	return false;
-      }
+int rookLegalMove(char board[9][9], int *src, int *dst){ 
+    int srank = src[0], sfile = src[1], drank = dst[0], dfile = dst[1];
+    int i;
+    if (!rookLegalDirection(src, dst)){
+        return false;
     }
-  }
-  else if (drank < srank){
-    for (i = srank - 1; i != drank; --i){
-      if (board[i][sfile] != ' '){ 
-	return false;
-      }
+    else if (drank > srank){
+        for (i = srank + 1; i != drank; ++i){
+            if (board[i][sfile] != ' ') {
+                return false;
+            }
+        }
     }
-  }
-  else if (dfile > sfile){
-    for (i = sfile + 1; i != dfile; ++i){
-      if (board[srank][i] != ' '){
-	return false;
-      }
+    else if (drank < srank){
+        for (i = srank - 1; i != drank; --i){
+            if (board[i][sfile] != ' '){ 
+                return false;
+            }
+        }
     }
-  }
-  else{
-    for (i = sfile - 1; i != dfile; --i){
-      if (board[srank][i] != ' '){
-	return false;
-      }
+    else if (dfile > sfile){    
+        for (i = sfile + 1; i != dfile; ++i){
+            if (board[srank][i] != ' '){
+                return false;
+            }
+        }
     }
-  }
-  return true;
+    else{
+        for (i = sfile - 1; i != dfile; --i){
+            if (board[srank][i] != ' '){
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 int upRookLegalMove(int player, int *src, int *dst){
@@ -216,77 +390,12 @@ int upRookLegalMove(int player, int *src, int *dst){
 int pawnLegalMove(int player, int *src, int *dst){
   int srank = src[0], sfile = src[1],
     drank = dst[0], dfile = dst[1];
-  int rel_dir = rel_dir_gen(player);
+  int rel_dir = relativeDirectionOf(player);
   eprintf("%i from %i, %i to %i, %i\n", player, srank, sfile, drank, dfile);
   return srank + rel_dir == drank && sfile == dfile;
 }
 
-int gmLegalMove(struct gm_status *game, int *src, int *dst){
-  return legalMove(game->board, game->player, src, dst, false);
-}
-
-int legalMove(char board[9][9], int player,
-	      int *src, int *dst, int from_check_f){
-  int srank = src[0], sfile = src[1],
-      drank = dst[0], dfile = dst[1];
-
-  char piece = board[srank][sfile];
-  eprintf("P%i with %c from %i, %i to %i, %i \n",
-          player, piece, srank, sfile, drank, dfile);
- 
-  char test_board[9][9];
-  char blank[2][38];
-  memcpy(&test_board, board, sizeof(test_board));
-  makeMove(test_board, blank, player, src, dst, 0);
-
-  if (legaldest(board, player, dst[0], dst[1]) == false){
-    return false;
-  }
-  else if (legalsrc(piece, player, src[0], src[1]) == false){
-    return false;
-  }
-  else if (drank == srank && dfile == sfile){
-    return false;
-  }
-  else if (from_check_f == false && ischeck(test_board, player)){
-    return false;
-  }
-  else if (piece == 'P' || piece == 'p'){
-    eprintf("trigger pawn %i \n", pawnLegalMove(player, src, dst));
-    return pawnLegalMove(player, src, dst);
-  }
-  else if (piece == 'R' || piece == 'r'){
-    return rookLegalMove(board, player, src, dst);
-  }
-  else if (piece == 'S' || piece == 's'){
-    return (rookLegalMove(board, player, src, dst)||
-	    upRookLegalMove(player, src, dst));
-  }
-  else if (piece == 'B' || piece == 'b'){
-    return bishopLegalMove(board, player ,src, dst);
-  }
-  else if (piece == 'C' || piece == 'c'){
-    return (bishopLegalMove(board, player, src, dst) ||
-	    upBishopLegalMove(player, src, dst));
-  }
-  else if (piece == 'L' || piece == 'l'){
-    return lanceLegalMove(board, player, src, dst);
-  }
-  else if (piece == 'K' || piece == 'k'){
-    return kingLegalMove(player, src, dst);
-  }
-  else if (piece == 'G' || piece == 'g'){
-    return silverLegalMove(player, src, dst);
-  }
-  else if (movesLikeGold(piece)){
-    return goldLegalMove(player, src, dst);
-  }
-  else{
-    return false;
-  }
-}
-
-int inrange(int rank, int file){
+int inRange(int rank, int file){
   if (rank > 8 || rank < 0 || file > 8 || file < 0){
     return false;
   }
@@ -295,9 +404,9 @@ int inrange(int rank, int file){
   }
 }
 
-int legaldest(char board[9][9], int player, int rank, int file){
+int legalDest(char board[9][9], int player, int rank, int file){
   char dpiece = board[rank][file];
-  if (inrange(rank, file) == false){
+  if (inRange(rank, file) == false){
     return false; 
   }
   else if ((player == 1 && isupper(dpiece)) || dpiece == ' '){
@@ -311,9 +420,9 @@ int legaldest(char board[9][9], int player, int rank, int file){
   }
 }
 
-int legalsrc(char piece, int player, int rank, int file){
-  if (inrange(rank, file) == false){
-    printf("rangeFail");
+int legalSrc(char piece, int player, int rank, int file){
+  if (inRange(rank, file) == false){
+    eprintf("rangeFail");
     return false;
   }
   else if (player == 1 && islower(piece)){
@@ -337,20 +446,6 @@ int inGraveyard(char graveyard[2][38], int player, char piece){
   return false;
 }
 
-int legaldrop(char board[9][9], char graveyard[2][38],
-	      int player, char piece, int *dst){
-  int drank = dst[0];
-  int dfile = dst[1];
-  char dpiece = board[drank][dfile];
-  eprintf("%c*(%i, %i)", piece, drank, dfile);
-  if (dpiece != ' ') {
-    return false;
-  }
-  else{
-    return inGraveyard(graveyard, player, piece);
-  }
-}
-
 bool isUpgradablePiece(char piece){
   piece = tolower(piece);
   return (piece == 'g' || piece == 'r'||
@@ -365,17 +460,16 @@ bool isUpgradedPiece(char piece){
           piece == 'o' || piece == 'm');
 }
 
-bool legalUpgrade(char board[9][9], char piece, int player, int rank){
-  eprintf("R:%i, Piece:%c, Player:%i", rank, piece, player);
-  if (player == 1 && rank < 3 && isUpgradablePiece(piece)){
-    return true;
+int wherePiece(char board[9][9], int loc[2], char piece){
+  for (loc[0] = 0; loc[0] < 9; loc[0]++){
+    for (loc[1] = 0; loc[1] < 9; loc[1]++){
+      eprintf("%i, %i\n", loc[0], loc[1]);
+      if (board[loc[0]][loc[1]] == piece){
+	return true;
+      }
+    }
   }
-  else if (player == 2 && rank > 5 && isUpgradablePiece(piece)){
-    return true;
-  }
-  else{
-    return false;
-  }
+  return false;
 }
 
 #ifdef LEGAL_TEST

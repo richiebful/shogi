@@ -91,3 +91,16 @@ uint32_t scorePieceDevelopment(int rank, int file, char board[9][9], int player)
 uint32_t scoreSign(int player, int owner){
   return (player == owner) ? 1 : -1;
 }
+=======
+/** \file */
+#include "shogi.h"
+#include "ai.h"
+#include <stdio.h>
+
+#ifdef SCORE_TEST
+
+int main(){
+
+}
+
+#endif

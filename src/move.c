@@ -9,18 +9,24 @@
 #include <string.h>
 #include <time.h>
 #include "shogi.h"
+#include "move.h"
+#include "clock.h"
+#include "legal.h"
 
+void cToCoords(int *converted, char *to_convert);
+void updateHistory(struct gm_status *game, char *move, time_t tm_executed);
+int digGrave(char graveyard[2][GRAVEYARD_MAX], int player, char piece);
 
 /** 
  * fn mkmove
  * Moves a piece from one position to another, and upgrades
  *   if necessary
  *
- *\param game the current game status
+ *\param board the game board to modify
+ *\param graveyard the graveyard to modify
  *\param player the player making the move
  *\param src array of source coordinates
  *\param dst array of destination coordinates
- *\param update_f add move to history
  *\param upgrade_f upgrade piece
  *
  *\pre move is legal, include upgrade
@@ -41,6 +47,22 @@ void makeMove(char board[9][9], char graveyard[2][38],
   digGrave(graveyard, player, dpiece);
 }
 
+
+/** 
+ * \fn mkmove
+ * Moves a piece from one position to another, and upgrades
+ *   if necessary
+ *
+ * \param game the game state to modify
+ * \param player the player making the move
+ * \param src array of source coordinates
+ * \param dst array of destination coordinates
+ * \param upgrade_f upgrade piece
+ * \param update_f whether to add to history or not
+ *
+ * \pre move is legal, including upgrade
+ * \pre game is a well-formed gm_status
+ */
 void gmMakeMove(struct gm_status *game, int player,
 		int *src, int *dst,
 		bool upgrade_f, bool update_f){
@@ -51,7 +73,7 @@ void gmMakeMove(struct gm_status *game, int player,
   makeMove(game->board, game->graveyard, game->player,
 	   src, dst, upgrade_f);
   if (update_f == true){
-    time_t tm_executed = updateClock(game);
+    time_t tm_executed = updateClock(&game->clock, game->player);
     char move[6];
     int i_src[2] = {srank, sfile};
     int i_dst[2] = {drank, dfile};
@@ -68,9 +90,9 @@ void gmMakeMove(struct gm_status *game, int player,
 /**
  * \fn digGrave
  * Adds a piece to the given player's graveyard
- *
- * \param player who's graveyard the piece should be added to
+ * 
  * \param game the current game state
+ * \param player who's graveyard the piece should be added to
  * \param piece the piece to be added
  */
 
@@ -144,14 +166,14 @@ void gmMakeDrop(struct gm_status *game, int player, char piece,
   if (update_f){
     char c_dst[3];
     coordsToC(c_dst, dst);
-    long s_lost = updateClock(game);
+    long s_lost = updateClock(&game->clock, game->player);
     char move[5];
     snprintf(move, 5, "%c*%c%c", piece, c_dst[0], c_dst[1]);
     updateHistory(game, move, s_lost);
   }
 }
 
-int otherPlayer(player){
+int otherPlayer(int player){
   return player % 2 + 1;
 }
 

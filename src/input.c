@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "shogi.h"
 
 /*if return 1, continue to next player
@@ -16,7 +15,7 @@
  *if return -1, input kills the program.
  */
  
-int processcmd(struct gm_status *game, char *command){
+int processCmd(struct gm_status *game, char *command){
   eprintf("%s", command);
   if (strncmp(command, "show", 4) == 0){
     dispBoard(game->board);
@@ -67,7 +66,7 @@ int processcmd(struct gm_status *game, char *command){
     cToCoords(dst, dst_c);
     cToCoords(src, src_c);
     char piece = game->board[src[0]][src[1]];
-    upgrade_f = (legalUpgrade(game->board, game->player, piece, dst[0]) &&
+    upgrade_f = (legalUpgrade(game->board, game->player, piece, dst) &&
 		 command[4] == '+');
     if (gmLegalMove(game, src, dst)==true){
       gmMakeMove(game, game->player, src, dst, upgrade_f, false);
@@ -87,7 +86,7 @@ int processcmd(struct gm_status *game, char *command){
     cToCoords(dst, dst_c);
     cToCoords(src, src_c);
     char piece = game->board[src[0]][src[1]];
-    upgrade_f = (legalUpgrade(game->board, game->player, piece, dst[0]) &&
+    upgrade_f = (legalUpgrade(game->board, game->player, piece, dst) &&
 		 command[4] == '+');
     if (gmLegalMove(game, src, dst)==true){
       gmMakeMove(game, game->player, src, dst, upgrade_f, false);
@@ -102,7 +101,7 @@ int processcmd(struct gm_status *game, char *command){
     char dst_c[3], piece = command[0];
     snprintf(dst_c, 3, "%s", command+1);
     cToCoords(dst, dst_c);
-    int processed_f = processmv(game, piece, src, dst);
+    int processed_f = processMv(game, piece, src, dst);
     if(processed_f &&
        gmLegalMove(game, src, dst)){
       gmMakeMove(game, game->player, src, dst, false, true);
@@ -118,11 +117,11 @@ int processcmd(struct gm_status *game, char *command){
     char dst_c[3], piece = command[0];
     snprintf(dst_c, 3, "%s", command+1);
     cToCoords(dst, dst_c);
-    int processed_f = processmv(game, piece, src, dst);
+    int processed_f = processMv(game, piece, src, dst);
     printf("%c", piece);
     if(processed_f == true &&
        gmLegalMove(game, src, dst)==true &&
-       legalUpgrade(game->board, piece, game->player, dst[0])){
+       legalUpgrade(game->board, piece, game->player, dst)){
       gmMakeMove(game, game->player, src, dst, true, true);
       return 1;
     }
@@ -137,7 +136,7 @@ int processcmd(struct gm_status *game, char *command){
     snprintf(dst_c, 3, "%s", command+2);
     cToCoords(dst, dst_c);
     eprintf("%c", piece);
-    if (legaldrop(game->board, game->graveyard, game->player,
+    if (legalDrop(game->board, game->graveyard, game->player,
 		  piece, dst) == true){
       gmMakeDrop(game, game->player, piece, dst, true);
       return 1;
@@ -157,7 +156,7 @@ int processcmd(struct gm_status *game, char *command){
  *then executes the move function.
  */
 
-int processmv(struct gm_status *game, char piece, int *src, int *dst){
+int processMv(struct gm_status *game, char piece, int *src, int *dst){
   if (game->player == 1){
     piece = tolower(piece);
   }
@@ -209,7 +208,7 @@ int main(){
   char command[5][4] = {"B7g","P7f","B7g","G",""};
   int i, mv_f;
   FOREACH(command, i){
-    mv_f = processcmd(&game, command[i]);
+    mv_f = processCmd(&game, command[i]);
     if (mv_f == 1){
       printf("Success\n");
       mv_f = 0;

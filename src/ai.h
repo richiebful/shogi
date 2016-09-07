@@ -1,12 +1,8 @@
-#define treetop (struct tree_node);
-
-/**Game tree node*/
-struct tree_node{
-  int score;
-  int *delta; //probably should specify this better
-  struct tree_node *children;
-  struct tree_node *parent;
-};
+/** @file */
+#pragma once
+#include <sys/queue.h>
+#define NO_PIECES 14
+#define MAIN_STAGES 4
 
 /**Determines the difficulty of the game AI*/
 struct gm_ai_profile{
@@ -15,8 +11,13 @@ struct gm_ai_profile{
   struct ai_score_book score_book;
 }ai_profile;
 
-#define NO_PIECES 14
-#define MAIN_STAGES 4
+/**Game tree node*/
+struct tree_node{
+  int score;
+  int *delta; //probably should specify this better
+  struct tree_node *children;
+  struct tree_node *parent;
+};
 
 struct pcValuation{
   char name[14] = "PLNGUBRQMOHCSK";
