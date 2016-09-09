@@ -1,28 +1,28 @@
 /** @file */
 #pragma once
 #include <sys/queue.h>
+#define NO_PIECES 14
+#define MAIN_STAGES 4
 
-/*Stores values for piece valuation*/
-struct ai_score_book{
-  char piece[14];
-  int score[14];
-  int check_v;
-};
-
-/*Determines the difficulty of the game AI*/
+/**Determines the difficulty of the game AI*/
 struct gm_ai_profile{
   int depth;
   int level; //official level 1-9
   struct ai_score_book score_book;
 }ai_profile;
 
-#define NO_PIECES 14
-#define MAIN_STAGES 4
+/**Game tree node*/
+struct tree_node{
+  int score;
+  int *delta; //probably should specify this better
+  struct tree_node *children;
+  struct tree_node *parent;
+};
 
-/*struct pcValuation{
+struct pcValuation{
   char name[14] = "PLNGUBRQMOHCSK";
   short score[14] = {7, 20, 20, 35, 40, 90, 95, 15, 25, 25, 35, 99, 97, 100};
-  }pcValue; */
+}PIECE_VALUES;
 
 #ifdef ADVANCED_VALUE
 struct pcValuation{

@@ -18,7 +18,7 @@ void updateHistory(struct gm_status *game, char *move, time_t tm_executed);
 int digGrave(char graveyard[2][GRAVEYARD_MAX], int player, char piece);
 
 /** 
- *\fn mkmove
+ * fn mkmove
  * Moves a piece from one position to another, and upgrades
  *   if necessary
  *
@@ -102,7 +102,7 @@ int digGrave(char graveyard[2][38], int player, char piece){
     piece--;
   if (piece != ' '){
     for (i = 0; i < 38; i++){
-      if (graveyard[player-1][i] == '\0'){
+      if (!graveyard[player-1][i]){
 	graveyard[player-1][i] = piece;
 	break;
       }

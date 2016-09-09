@@ -98,6 +98,7 @@ void buildRoot(struct gm_status *game, struct tree_node *root){
     root->childCount = 0;
 }
 
+
 /**
  * Creates a new decision tree node for moving a piece on the board
  * @todo make board and graveyard parameters
@@ -143,6 +144,21 @@ struct tree_node *generateDropNode(int player, char piece, int *dst){
 
 /**
  * Returns the player who is making the game tree node's move 1 or 2
+ * @param player is the current gm_status's player opposed to forcasted moves in the game tree
+ */
+int getNodePlayer(int currPlayer){
+  struct board_entry *entry;
+  int i = 0;
+  //counts number of entries in stack - 1
+  if (entry = SLIST_FIRST(&boardHead)){
+    while (entry = SLIST_NEXT(&entry, d)){
+      i++;
+    }
+  }
+  return (currPlayer + i) % 2 + 1;
+}
+
+/**
  * @param parent the decision tree node of the previous move
  * @param player the player making this move
  */
