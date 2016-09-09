@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 #include "shogi.h"
 #include "ai.h"
 #include "movegen.h"
@@ -10,7 +11,7 @@
 #define MOVEGEN_TEST
 
 /**
- * Adds a new updated graveyard to the top of the stack 
+ * Adds a new updated graveyard to the top of the stack
  */
 void pushGraveyardEntry(char graveyard[2][GRAVEYARD_MAX]){
     struct grave_entry *nEntry;
@@ -22,7 +23,7 @@ void pushGraveyardEntry(char graveyard[2][GRAVEYARD_MAX]){
 }
 
 /**
- * Adds a new updated board to the top of the stack 
+ * Adds a new updated board to the top of the stack
  */
 void pushBoardEntry(char board[9][9]){
     struct board_entry *nEntry;
@@ -48,7 +49,6 @@ void applyDelta(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player, 
         dst[0] = delta[2] - '0';
         dst[1] = delta[3] - '0';
         bool upgrade_f = delta[5];
-        printf("%d, %d to %d, %d with upgrade_f = %d", src[0], src[1], dst[0], dst[1], upgrade_f);
         makeMove(board, graveyard, player, src, dst, upgrade_f);
     }
     else{
@@ -65,18 +65,19 @@ void applyDelta(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player, 
 void attachNode(struct tree_node *parent, struct tree_node *child){
     //add parent pointer to child
     child->parent = parent;
-    
+
     //allocate more memory to store more child pointers if necessary
     if (parent->childCapacity < parent->childCount){
         printf("ensures capacity");
         struct tree_node **temp = calloc(2 * parent->childCapacity, __SIZEOF_POINTER__);
-        printf("tempsize %d\n",__SIZEOF_POINTER__);
+        printf("tempsize %d\n",__SIZEOF_POINTER__ * parent->childCapacity);
         memcpy(temp, parent->children, parent->childCapacity * __SIZEOF_POINTER__);
-        parent->children = temp;
+        free(parent->children);
         
+        parent->children = temp;
         parent->childCapacity = 2 * parent->childCapacity;
     }
-    
+
     //add pointer to child
     *(parent->children + parent->childCount) = child;
     parent->childCount++;
@@ -89,9 +90,10 @@ void buildRoot(struct gm_status *game, struct tree_node *root){
     SLIST_INIT(&graveHead);
     pushGraveyardEntry(game->graveyard);
     pushBoardEntry(game->board);
-    
+
     size_t childCapacity = 16;
-    root->children = calloc(sizeof(struct tree_node), childCapacity);
+    root->children = calloc(childCapacity, __SIZEOF_POINTER__);
+    printf("size: %lu\n",sizeof(root->children));
     root->childCapacity = childCapacity;
     root->childCount = 0;
 }
@@ -104,7 +106,7 @@ struct tree_node *generateMoveNode(int player, int *src, int *dst, bool isUpgrad
     struct tree_node *child;
     child = malloc(sizeof(struct tree_node));
     child->childCount = 0;
-    
+
     child->delta = calloc(sizeof(char), 6);
     sprintf(child->delta, "%1d%1d%1d%1d%1d", src[0], src[1], dst[0], dst[1], isUpgrade);
     printf("%s,", child->delta);
@@ -149,7 +151,7 @@ int generateChildNodes(struct tree_node *parent, int player){
     char board[9][9], graveyard[2][GRAVEYARD_MAX];
     memcpy(board, SLIST_FIRST(&boardHead)->board, 9*9);
     memcpy(graveyard, SLIST_FIRST(&graveHead)->graveyard, 2*GRAVEYARD_MAX);
-    
+
     char piece;
     struct tree_node *child;
     for (dst[0] = 0; dst[0] < 9; dst[0]++){
@@ -179,7 +181,8 @@ int generateChildNodes(struct tree_node *parent, int player){
                 }
             }
         }
-    } 
+    }
+    return 0;
 }
 
 void recursiveFree(struct tree_node *parent){
@@ -195,6 +198,48 @@ void recursiveFree(struct tree_node *parent){
     free(parent);
 }
 
+void breakBranch(
+
+int32_t alphabeta(struct tree_node *node, int32_t alpha, int32_t beta, bool maximizeF){
+    if (node->parent == NULL || node->children == NULL){
+        return node->score;
+    }else if (maximizeF){
+        int32_t v = INT32_MIN;
+        int i = 0;
+        for (i = 0; i < node->childCount; i++){
+            int32_t result = alphabeta(*(node->children + i), alpha, beta, false)
+            v = (v > result) ? v : result;
+            alpha = (alpha > v) ? alpha : v;
+            if (beta <= alpha){
+                detatchNode(node, *(node->children + i));
+            }
+        }
+        return v;
+    }else{
+        int32_t v = INT32_MAX;
+        int i = 0;
+        for (i = 0; i < node->childCount; i++){
+            int32_t result = alphabeta(*(node->children + i), alpha, beta, true);
+            v = (v < result) ? v : result;
+            beta = (beta < v) ? beta : v;
+            if (beta <= alpha){
+                detatchNode(node, *(node->children + i));
+            }
+        }
+        return v;
+    }
+}
+
+void buildTree(struct tree_node *parent, int player){
+    generateChildNodes(parent, player);
+    alphabeta(parent);
+    int i;
+    for (i = 0; i < parent->childCount; i++){
+        player = (player + 1) % 2 + 1; //change player
+        //buildTree(parent, player);
+    }
+};
+
 
 #ifdef MOVEGEN_TEST
 
@@ -208,7 +253,7 @@ int main(void){
   generateChildNodes(root, game->player);
   printf("childCount = %d\n", root->childCount);
   printf("childCapacity = %d\n", root->childCapacity);
-  recursiveFree(root);
+  //recursiveFree(root);
   free(game);
 }
 
