@@ -1,17 +1,6 @@
 /** @file */
 #pragma once
 
-/**
- * Comprises nodes in the game decision tree
- */
-struct tree_node{
-  int score;
-  char *delta; //probably should specify this better
-  int childCount, childCapacity;
-  struct tree_node **children;
-  struct tree_node *parent;
-};
-
 
 /**
  * Comprises the stack of board modifications
