@@ -11,13 +11,20 @@
 #define SCORE_TEST 1
 #define SCORE_BOARD_PIECE_COEFF 1.0
 #define DROPPABILITY_COEFF 1.0
+#define IN_CHECK_COEFF 1.0
 
 uint32_t scoreGraveyardPiece(char piece, int player, int owner);
 uint32_t scoreDroppability(char piece, char board[9][9], int player);
 uint32_t scoreBoardPiece(char piece, int player);
-uint32_t scorePieceDevelopment(int rank, int file, char board[9][9], int player);
+uint32_t scorePieceDevelopment(int loc[2], char board[9][9], int player);
 uint32_t scoreSign(int player, int owner);
 uint32_t scorePiece(char piece, int player);
+uint32_t scoreBishopDevelopment(int loc[2], char board[9][9], int player);
+uint32_t scoreUpBishopDevelopment(int loc[2], char board[9][9], int player);
+uint32_t scoreLanceDevelopment(int loc[2], char board[9][9], int player);
+uint32_t scoreRookDevelopment(int loc[2], char board[9][9], int player);
+uint32_t scoreUpRookDevelopment(int loc[2], char board[9][9], int player);
+uint32_t scoreKnightDevelopment(int loc[2], char board[9][9], int player);
 
 
 /**
@@ -27,14 +34,13 @@ uint32_t scorePiece(char piece, int player);
 uint32_t scoreState(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player){
   int i, j;
   char piece;
-  uint32_t score = 0;
-  
+  uint32_t score = isCheck(board, player) * IN_CHECK_COEFF;
   for (i = 0; i < 9; i++){
     for (j = 0; j < 9; j++){
       piece = board[i][j];
       if (piece != ' '){
-	score += scoreBoardPiece(piece, player);
-	score += scorePieceDevelopment(i, j, board, player);
+	int loc[2] = {i, j};
+	score += scorePieceDevelopment(loc, board, player);
       }
     }
   }
@@ -89,10 +95,16 @@ uint32_t scoreBoardPiece(char piece, int player){
   return SCORE_BOARD_PIECE_COEFF * scorePiece(piece, player);
 }
 
+/**
+ * Scores a piece generally, based on its assumed value in game play
+ */
 uint32_t scorePiece(char piece, int player){
   for (int i = 0; i < sizeof(PIECE_VALUES.name); i++){
-    if (toupper(piece) == PIECE_VALUES.name[i]){
-      return scoreSign(player, islower(piece) + 1) * PIECE_VALUES.score[i];
+    if (piece == PIECE_VALUES.name[i]){
+      return scoreSign(player, 1) * PIECE_VALUES.score[i];
+    }
+    else if (toupper(piece) == PIECE_VALUES.name[i]){
+      return scoreSign(player, 2) * PIECE_VALUES.score[i];
     }
   }
 }
@@ -100,9 +112,32 @@ uint32_t scorePiece(char piece, int player){
 /**
  * (Returns a measurement of piece development) * k
  * @pre board[rank][file] is a piece
+ * @note only pieces with range, like rook, bishop, lance can be developed
  */
-uint32_t scorePieceDevelopment(int rank, int file, char board[9][9], int player){
-  return 0;
+uint32_t scorePieceDevelopment(int loc[2], char board[9][9], int player){
+  char piece = board[loc[0]][loc[1]];
+  switch (piece){
+    case 'B':
+    case 'b':
+      return scoreBishopDevelopment(loc, board, player);
+    case 'C':
+    case 'c':
+      return scoreUpBishopDevelopment(loc, board, player);
+    case 'L':
+    case 'l':
+      return scoreLanceDevelopment(loc, board, player);
+    case 'N':
+    case 'n':
+      return scoreKnightDevelopment(loc, board, player);
+    case 'R':
+    case 'r':
+      return scoreRookDevelopment(loc, board, player);
+    case 'S':
+    case 's':
+      return scoreUpRookDevelopment(loc, board, player);
+    default:
+      return 0;
+  }
 }
 
 /**
@@ -110,6 +145,48 @@ uint32_t scorePieceDevelopment(int rank, int file, char board[9][9], int player)
  */
 uint32_t scoreSign(int player, int owner){
   return (player == owner) ? 1 : -1;
+}
+
+/**
+ * @todo develop functionality
+ */
+uint32_t scoreBishopDevelopment(int loc[2], char board[9][9], int player){
+  
+}
+
+/**
+ * @todo develop functionality
+ */
+uint32_t scoreUpBishopDevelopment(int loc[2], char board[9][9], int player){
+  
+}
+
+/**
+ * @todo develop functionality
+ */
+uint32_t scoreLanceDevelopment(int loc[2], char board[9][9], int player){
+  
+}
+
+/**
+ * @todo develop functionality
+ */
+uint32_t scoreRookDevelopment(int loc[2], char board[9][9], int player){
+  
+}
+
+/**
+ * @todo develop functionality
+ */
+uint32_t scoreUpRookDevelopment(int loc[2], char board[9][9], int player){
+  
+}
+
+/**
+ * @todo develop functionality
+ */
+uint32_t scoreKnightDevelopment(int loc[2], char board[9][9], int player){
+  
 }
 
 
@@ -173,7 +250,7 @@ int main(){
 			      { .src = {0, 7}, 
 			        .dst = {2, 6},
 			        .legalF = true,
-			        .score = 4,
+			        .score = 225,
 			        .board = {"LNGUKUG L", 
 				          " R     B ", 
 					  "PPPPPPNPP", 
@@ -204,3 +281,4 @@ int main(){
 }
 
 #endif
+

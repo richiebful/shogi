@@ -49,7 +49,7 @@ int legalMove(char board[9][9], int player,
       drank = dst[0], dfile = dst[1];
 
   char piece = board[srank][sfile];
-  printf("P%i with %c from %i, %i to %i, %i \n",
+  eprintf("P%i with %c from %i, %i to %i, %i \n",
           player, piece, srank, sfile, drank, dfile);
  
   char test_board[9][9];
@@ -67,7 +67,7 @@ int legalMove(char board[9][9], int player,
     return false;
   }
   else if (from_check_f == false && isCheck(test_board, player)){
-    printf("fails here?\n");
+    eprintf("fails here?\n");
     return false;
   }
   else if (piece == 'P' || piece == 'p'){
@@ -104,7 +104,7 @@ int legalMove(char board[9][9], int player,
     return goldLegalMove(player, src, dst);
   }
   else{
-    printf("fails by default\n");
+    eprintf("fails by default\n");
     return false;
   }
 }
@@ -420,7 +420,7 @@ int pawnLegalMove(int player, int src[2], int dst[2]){
 }
 
 bool knightLegalMove(int player, int src[2], int dst[2]){
-  printf("knight legal move\n");
+  eprintf("knight legal move\n");
   return (relativeDirectionOf(player)*2 + src[0] == dst[0] && 
 	  (src[1] + 1 == dst[1] || src[1] - 1 == dst[1]));
 }
