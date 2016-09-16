@@ -44,6 +44,8 @@ int gmLegalDrop(struct gm_status *game, char piece, int dst[2]);
 bool legalUpgrade(char board[9][9], char piece, int player, int loc[2]);
 int isCheck(char board[9][9], int player);
 int isMate(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player);
+int relativeDirectionOf(int player);
+int inRange(int rank, int file);
 /*init.c*/
 void init_game(struct gm_status *game);
 int eprintf(char *format, ...);
