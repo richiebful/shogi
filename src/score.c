@@ -121,10 +121,9 @@ int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player){
   switch (piece){
     case 'B':
     case 'b':
-      return scoreBishopDevelopment(loc, board, player);
     case 'C':
     case 'c':
-      return scoreUpBishopDevelopment(loc, board, player);
+      return scoreBishopDevelopment(loc, board, player);
     case 'L':
     case 'l':
       return scoreLanceDevelopment(loc, board, player);
@@ -133,10 +132,10 @@ int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player){
       return scoreKnightDevelopment(loc, board, player);
     case 'R':
     case 'r':
-      return scoreRookDevelopment(loc, board, player);
     case 'S':
     case 's':
-      return scoreUpRookDevelopment(loc, board, player);
+      return scoreRookDevelopment(loc, board, player);
+
     default:
       return 0;
   }
@@ -150,20 +149,21 @@ int32_t scoreSign(int player, int owner){
 }
 
 /**
- * @todo develop functionality, ensure dpiece is in range
+ * @todo test functionality
  */
 int32_t scoreBishopDevelopment(int loc[2], char board[9][9], int player){
-  int i;
+  int dfile, drank;
   //all arrays of 2 elements are of format {-slope diagonal, +slope diagonal}
   int32_t count[2] = {0, 0};
-  for (i = 0; i < sizeof(board)/sizeof(board[0]); i++){
+  for (dfile = 0; dfile < sizeof(board)/sizeof(board[0]); dfile++){
     char pcInSame[2] = {board[loc[0]][loc[1] - 1] , board[loc][loc[1]]};
-    bool atRookIn[2] = {loc[1] == i, loc[0] == i};
-    bool pastRookIn[2] = {loc[1] > i, loc[0] > i};
+    bool atRookIn[2] = {loc[1] == dfile, loc[0] == dfile};
+    bool pastRookIn[2] = {loc[1] > dfile, loc[0] > dfile};
     int32_t nCount[2];
     int j;
-    for (j = 0; j < 2; j++){
-      if (nCount[j] < 0){
+    for (j = -1; j < 2; j += 2){
+      drank = j * dfile + (loc[0] - loc[1])* j;
+      if (nCount[(j + 1)/2] < 0 || !inRange(drank, dfile)){
 	continue;
       }
       nCount[j] = obstructionTest(pcInSame[j], atRookIn[j], pastRookIn[j], player, count[j]);
@@ -176,11 +176,22 @@ int32_t scoreBishopDevelopment(int loc[2], char board[9][9], int player){
 }
 
 /**
- * @todo develop functionality
- */
 int32_t scoreUpBishopDevelopment(int loc[2], char board[9][9], int player){
-  
+  int32_t count = scoreBishopDevelopment(loc, board, player);
+  int potentialDst[4][2] = {{loc[0] + 1, loc[1]},
+			    {loc[0] - 1, loc[1]},
+			    {loc[0], loc[1] + 1},
+			    {loc[0], loc[1] - 1}};
+  for (int i = 0; i < sizeof(potentialDst)/sizeof(potentialDst[0]); i++){
+    char dstPiece = board[potentialDst[i][0]][potentialDst[i][1]];
+    if (ownerOf(dstPiece) != player){
+      score++;
+    } else {
+      continue;
+    }
+  }
 }
+*/
 
 /**
  * @todo test the shit out of this
@@ -258,8 +269,6 @@ int32_t scoreRookDevelopment(int loc[2], char board[9][9], int player){
 }
 
 /**
- * @todo develop functionality
- */
 int32_t scoreUpRookDevelopment(int loc[2], char board[9][9], int player){
   int32_t score = scoreRookDevelopment(loc, board, player);
   int potentialDst[4][2] = {{loc[0] + 1, loc[1] + 1},
@@ -275,6 +284,7 @@ int32_t scoreUpRookDevelopment(int loc[2], char board[9][9], int player){
     }
   }
 }
+*/
 
 /**
  * @todo develop functionality
@@ -319,14 +329,14 @@ int main(){
 			       .legalF = true, 
 			       .score = 0, 
 			       .board = {"LNGUKUGNL", 
-				        " R     B ", 
-					"PPPPPPPPP", 
-					"         ", 
-					"         ", 
-					"  p      ",
-				        "pp pppppp",
-				        " b     r ",
-				        "lngukugnl"},
+				         " R     B ", 
+					 "PPPPPPPPP", 
+					 "         ", 
+					 "         ", 
+					 "  p      ",
+				         "pp pppppp",
+				         " b     r ",
+				         "lngukugnl"},
                                 .player = 1
                               },
 			      { .src = {7, 1},
@@ -391,6 +401,115 @@ int main(){
     }
   }
 }
+#endif
 
+struct board_score_test{
+  uint32_t score;
+  char board[9][9];
+  int pcLocation[2];
+  int player;
+};
+  
+#ifdef BISHOP_DEVELOPMENT_TEST
+int main(void){
+  struct board_score_test test[] = {
+    {.board = {"LNGUKUGNL", 
+               " R     B ", 
+	       "PPPPPPbPP", 
+	       "         ", 
+	       "         ", 
+	       "  p      ",
+	       "pp pppppp",
+	       "       r ",
+	       "lngukugnl"},
+     .score = 0,
+     .pcLocation = {2, 6},
+     .player = 1},
+    {.board = {"LNGUKUG L", 
+	       " R     B ", 
+	       "PPPPPPNPP", 
+	       "         ", 
+	       "         ",
+	       "  p      ",
+	       "pp pppppp",
+	       "       r ",
+	       "lngukugnl"},
+     .pcLocation = {1, 7},
+     .score = 0,
+     .player = 2}
+  };
+  for (int i = 0; i < sizeof(test)/sizeof(test[0]); i++){
+    assert(test[i].score == scoreBishopDevelopment(test[i].pcLocation, test[i].board, test[i].player));
+  }
+  return 0;
+}
+#endif
+#ifdef ROOK_DEVELOPMENT_TEST
+int main(void){
+  struct board_score_test test[] = {
+    {.board = {"LNGUKUGNL", 
+               " R     B ", 
+	       "PPPPPPbPP", 
+	       "         ", 
+	       "         ", 
+	       "  p      ",
+	       "pp pppppp",
+	       "       r ",
+	       "lngukugnl"},
+     .score = 0,
+     .pcLocation = {2, 6},
+     .player = 1},
+    {.board = {"LNGUKUG L", 
+	       " R     B ", 
+	       "PPPPPPNPP", 
+	       "         ", 
+	       "         ",
+	       "  p      ",
+	       "pp pppppp",
+	       "       r ",
+	       "lngukugnl"},
+     .pcLocation = {1, 7},
+     .score = 0,
+     .player = 2}
+  };
+  for (int i = 0; i < sizeof(test)/sizeof(test[0]); i++){
+    assert(test[i].score == scoreLanceDevelopment(test[i].pcLocation, test[i].board, test[i].player));
+  }
+  return 0;
+}
+#endif
+#ifdef LANCE_DEVELOPMENT_TEST
+int main(void){
+  struct board_score_test test[] = {
+    {.board = {"LNGUKUGNL", 
+               " R     B ", 
+	       "PPPPPPbPP", 
+	       "         ", 
+	       "         ", 
+	       "  p      ",
+	       "pp pppppp",
+	       "       r ",
+	       "lngukugnl"},
+     .score = 0,
+     .pcLocation = {2, 6},
+     .player = 1},
+    {.board = {"LNGUKUG L", 
+	       " R     B ", 
+	       "PPPPPPNPP", 
+	       "         ", 
+	       "         ",
+	       "  p      ",
+	       "pp pppppp",
+	       "       r ",
+	       "lngukugnl"},
+     .pcLocation = {1, 7},
+     .score = 0,
+     .player = 2}
+  };
+  for (int i = 0; i < sizeof(test)/sizeof(test[0]); i++){
+    assert(test[i].score == scoreRookDevelopment(test[i].pcLocation, test[i].board, test[i].player));
+  }
+  return 0;
+}
 #endif
 
