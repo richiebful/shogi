@@ -8,15 +8,16 @@
 #include "shogi.h"
 #include "ai.h"
 
-#define SCORE_TEST 1
+#define BISHOP_DEVELOPMENT_TEST 1
 #define SCORE_BOARD_PIECE_COEFF 1.0
 #define DROPPABILITY_COEFF 1.0
 #define IN_CHECK_COEFF 1.0
+#define SCORE_PIN_COEFF 1.0
 
 int32_t scoreGraveyardPiece(char piece, int player, int owner);
 int32_t scoreDroppability(char piece, char board[9][9], int player);
 int32_t scoreBoardPiece(char piece, int player);
-int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player);
+int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player, bool oppInCheckF);
 int32_t scoreSign(int player, int owner);
 int32_t scorePiece(char piece, int player);
 int32_t scoreBishopDevelopment(int loc[2], char board[9][9], int player);
@@ -25,7 +26,8 @@ int32_t scoreLanceDevelopment(int loc[2], char board[9][9], int player);
 int32_t scoreRookDevelopment(int loc[2], char board[9][9], int player);
 int32_t scoreUpRookDevelopment(int loc[2], char board[9][9], int player);
 int32_t scoreKnightDevelopment(int loc[2], char board[9][9], int player);
-int32_t obstructionTest(char attackedPiece, bool atAttackingPiece, bool pastAttackingPiece, int player, int count);
+bool obstructionTest(char attackedPiece, bool atAttackingPiece, bool pastAttackingPiece, int player, int *count);
+int32_t scorePinning(int loc[2], char board[9][9], int player);
 int ownerOf(char piece);
 
 
@@ -36,13 +38,16 @@ int ownerOf(char piece);
 int32_t scoreState(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player){
   int i, j;
   char piece;
-  int32_t score = isCheck(board, player) * IN_CHECK_COEFF;
+  int opponent = (player % 2) + 1;
+  bool oppInCheckF = isCheck(board, opponent);
+  int32_t score = oppInCheckF * IN_CHECK_COEFF;
   for (i = 0; i < 9; i++){
     for (j = 0; j < 9; j++){
       piece = board[i][j];
       if (piece != ' '){
 	int loc[2] = {i, j};
-	score += scorePieceDevelopment(loc, board, player);
+	score += scorePieceDevelopment(loc, board, player, oppInCheckF);
+	score += scorePinning(loc, board, player);
       }
     }
   }
@@ -66,7 +71,7 @@ int32_t scoreState(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int playe
 int32_t scoreGraveyardPiece(char piece, int player, int owner){
   for (int i = 0; i < sizeof(PIECE_VALUES.name); i++){
     if (toupper(piece) == PIECE_VALUES.name[i]){
-      printf("toupper(piece) -> %c \n", toupper(piece));
+      //printf("toupper(piece) -> %c \n", toupper(piece));
       return scoreSign(player, owner) * PIECE_VALUES.score[i];
     }
   }
@@ -116,29 +121,58 @@ int32_t scorePiece(char piece, int player){
  * @pre board[rank][file] is a piece
  * @note only pieces with range, like rook, bishop, lance can be developed
  */
-int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player){
+int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player, bool oppInCheckF){
   char piece = board[loc[0]][loc[1]];
+  int32_t score = 0;
   switch (piece){
     case 'B':
     case 'b':
     case 'C':
     case 'c':
-      return scoreBishopDevelopment(loc, board, player);
+      score = scoreBishopDevelopment(loc, board, player);
+      break;
     case 'L':
     case 'l':
-      return scoreLanceDevelopment(loc, board, player);
+      score =  scoreLanceDevelopment(loc, board, player);
+      break;
     case 'N':
     case 'n':
-      return scoreKnightDevelopment(loc, board, player);
+      score = scoreKnightDevelopment(loc, board, player);
+      break;
     case 'R':
     case 'r':
     case 'S':
     case 's':
-      return scoreRookDevelopment(loc, board, player);
-
-    default:
-      return 0;
+      score = scoreRookDevelopment(loc, board, player);
+      break;
   }
+  int sign =  scoreSign(player, islower(piece) + 1);
+  
+  if (sign == -1 && oppInCheckF)
+    return 0;
+  else
+    return sign * score;
+}
+
+int32_t scorePinning(int src[2], char board[9][9], int player){
+  char tempBoard[9][9];
+  memcpy(tempBoard, board, sizeof(char)*9*9);
+  
+  int dst[2];
+  int32_t score = 0;
+  for (dst[0] = 0; dst[0] < 9; dst[0]++){
+    for (dst[1] = 0; dst[1] < 9; dst[1]++){
+      char pinCandidate = board[dst[0]][dst[1]];
+      if (pinCandidate != ' '){
+	tempBoard[9][9] = ' ';
+	//needs to be negative because opponent owning pinCandidate is good for you
+	score -= scoreSign(player, ownerOf(pinCandidate)) * isCheck(board, (player % 2) + 1);
+	tempBoard[9][9] = pinCandidate;
+      }
+    }
+  }
+  //score will be number of pinned pieces...potentially value should be figured in as well
+  return score * SCORE_PIN_COEFF;
 }
 
 /**
@@ -155,20 +189,23 @@ int32_t scoreBishopDevelopment(int loc[2], char board[9][9], int player){
   int dfile, drank;
   //all arrays of 2 elements are of format {-slope diagonal, +slope diagonal}
   int32_t count[2] = {0, 0};
-  for (dfile = 0; dfile < sizeof(board)/sizeof(board[0]); dfile++){
-    char pcInSame[2] = {board[loc[0]][loc[1] - 1] , board[loc][loc[1]]};
-    bool atRookIn[2] = {loc[1] == dfile, loc[0] == dfile};
-    bool pastRookIn[2] = {loc[1] > dfile, loc[0] > dfile};
-    int32_t nCount[2];
-    int j;
-    for (j = -1; j < 2; j += 2){
-      drank = j * dfile + (loc[0] - loc[1])* j;
-      if (nCount[(j + 1)/2] < 0 || !inRange(drank, dfile)){
+  bool atBishopIn, pastBishopIn;
+  char pcInSame;
+  int i;
+  for (i = -1; i < 2; i += 2){
+    int32_t nCount = 0;
+    for (drank = 0; drank < 9; drank++){
+      atBishopIn = drank == loc[0];
+      pastBishopIn = drank > loc[0];
+      dfile = -i * drank + (loc[1] + i * loc[0]);
+      //dfile = (i == -1) ? drank + (loc[1] - loc[0]) : -drank + (loc[1] + loc[0]);
+      pcInSame = board[drank][dfile];
+      printf("currentDest: (%i, %i)\n", drank, dfile);
+      if (nCount < 0 || !inRange(drank, dfile)){
 	continue;
       }
-      nCount[j] = obstructionTest(pcInSame[j], atRookIn[j], pastRookIn[j], player, count[j]);
-      if (nCount[j] >= 0){
-	count[j] = nCount[j];
+      if (!obstructionTest(pcInSame, atBishopIn, pastBishopIn, player, &count[(i + 1)/2])){
+	break;
       }
     }
   }
@@ -197,74 +234,77 @@ int32_t scoreUpBishopDevelopment(int loc[2], char board[9][9], int player){
  * @todo test the shit out of this
  */
 int32_t scoreLanceDevelopment(int loc[2], char board[9][9], int player){
-  int32_t count = 0;
+  int32_t count = 0, nCount;
   int rel_dir = relativeDirectionOf(player);
   int outOfBounds = 4 + 5 * rel_dir;
   int i;
-  for (i = loc[0]; i != outOfBounds; i += rel_dir){
-    int32_t nCount;
-    char attackedPiece = board[loc[0][loc[1]];
-    nCount = obstructionTest(attackedPiece, false, true, player, count);
-    if (nCount >= 0)
-      count = nCount;
-    else
+  for (i = loc[0] + rel_dir; i != outOfBounds; i += rel_dir){
+    char attackedPiece = board[i][loc[1]];
+    if (!obstructionTest(attackedPiece, false, true, player, &count)){
       break;
+    }
   }
   return count;
 }
 
+bool playerAttackingOwn(char piece, int player){
+  return ('a' < piece && piece < 'z' && player == 1) || 
+         ('A' < piece && piece < 'Z' && player == 2);
+}
+
 /**
- * Works on pieces that cannot jump, but make "ranged" attacks, e.g. bishop, rook
+ * Works on pieces that cannot jump, but make "ranged" attacks, e.g. bishop, rook, lance
  * @todo test
  */
-int32_t obstructionTest(char attackedPiece, bool atAttackingPiece, bool pastAttackingPiece, int player, int count){
+bool obstructionTest(char attackedPiece, bool atAttackingPiece, bool pastAttackingPiece, int player, int *count){
   if (attackedPiece == ' '){
-      return count + 1;
+      *count += 1;
+      return true;
   }
-  else if (scoreSign(isupper(attackedPiece) + 1, player) == 1){
+  else if (playerAttackingOwn(attackedPiece, player)){
     if (pastAttackingPiece){
-      return -1;
-    } else if (!atAttackingPiece){
-      return 0;
+      return false;
+    } else if (atAttackingPiece){
+      return true;
     } else {
-      return count;
+      *count = 0;
+      return true;
     }
-  }
+  }	
   else{
     if (pastAttackingPiece){
-      return count + 1;
-      break;
-    } else if (!atAttackingPiece){
-      return 1;
+      *count += 1;
+      return false;
+    } else if (atAttackingPiece){
+      return true;
     } else {
-      return count;
+      *count = 1;
+      return true;
     }
   }
 }
 
 /**
- * @todo test
+ * @todo TEST
  */
 int32_t scoreRookDevelopment(int loc[2], char board[9][9], int player){
-  int i;
   //all arrays of 2 elements are of format {rank, file}, ie. pcInSame[rank]
+  bool atRookIn, pastRookIn;
   int32_t count[2] = {0, 0};
-  for (i = 0; i < sizeof(board)/sizeof(board[0]); i++){
-    char pcInSame[2] = {board[loc[0]][i] , board[i][loc[1]]};
-    bool atRookIn[2] = {loc[1] == i, loc[0] == i};
-    bool pastRookIn[2] = {loc[1] > i, loc[0] > i};
-    int32_t nCount[2];
-    int j;
-    for (j = 0; j < 2; j++){
-      if (nCount[j] < 0){
-	continue;
-      }
-      nCount[j] = obstructionTest(pcInSame[j], atRookIn[j], pastRookIn[j], player, count[j]);
-      if (nCount[j] >= 0){
-	count[j] = nCount[j];
+  int32_t nCount;
+  int i, j;
+  for (i = 0; i < 2; i++){
+    for (j = 0; j < 9; j++){
+      char pcInSame[2] = {board[loc[0]][j] , board[j][loc[1]]};
+      atRookIn = (j == loc[i]);
+      pastRookIn = (j > loc[i]);
+      printf("obstructionTest(%c, %d, %d, %d, %d)\n", pcInSame[i], atRookIn, pastRookIn, player, count[i]);
+      if(!obstructionTest(pcInSame[i], atRookIn, pastRookIn, player, &count[i])){
+	break;
       }
     }
   }
+  
   return count[0] + count[1];
 }
 
@@ -287,7 +327,8 @@ int32_t scoreUpRookDevelopment(int loc[2], char board[9][9], int player){
 */
 
 /**
- * @todo develop functionality
+ * Determines how many places a knight can jump
+ * @see scorePieceDevelopment
  */
 int32_t scoreKnightDevelopment(int loc[2], char board[9][9], int player){
   int dst[2][2] = {{loc[0] + relativeDirectionOf(player), loc[1] + 1}, 
@@ -422,13 +463,13 @@ int main(void){
 	       "pp pppppp",
 	       "       r ",
 	       "lngukugnl"},
-     .score = 0,
+     .score = 10,
      .pcLocation = {2, 6},
      .player = 1},
     {.board = {"LNGUKUG L", 
 	       " R     B ", 
 	       "PPPPPPNPP", 
-	       "         ", 
+	       "         ",
 	       "         ",
 	       "  p      ",
 	       "pp pppppp",
@@ -439,7 +480,14 @@ int main(void){
      .player = 2}
   };
   for (int i = 0; i < sizeof(test)/sizeof(test[0]); i++){
-    assert(test[i].score == scoreBishopDevelopment(test[i].pcLocation, test[i].board, test[i].player));
+    printf("scoreBishopDevelopment given arguments: \n");
+    printf("loc = (%i, %i) \n", test[i].pcLocation[0], test[i].pcLocation[1]);
+    dispBoard(test[i].board);
+    printf("player = %i\n", test[i].player);
+    int32_t develScore = scoreBishopDevelopment(test[i].pcLocation, test[i].board, test[i].player);
+    printf("--->> \t %i\n", develScore);
+    
+    assert(test[i].score == develScore);
   }
   return 0;
 }
@@ -449,31 +497,32 @@ int main(void){
   struct board_score_test test[] = {
     {.board = {"LNGUKUGNL", 
                " R     B ", 
-	       "PPPPPPbPP", 
-	       "         ", 
+	       "P PPPPbPP", 
+	       " P       ", 
 	       "         ", 
 	       "  p      ",
 	       "pp pppppp",
 	       "       r ",
 	       "lngukugnl"},
-     .score = 0,
-     .pcLocation = {2, 6},
-     .player = 1},
+     .score = 7,
+     .pcLocation = {1, 1},
+     .player = 2},
     {.board = {"LNGUKUG L", 
 	       " R     B ", 
 	       "PPPPPPNPP", 
 	       "         ", 
 	       "         ",
 	       "  p      ",
-	       "pp pppppp",
+	       "pp pppp p",
 	       "       r ",
 	       "lngukugnl"},
-     .pcLocation = {1, 7},
-     .score = 0,
-     .player = 2}
+     .pcLocation = {7, 7},
+     .score = 13,
+     .player = 1}
   };
   for (int i = 0; i < sizeof(test)/sizeof(test[0]); i++){
-    assert(test[i].score == scoreLanceDevelopment(test[i].pcLocation, test[i].board, test[i].player));
+    printf("--> %i: expected: %i", scoreRookDevelopment(test[i].pcLocation, test[i].board, test[i].player), test[i].score);
+    assert(test[i].score == scoreRookDevelopment(test[i].pcLocation, test[i].board, test[i].player));
   }
   return 0;
 }
@@ -490,8 +539,20 @@ int main(void){
 	       "pp pppppp",
 	       "       r ",
 	       "lngukugnl"},
-     .score = 0,
-     .pcLocation = {2, 6},
+     .score = 1,
+     .pcLocation = {8, 8},
+     .player = 1},
+    {.board = {"LNGUKUGNL", 
+               " R     B ", 
+	       "PPPPPPbPP", 
+	       "         ", 
+	       "         ", 
+	       "  p      ",
+	       "pp ppppp ",
+	       "       r ",
+	       "lngukugnl"},
+     .score = 6,
+     .pcLocation = {8, 8},
      .player = 1},
     {.board = {"LNGUKUG L", 
 	       " R     B ", 
@@ -502,12 +563,13 @@ int main(void){
 	       "pp pppppp",
 	       "       r ",
 	       "lngukugnl"},
-     .pcLocation = {1, 7},
-     .score = 0,
+     .pcLocation = {0, 0},
+     .score = 1,
      .player = 2}
   };
   for (int i = 0; i < sizeof(test)/sizeof(test[0]); i++){
-    assert(test[i].score == scoreRookDevelopment(test[i].pcLocation, test[i].board, test[i].player));
+    printf("lanceDevelopment -->> %i, expects: %i\n", scoreLanceDevelopment(test[i].pcLocation, test[i].board, test[i].player), test[i].score);
+    assert(test[i].score == scoreLanceDevelopment(test[i].pcLocation, test[i].board, test[i].player));
   }
   return 0;
 }
