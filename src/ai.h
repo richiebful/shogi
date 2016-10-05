@@ -21,6 +21,13 @@ struct pcValuation{
   {7, 20, 20, 35, 40, 90, 95, 15, 25, 25, 35, 99, 97, 100}
 };
 
+struct aiScoreBook{
+  struct pcValuation pcValues;
+  double inCheckCoefficient;
+  double droppabilityCoefficient;
+  //etc.
+}; //pass this to scoreState function
+
 #ifdef ADVANCED_VALUE
 struct pcValuation{
   char name[NO_PIECES] = "PLNGUBRQMOHCSK";
