@@ -156,7 +156,7 @@ int processCmd(struct gm_status *game, char *command){
  *then executes the move function.
  */
 
-int processMv(struct gm_status *game, char piece, int *src, int *dst){
+int processMv(struct gm_status *game, char piece, int src[2], int dst[2]){
   if (game->player == 1){
     piece = tolower(piece);
   }

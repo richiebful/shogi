@@ -37,10 +37,11 @@ struct gm_status{
 
 /*legal.c*/
 int legalMove(char board[9][9], int player,
-	      int *src, int *dst, int from_check_f);
-int gmLegalMove(struct gm_status *game, int *src, int *dst);
-int legalDrop(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player, char piece, int *dst);
-bool legalUpgrade(char board[9][9], char piece, int player, int *loc);
+	      int src[2], int dst[2], int from_check_f);
+int gmLegalMove(struct gm_status *game, int src[2], int dst[2]);
+bool legalDrop(char board[9][9], int player, char piece, int dst[2]);
+int gmLegalDrop(struct gm_status *game, char piece, int dst[2]);
+bool legalUpgrade(char board[9][9], char piece, int player, int loc[2]);
 int isCheck(char board[9][9], int player);
 int isMate(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player);
 /*init.c*/
@@ -48,14 +49,14 @@ void init_game(struct gm_status *game);
 int eprintf(char *format, ...);
 /*move.c*/
 void makeMove(char board[9][9], char graveyard[2][GRAVEYARD_MAX],
-	      int player, int *src, int *dst, bool upgrade_f);
+	      int player, int src[2], int dst[2], bool upgrade_f);
 void gmMakeMove(struct gm_status *game, int player,
-		int *src, int *dst,
+		int src[2], int dst[2],
 		bool upgrade_f, bool update_f);
 void makeDrop(char board[9][9], char graveyard[2][GRAVEYARD_MAX],
-	      int player, char piece, int *dst);
+	      int player, char piece, int dst[2]);
 void gmMakeDrop(struct gm_status *game, int player, char piece,
-		int *dst, bool update_f);
+		int dst[2], bool update_f);
 void coordsToC(char *converted, int *to_convert);
 void cToCoords(int *converted, char *to_convert);
 /*display.c*/

@@ -34,7 +34,7 @@ int digGrave(char graveyard[2][GRAVEYARD_MAX], int player, char piece);
  */
 
 void makeMove(char board[9][9], char graveyard[2][38],
-	     int player, int *src, int *dst, bool upgrade_f){
+	     int player, int src[2], int dst[2], bool upgrade_f){
   int drank = dst[0];
   int dfile = dst[1];
   int srank = src[0];
@@ -49,7 +49,6 @@ void makeMove(char board[9][9], char graveyard[2][38],
 
 
 /** 
- * \fn mkmove
  * Moves a piece from one position to another, and upgrades
  *   if necessary
  *
@@ -64,7 +63,7 @@ void makeMove(char board[9][9], char graveyard[2][38],
  * \pre game is a well-formed gm_status
  */
 void gmMakeMove(struct gm_status *game, int player,
-		int *src, int *dst,
+		int src[2], int dst[2],
 		bool upgrade_f, bool update_f){
   int drank = dst[0];
   int dfile = dst[1];
@@ -151,7 +150,7 @@ void removeGrave(char graveyard[2][38], int player, char piece){
 }
 
 void makeDrop(char board[9][9], char graveyard[2][38], int player,
-	    char piece, int *dst){
+	    char piece, int dst[2]){
   removeGrave(graveyard, player, piece);
   piece = (player == 1) ? tolower(piece) : toupper(piece);
   int drank = dst[0];

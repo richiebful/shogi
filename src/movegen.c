@@ -8,8 +8,6 @@
 #include "ai.h"
 #include "movegen.h"
 
-#define MOVEGEN_TEST
-
 /**
  * Adds a new updated graveyard to the top of the stack
  */
@@ -143,22 +141,6 @@ struct tree_node *generateDropNode(int player, char piece, int *dst){
 }
 
 /**
- * Returns the player who is making the game tree node's move 1 or 2
- * @param player is the current gm_status's player opposed to forcasted moves in the game tree
- */
-int getNodePlayer(int currPlayer){
-  struct board_entry *entry;
-  int i = 0;
-  //counts number of entries in stack - 1
-  if (entry = SLIST_FIRST(&boardHead)){
-    while (entry = SLIST_NEXT(&entry, d)){
-      i++;
-    }
-  }
-  return (currPlayer + i) % 2 + 1;
-}
-
-/**
  * @param parent the decision tree node of the previous move
  * @param player the player making this move
  */
@@ -214,7 +196,14 @@ void recursiveFree(struct tree_node *parent){
     free(parent);
 }
 
-void breakBranch(
+void breakBranch(struct tree_node *parent, struct tree_node *child){
+  int i;
+  //shift all pointers down in children pointer array to erase useless child
+  for (i = child-(*parent->children)+1; i < parent->childCount; i++){
+    (*(parent->children + i - 1)) = (*(parent->children + i));
+  }
+  recursiveFree(child);
+}
 
 int32_t alphabeta(struct tree_node *node, int32_t alpha, int32_t beta, bool maximizeF){
     if (node->parent == NULL || node->children == NULL){
@@ -223,11 +212,11 @@ int32_t alphabeta(struct tree_node *node, int32_t alpha, int32_t beta, bool maxi
         int32_t v = INT32_MIN;
         int i = 0;
         for (i = 0; i < node->childCount; i++){
-            int32_t result = alphabeta(*(node->children + i), alpha, beta, false)
+            int32_t result = alphabeta(*(node->children + i), alpha, beta, false);
             v = (v > result) ? v : result;
             alpha = (alpha > v) ? alpha : v;
             if (beta <= alpha){
-                detatchNode(node, *(node->children + i));
+                breakBranch(node, *(node->children + i));
             }
         }
         return v;
@@ -239,7 +228,7 @@ int32_t alphabeta(struct tree_node *node, int32_t alpha, int32_t beta, bool maxi
             v = (v < result) ? v : result;
             beta = (beta < v) ? beta : v;
             if (beta <= alpha){
-                detatchNode(node, *(node->children + i));
+                breakBranch(node, *(node->children + i));
             }
         }
         return v;
@@ -248,7 +237,7 @@ int32_t alphabeta(struct tree_node *node, int32_t alpha, int32_t beta, bool maxi
 
 void buildTree(struct tree_node *parent, int player){
     generateChildNodes(parent, player);
-    alphabeta(parent);
+    alphabeta(parent, INT32_MIN, INT32_MAX, true);
     int i;
     for (i = 0; i < parent->childCount; i++){
         player = (player + 1) % 2 + 1; //change player
