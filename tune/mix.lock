@@ -1,0 +1,1 @@
+%{"sh": {:git, "https://github.com/devinus/sh.git", "03ae3dc014e5d528da8bac75fdd84735df8ef59f", [tag: "1.1.2"]}}
