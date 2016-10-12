@@ -8,23 +8,32 @@
 #include "shogi.h"
 #include "ai.h"
 
+#define DEBUG_FLAG 1
 #define BISHOP_DEVELOPMENT_TEST 1
 
-/**
- * @todo These should probably be part of a local parameter struct, so we can tune the shit out of it later on,
- * rather than having to recompile the program around these defines
- */
-#define SCORE_BOARD_PIECE_COEFF 1.0
-#define DROPPABILITY_COEFF 1.0
-#define IN_CHECK_COEFF 1.0
-#define SCORE_PIN_COEFF 1.0
+#ifdef DEBUG_FLAG
+struct aiParameters defaultParams{
+  {
+    "PLNGUBRQMOHCSK",
+    {7, 20, 20, 35, 40, 90, 95, 15, 25, 25, 35, 99, 97, 10}
+  },
+  {
+    "PLNGUBRQMOHCSK",
+    {7, 20, 20, 35, 40, 90, 95, 15, 25, 25, 35, 99, 97, 10}
+  },
+  {
+    "PLNGUBRQMOHCSK",
+    {3, 10, 10, 17, 20, 45, 47, 7, 12, 12, 17, 49, 48, 5}
+  },
+  75,
+  3
+};
+#endif
 
 int32_t scoreGraveyardPiece(char piece, int player, int owner);
 int32_t scoreDroppability(char piece, char board[9][9], int player);
-int32_t scoreBoardPiece(char piece, int player);
 int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player, bool oppInCheckF);
 int32_t scoreSign(int player, int owner);
-int32_t scorePiece(char piece, int player);
 int32_t scoreBishopDevelopment(int loc[2], char board[9][9], int player);
 int32_t scoreUpBishopDevelopment(int loc[2], char board[9][9], int player);
 int32_t scoreLanceDevelopment(int loc[2], char board[9][9], int player);
@@ -35,23 +44,31 @@ bool obstructionTest(char attackedPiece, bool atAttackingPiece, bool pastAttacki
 int32_t scorePinning(int loc[2], char board[9][9], int player);
 int ownerOf(char piece);
 
-
 /**
  * Scores a game state in the decision tree
  * @todo determine factors to multiply helper functions by
  */
-int32_t scoreState(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player){
+int32_t scoreState(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int player, struct aiParameters *params){
+  int opponent = (player % 2) + 1;
+
+  // if opponent in check, return max score, else if player in check, return min score
+  if (isMate(board, graveyard, opponent)){
+    return INT32_MAX;
+  }
+  else if (isMate(board, graveyard, player)){
+    return INT32_MIN;
+  }
+  
   int i, j;
   char piece;
-  int opponent = (player % 2) + 1;
-  bool oppInCheckF = isCheck(board, opponent);
-  int32_t score = oppInCheckF * IN_CHECK_COEFF;
+  int32_t score = (isCheck(board, opponent) - isCheck(board, opponent)) * params.isCheck;
   for (i = 0; i < 9; i++){
     for (j = 0; j < 9; j++){
       piece = board[i][j];
       if (piece != ' '){
 	int loc[2] = {i, j};
-	score += scorePieceDevelopment(loc, board, player, oppInCheckF);
+	//don't let pieceDevelopment run when piece's player is in check
+	score += scorePieceDevelopment(loc, board, player);
 	score += scorePinning(loc, board, player);
       }
     }
@@ -73,11 +90,11 @@ int32_t scoreState(char board[9][9], char graveyard[2][GRAVEYARD_MAX], int playe
  * Returns score for piece in graveyard, 
  *  factoring in who has ownership
  */
-int32_t scoreGraveyardPiece(char piece, int player, int owner){
-  for (int i = 0; i < sizeof(PIECE_VALUES.name); i++){
-    if (toupper(piece) == PIECE_VALUES.name[i]){
+int32_t scoreGraveyardPiece(char piece, int player, int owner, struct pcValuation *values){
+  for (int i = 0; i < sizeof(values->name)/sizeof(values->name[0]); i++){
+    if (toupper(piece) == values->name[i]){
       //printf("toupper(piece) -> %c \n", toupper(piece));
-      return scoreSign(player, owner) * PIECE_VALUES.score[i];
+      return scoreSign(player, owner) * values->score[i];
     }
   }
 }
@@ -86,7 +103,7 @@ int32_t scoreGraveyardPiece(char piece, int player, int owner){
  * (Returns number of locations a piece can be dropped) * k
  * @pre piece is in the graveyard of the player
  */
-int32_t scoreDroppability(char piece, char board[9][9], int player){
+int32_t scoreDroppability(char piece, char board[9][9], int player, const double DROPPABILITY_COEFF){
   int dst[2];
   int32_t count;
   for (dst[0] = 0; dst[0] < 9; dst[0]++){
@@ -100,23 +117,15 @@ int32_t scoreDroppability(char piece, char board[9][9], int player){
 }
 
 /**
- * Scores an individual piece on the board
- * @pre piece is in the graveyard of the player
- */
-int32_t scoreBoardPiece(char piece, int player){
-  return SCORE_BOARD_PIECE_COEFF * scorePiece(piece, player);
-}
-
-/**
  * Scores a piece generally, based on its assumed value in game play
  */
-int32_t scorePiece(char piece, int player){
-  for (int i = 0; i < sizeof(PIECE_VALUES.name); i++){
-    if (piece == PIECE_VALUES.name[i]){
-      return scoreSign(player, 1) * PIECE_VALUES.score[i];
+int32_t scorePiece(char piece, int player, struct pcValuation *value){
+  for (int i = 0; i < sizeof(value->name)/sizeof(value->name[0]); i++){
+    if (piece == value->name[i]){
+      return scoreSign(player, 1) * value->score[i];
     }
     else if (toupper(piece) == PIECE_VALUES.name[i]){
-      return scoreSign(player, 2) * PIECE_VALUES.score[i];
+      return scoreSign(player, 2) * value->score[i];
     }
   }
 }
@@ -126,7 +135,7 @@ int32_t scorePiece(char piece, int player){
  * @pre board[rank][file] is a piece
  * @note only pieces with range, like rook, bishop, lance can be developed
  */
-int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player, bool oppInCheckF){
+int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player, struct pcValuation *devValue){
   char piece = board[loc[0]][loc[1]];
   int32_t score = 0;
   switch (piece){
@@ -138,7 +147,7 @@ int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player, bool opp
     break;
   case 'L':
   case 'l':
-    score =  scoreLanceDevelopment(loc, board, player);
+    score = scoreLanceDevelopment(loc, board, player);
     break;
   case 'N':
   case 'n':
@@ -151,25 +160,22 @@ int32_t scorePieceDevelopment(int loc[2], char board[9][9], int player, bool opp
     score = scoreRookDevelopment(loc, board, player);
     break;
   }
-  int sign =  scoreSign(player, islower(piece) + 1);
   
-  if (sign == -1 && oppInCheckF)
-    return 0;
-  else
-    return sign * score;
+  return scorePiece(piece, player, devValue) * score;
 }
 
 /**
- * 
+ * Determines whether a piece at loc is pinned by the opponent to protect the king
  */
-int32_t scorePinning(int loc[2], char board[9][9], int player){
+int32_t scorePinning(int loc[2], char board[9][9], int player, struct pcValuation *pinValue){
   char tempBoard[9][9];
   memcpy(tempBoard, board, sizeof(char)*9*9);
   int32_t score = 0;
+  char pinCandidate = tempBoard[loc[0]][loc[1]];
   tempBoard[loc[0]][loc[1]] = ' ';
   score -= scoreSign(player, ownerOf(pinCandidate)) * isCheck(board, (player % 2) + 1);
   tempBoard[loc[0]][loc[1]] = pinCandidate;
-  return score * SCORE_PIN_COEFF;
+  return score * scorePiece(pinCandidate, player, pinValue);
 }
 
 /**
@@ -575,8 +581,8 @@ int main(void){
 #ifdef PIN_SCORE_TEST
 int main(void){
   struct board_score_test test[] = {
-    {.board = {"LNGUKUGNL", 
-               " R     B ", 
+    {.board = {"LNGUK GNL", 
+               " R   U B ", 
 	       "PPPPPPbPP", 
 	       "         ", 
 	       "         ", 
@@ -590,7 +596,7 @@ int main(void){
     {.board = {"LNGUKUGNL", 
                " R     B ", 
 	       "PPPPPPbPP", 
-	       "         ", 
+	       "         ",
 	       "         ", 
 	       "  p      ",
 	       "pp ppppp ",
@@ -618,3 +624,5 @@ int main(void){
   }
   return 0;
 }
+
+#endif

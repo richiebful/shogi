@@ -16,17 +16,15 @@ struct tree_node{
 struct pcValuation{
   char name[14];
   short score[14];
-} PIECE_VALUES = {
-  "PLNGUBRQMOHCSK",
-  {7, 20, 20, 35, 40, 90, 95, 15, 25, 25, 35, 99, 97, 100}
 };
 
-struct aiScoreBook{
-  struct pcValuation pcValues;
+struct aiParameters{
+  struct pcValuation boardPieceCoefficient;
+  struct pcValuation pinnedPieceCoefficient;
+  struct pcValuation developmentCoefficient;
   double inCheckCoefficient;
   double droppabilityCoefficient;
-  //etc.
-}; //pass this to scoreState function
+};
 
 #ifdef ADVANCED_VALUE
 struct pcValuation{

@@ -1,0 +1,16 @@
+{
+    "boardPiece" : {
+	"name" : "PLNGUBRQMOHCSK",
+	"score" : [7, 20, 20, 35, 40, 90, 95, 15, 25, 25, 35, 99, 97, 10]
+    },
+    "pinnedPiece": {
+	"name" : "PLNGUBRQMOHCSK",
+	"score": [7, 20, 20, 35, 40, 90, 95, 15, 25, 25, 35, 99, 97, 10]
+    },
+    "pieceDevelopment": {
+	"name" : "LNRSBC",
+	"score" : [3, 10, 10, 17, 20, 45, 47, 7, 12, 12, 17, 49, 48, 5]
+    }
+    "inCheck" : 75,
+    "droppability" : 3
+}
