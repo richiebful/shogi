@@ -1,0 +1,12 @@
+bool inRange(int loc[2]);
+bool legalSrc(int player, char piece, int loc[2]);
+bool legalDest(int player, char piece, int loc[2]);
+bool kingLegalMove(int player, int src[2], int dst[2]);
+bool silverLegalMove(int player, int src[2], int dst[2]);
+int relativeDir(int player);
+bool movesLikeGold(char piece);
+bool goldLegalMove(int player, int src[2], int dst[2]);
+bool isUpgradablePiece(char piece);
+bool upRookLegalMove(int player, int src[2], int dst[2]);
+bool upBishopLegalMove(int player, int src[2], int dst[2]);
+int sign(int value);
