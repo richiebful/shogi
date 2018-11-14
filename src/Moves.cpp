@@ -23,10 +23,10 @@ bool legalSrc(int player, char piece, int loc[2]){
 #endif
     return false;
   }
-  else if (player == WHITE && isupper(piece)){
+  else if (player == WHITE && islower(piece)){
     return true;
   }
-  else if (player == BLACK && islower(piece)){
+  else if (player == BLACK && isupper(piece)){
     return true;
   }
   else{
@@ -38,10 +38,10 @@ bool legalDest(int player, char piece, int loc[2]){
   if (inRange(loc) == false){
     return false; 
   }
-  else if ((player == WHITE && islower(piece)) || piece == ' '){
+  else if ((player == WHITE && isupper(piece)) || piece == ' '){
     return true;
   }
-  else if ((player == BLACK && isupper(piece)) || piece == ' '){
+  else if ((player == BLACK && islower(piece)) || piece == ' '){
     return true;
   }
   else{

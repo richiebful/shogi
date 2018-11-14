@@ -13,7 +13,7 @@ class Graveyard {
   std::array<std::vector<char>, 2> graveyard;
 
 public:
-  void bury(int player, char piece);
+  void bury(bool player, char piece);
 };
 
 /**
@@ -23,34 +23,35 @@ public:
  * @param piece, the char id of the piece captured
  *
  */
-void Graveyard::bury(int player, char piece) {
+void Graveyard::bury(bool player, char piece) {
   graveyard[player].push_back(piece);
 }
 
 class ShogiBoard {
   char *board;
   Graveyard graveyard;
-  bool curr_player;
+  bool currPlayer;
 
 public:
   ShogiBoard();
   ShogiBoard(const ShogiBoard& other);
   void move(int[2], int[2]);
   void drop(int[2], char);
-  bool legalMove(int player, int src[2], int dst[2], bool from_check_f);
+  bool legalMove(bool player, int src[2], int dst[2], bool from_check_f);
   bool legalMove(int src[2], int dst[2]);
-  bool legalUpgrade(char piece, int player, int rank);
+  bool legalUpgrade(char piece, bool player, int rank);
   bool legalDrop(int dst[2], char piece);
-  bool isCheck(int player);
-  bool isMate(int player);
+  bool isCheck(bool player);
+  bool isMate(bool player);
   void print();
 
 private:
   bool rookLegalMove(int src[2], int dst[2]);
   bool bishopLegalMove(int src[2], int dst[2]);
-  bool lanceLegalMove(int player, int src[2], int dst[2]);
-  bool pawnLegalMove(int player, int src[2], int dst[2], char dpiece);
+  bool lanceLegalMove(bool player, int src[2], int dst[2]);
+  bool pawnLegalMove(bool player, int src[2], int dst[2], char dpiece);
   char getPiece(int loc[2]);
+  bool getPieceLocation(int loc[2], char piece);
 };
 
 ShogiBoard::ShogiBoard() {
@@ -65,20 +66,20 @@ ShogiBoard::ShogiBoard() {
                                " b     r "
                                "lngukugnl"};
   std::copy(init_board, init_board + 81, board);
-  curr_player = WHITE;
+  currPlayer = WHITE;
 }
 
 ShogiBoard::ShogiBoard(const ShogiBoard& other){
   board = new char[82];
   std::copy(other.board, other.board + 81, board);
-  curr_player = other.curr_player;
+  currPlayer = other.currPlayer;
 }
 
 bool ShogiBoard::legalMove(int src[2], int dst[2]){
-  return legalMove(curr_player, src, dst, false);
+  return legalMove(currPlayer, src, dst, false);
 }
 
-bool ShogiBoard::legalMove(int player, int src[2], int dst[2], bool from_check_f) {
+bool ShogiBoard::legalMove(bool player, int src[2], int dst[2], bool from_check_f) {
   int s_idx, d_idx;
   s_idx = src[0] * 9 + src[1];
   d_idx = dst[0] * 9 + dst[1];
@@ -90,18 +91,19 @@ bool ShogiBoard::legalMove(int player, int src[2], int dst[2], bool from_check_f
 #endif
 
   // See if we can test for check later
+  ShogiBoard test_board = *this;
+  test_board.move(src, dst);
   // memcpy(&test_board, board, sizeof(test_board));
-  // makeMove(test_board, blank, player, src, dst, 0);
-  // else if (from_check_f == false && ischeck(test_board, player)) {
-  //   return false;
-  // } 
-
+  // makeMove(test_board, blank, player, src, dst, 0); 
+  
   if (legalDest(player, dpiece, dst) == false) {
     return false;
   } else if (legalSrc(player, piece, src) == false) {
     return false;
   } else if (dst[0] == src[0] && dst[1] == src[1]) {
     return false;
+  } else if (from_check_f == false && test_board.isCheck(player)) {
+     return false;
   } else if (piece == 'P' || piece == 'p') {
     return pawnLegalMove(player, src, dst, dpiece);
   } else if (piece == 'R' || piece == 'r') {
@@ -135,6 +137,7 @@ void ShogiBoard::move(int src[2], int dst[2]) {
   char piece = board[src[1] + 9 * src[0]];
   board[src[1] + 9 * src[0]] = EMPTY_SQUARE;
   board[dst[1] + 9 * dst[0]] = piece;
+  currPlayer = !currPlayer;
 }
 
 void ShogiBoard::drop(int dst[2], char piece) {
@@ -180,7 +183,7 @@ bool ShogiBoard::rookLegalMove(int src[2], int dst[2]){
   return true;
 }
 
-bool ShogiBoard::lanceLegalMove(int player, int src[2], int dst[2]) {
+bool ShogiBoard::lanceLegalMove(bool player, int src[2], int dst[2]) {
   int dir = relativeDir(player);
   if (src[1] != dst[1]) {
     return false;
@@ -197,20 +200,9 @@ bool ShogiBoard::lanceLegalMove(int player, int src[2], int dst[2]) {
   }
 }
 
-bool ShogiBoard::pawnLegalMove(int player, int src[2], int dst[2], char dpiece){
+bool ShogiBoard::pawnLegalMove(bool player, int src[2], int dst[2], char dpiece){
   int player_dir = relativeDir(player);
-  int hoz_dist = std::abs(src[1] - dst[1]);
-  int forward_dist = (src[0] - dst[0]) * player_dir;
-  if (hoz_dist == 1 && forward_dist == 1 && isalpha(dpiece))
-    return true; //ensure pawn attacks are valid
-  else if (forward_dist == 2 && hoz_dist == 0 && dpiece == EMPTY_SQUARE && 
-	   dpiece == EMPTY_SQUARE && ((player == 0 && src[0] != 2) ||
-				      (player == 1 && src[0] != 6)))   
-    return true; //handle double jumps
-  else if (forward_dist == 1 && hoz_dist == 0 && dpiece == EMPTY_SQUARE)
-    return true; //handle regular jumps
-  else
-    return false;
+  return src[0] + player_dir == dst[0] && src[1] == dst[1];
 }
 
 bool ShogiBoard::bishopLegalMove(int src[2], int dst[2]) {
@@ -239,7 +231,7 @@ bool ShogiBoard::bishopLegalMove(int src[2], int dst[2]) {
   return true;
 }
  
-bool ShogiBoard::legalUpgrade(char piece, int player, int rank) {
+bool ShogiBoard::legalUpgrade(char piece, bool player, int rank) {
   if (player == WHITE && rank < 3 && isUpgradablePiece(piece)) {
     return true;
   } else if (player == BLACK && rank > 5 && isUpgradablePiece(piece)) {
@@ -253,39 +245,118 @@ char ShogiBoard::getPiece(int loc[2]){
   return board[loc[0] * 9 + loc[1]];
 }
 
+bool ShogiBoard::getPieceLocation(int loc[2], char piece){
+  for (loc[0] = 0; loc[0] < 9; loc[0]++){
+    for (loc[1] = 0; loc[1] < 9; loc[1]++){
+      if (getPiece(loc) == piece){
+	return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**\fn ischeck
+ * \param game the current game state
+ * \param player, the player being evaluated for being in check
+ */
+bool ShogiBoard::isCheck(bool player){
+  bool otherPlayer = !player;
+
+  int dst[2];
+  char king = (player == 1) ? 'k' : 'K';
+  getPieceLocation(dst, king);
+#ifdef DEBUG
+  printf("%i, %i is king\n", dst[0], dst[1]);
+#endif
+  int src[2];
+  for (src[0] = 0; src[0] < 9; src[0]++){
+    for (src[1] = 0; src[1] < 9; src[1]++){
+      if (legalMove(otherPlayer, src, dst, true)){
+	return true;
+      }
+    }
+  }
+  return false;
+}
+
+//@todo currently does not undo moves properly. Write helper for this
+bool ShogiBoard::isMate(bool player){
+  bool otherPlayer;
+  otherPlayer = currPlayer;
+
+  /*Player must be in check to be in mate*/
+  if (isCheck(otherPlayer) == false){
+    return false;
+  }
+  /*test all possible following moves, then determine 
+   *whether check still
+   *exists under the new game state*/
+  int src[2], dst[2];
+  /*Assume checkmate until it is disproven*/
+  for(src[0]= 0; src[0] < 9; src[0]++){
+    for (src[1] = 0; src[1] < 9; src[1]++){
+      for (dst[0] = 0; dst[0] < 9; dst[0]++){
+	for (dst[1] = 0; dst[1] < 9; dst[1]++){
+	  if (legalMove(player, src, dst, true) == true){
+	    move(src, dst);
+	    if (isCheck(player) == false){
+	      return false;
+	    }
+	    //undo last move
+	    move(dst, src);
+	  }
+	}
+      }
+    }
+  }
+  return true;
+}
+
 int main(void) {
   ShogiBoard sg;
   sg.print();
+  
   //test that pawns can move forward onto blank
-  int src[2] = {2, 6};
-  int dst[2] = {3, 6};
+  int src[2] = {6, 2};
+  int dst[2] = {5, 2};
   assert(sg.legalMove(src, dst));
   sg.move(src, dst);
   sg.print();
+
+  int src1[2] = {0, 6};
+  int dst1[2] = {1, 5};
+  assert(sg.legalMove(src1, dst1));
+  sg.move(src1, dst1);
+  sg.print();
   
   //test that pawns can't move sideways ever
-  int src2[2] = {3, 6};
+  int src2[2] = {6, 3};
   assert(sg.legalMove(src2, dst) == false);
 
   //ensure bishop can't move onto own team's piece
-  int src3[2] = {1, 7};
-  int dst3[2] = {2, 8};
+  int src3[2] = {7, 1};
+  int dst3[2] = {8, 2};
   assert(sg.legalMove(src3, dst3) == false);
 
   //ensure bishop can't move sideways
-  int src4[2] = {1, 7};
-  int dst4[2] = {1, 8};
+  int src4[2] = {7, 1};
+  int dst4[2] = {8, 1};
   assert(sg.legalMove(src4, dst4) == false);
 
   //ensure bishop can't jump over pieces
-  int src4a[2] = {1, 7};
-  int dst4a[2] = {7, 1};
+  int src4a[2] = {7, 1};
+  int dst4a[2] = {1, 7};
   assert(sg.legalMove(src4a, dst4a) == false);
-
+  sg.print();
+  
   //check bishop can attack properly
-  int src5[2] = {1, 7};
-  int dst5[2] = {6, 2};
+  int src5[2] = {7, 1};
+  int dst5[2] = {2, 6};
   assert(sg.legalMove(src5, dst5));
   sg.move(src5, dst5);
   sg.print();
+
+  int src6[2] = {2, 3};
+  int dst6[2] = {3, 3};
 }
